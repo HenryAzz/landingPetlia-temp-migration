@@ -31,20 +31,38 @@ const ChooseYourBondScreen = () => {
       `}</style>
 
       {/* Fondo expandido */}
-<div className="absolute inset-0 z-0 flex items-center justify-center">
-  <img
-    src="/fondoazul.png"
-    alt=""
-    className="object-cover"
-    style={{
-      width: '140%',
-      height: '140%',
-      minWidth: '140%',
-      minHeight: '140%',
-      transform: 'translateY(-8%)',
-    }}
-  />
-</div>
+      <div className="absolute inset-0 z-0 flex items-center justify-center">
+        <img
+          src="/fondoazul.png"
+          alt=""
+          className="object-cover"
+          style={{
+            width: '140%',
+            height: '140%',
+            minWidth: '140%',
+            minHeight: '140%',
+            transform: 'translateY(-8%)',
+          }}
+        />
+      </div>
+
+      {/* Onda amarilla en el top — superpuesta al fondo azul */}
+      <div
+        className="absolute top-0 left-0 w-full pointer-events-none"
+        style={{ zIndex: 30 }}
+      >
+        <svg
+          viewBox="0 0 1440 120"
+          className="w-full block"
+          preserveAspectRatio="none"
+          style={{ height: '65px', transform: 'rotate(180deg)' }}
+        >
+          <path
+            d="M0,40 Q180,0 360,25 Q540,50 720,20 Q900,0 1080,30 Q1260,55 1440,15 L1440,120 L0,120 Z"
+            fill="#F9DDA3"
+          />
+        </svg>
+      </div>
 
       {/* Contenido principal */}
       <div className="relative z-10 flex-1 flex min-h-0 w-full">
