@@ -11,7 +11,6 @@ const ChooseYourBondScreen = () => {
 
   useEffect(() => {
     if (hasAnimated) return;
-
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
@@ -19,13 +18,9 @@ const ChooseYourBondScreen = () => {
           observer.disconnect();
         }
       },
-      { threshold: 0.25 }
+      { threshold: 0.15 }
     );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
+    if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, [hasAnimated]);
 
@@ -38,8 +33,7 @@ const ChooseYourBondScreen = () => {
     <section
       ref={sectionRef}
       id="vinculos"
-      className="relative w-full overflow-hidden flex flex-col"
-      style={{ height: '100vh' }}
+      className="relative w-full overflow-hidden"
     >
       <style>{`
         @keyframes gentleFloat1 {
@@ -57,6 +51,7 @@ const ChooseYourBondScreen = () => {
         .card-icon-1 { animation: gentleFloat1 4s ease-in-out infinite; }
         .card-icon-2 { animation: gentleFloat2 4.5s ease-in-out infinite; animation-delay: 0.7s; }
         .card-icon-3 { animation: gentleFloat3 3.8s ease-in-out infinite; animation-delay: 1.2s; }
+
         .bond-card {
           transition: all 0.35s ease;
           cursor: pointer;
@@ -66,7 +61,39 @@ const ChooseYourBondScreen = () => {
           box-shadow: 0px 8px 20px rgba(0,0,0,0.3), inset 1px 4px 8px rgba(0,0,0,0.25);
         }
 
-        /* ── Entrance animations (one-time) ── */
+        /* ── Zig-zag stagger ── */
+        .bond-card-stagger-right {
+          margin-left: clamp(8px, 1.5vw, 24px);
+          margin-right: 0;
+        }
+        .bond-card-stagger-left {
+          margin-left: 0;
+          margin-right: clamp(8px, 1.5vw, 24px);
+        }
+
+        @media (max-width: 1024px) {
+          .bond-card-stagger-right {
+            margin-left: 12px;
+            margin-right: 0;
+          }
+          .bond-card-stagger-left {
+            margin-left: 0;
+            margin-right: 12px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .bond-card-stagger-right {
+            margin-left: 0;
+            margin-right: 0;
+          }
+          .bond-card-stagger-left {
+            margin-left: 0;
+            margin-right: 0;
+          }
+        }
+
+        /* ── Entrance animations ── */
         @keyframes fadeSlideUp {
           0%   { opacity: 0; transform: translateY(40px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -79,42 +106,31 @@ const ChooseYourBondScreen = () => {
           0%   { opacity: 0; transform: translateX(60px) scale(0.93); }
           100% { opacity: 1; transform: translateX(0) scale(1); }
         }
+        @keyframes cardSlideUp {
+          0%   { opacity: 0; transform: translateY(40px) scale(0.95); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
         @keyframes iconFadeIn {
           0%   { opacity: 0; }
           100% { opacity: 1; }
         }
 
-        /* Título */
-        .entrance-bond-title {
-          opacity: 0;
-        }
+        .entrance-bond-title { opacity: 0; }
         .entrance-bond-title.animate {
           animation: fadeSlideRight 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
           animation-delay: 0.1s;
         }
-
-        /* Subtítulo */
-        .entrance-bond-subtitle {
-          opacity: 0;
-        }
+        .entrance-bond-subtitle { opacity: 0; }
         .entrance-bond-subtitle.animate {
           animation: fadeSlideRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
           animation-delay: 0.3s;
         }
-
-        /* CTA */
-        .entrance-bond-cta {
-          opacity: 0;
-        }
+        .entrance-bond-cta { opacity: 0; }
         .entrance-bond-cta.animate {
           animation: fadeSlideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
           animation-delay: 0.5s;
         }
-
-        /* Cards */
-        .entrance-bond-card {
-          opacity: 0;
-        }
+        .entrance-bond-card { opacity: 0; }
         .entrance-bond-card.animate {
           animation: cardSlideIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
@@ -122,21 +138,112 @@ const ChooseYourBondScreen = () => {
         .entrance-bond-card.animate.bond-card-1 { animation-delay: 0.55s; }
         .entrance-bond-card.animate.bond-card-2 { animation-delay: 0.75s; }
 
-        /* Icon wrappers — solo opacity, no tocan transform */
-        .bond-icon-wrapper {
-          opacity: 0;
-        }
+        .bond-icon-wrapper { opacity: 0; }
         .bond-icon-wrapper.animate-bond-icon-0 {
-          animation: iconFadeIn 0.5s ease forwards;
-          animation-delay: 0.7s;
+          animation: iconFadeIn 0.5s ease forwards; animation-delay: 0.7s;
         }
         .bond-icon-wrapper.animate-bond-icon-1 {
-          animation: iconFadeIn 0.5s ease forwards;
-          animation-delay: 0.9s;
+          animation: iconFadeIn 0.5s ease forwards; animation-delay: 0.9s;
         }
         .bond-icon-wrapper.animate-bond-icon-2 {
-          animation: iconFadeIn 0.5s ease forwards;
-          animation-delay: 1.1s;
+          animation: iconFadeIn 0.5s ease forwards; animation-delay: 1.1s;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+          .entrance-bond-card.animate {
+            animation-name: cardSlideUp;
+          }
+          .entrance-bond-title.animate,
+          .entrance-bond-subtitle.animate {
+            animation-name: fadeSlideUp;
+          }
+        }
+
+        .bond-layout {
+          display: flex;
+          flex-direction: row;
+          min-height: 100vh;
+        }
+        .bond-left {
+          width: 45%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .bond-left-inner {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          width: 100%;
+          padding-left: 6vw;
+          padding-right: 3vw;
+          gap: 2.5vw;
+        }
+        .bond-right {
+          width: 55%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        .bond-cards-container {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          max-width: 40vw;
+          gap: 1.5vw;
+        }
+
+        @media (max-width: 1024px) {
+          .bond-layout {
+            flex-direction: column;
+            min-height: auto;
+            padding: 80px 0 60px;
+          }
+          .bond-left {
+            width: 100%;
+            padding: 0 32px;
+          }
+          .bond-left-inner {
+            padding-left: 0;
+            padding-right: 0;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+            margin-bottom: 44px;
+          }
+          .bond-right {
+            width: 100%;
+            padding: 0 32px;
+          }
+          .bond-cards-container {
+            max-width: 520px;
+            margin: 0 auto;
+            gap: 24px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .bond-layout {
+            padding: 60px 0 50px;
+          }
+          .bond-left {
+            padding: 0 24px;
+          }
+          .bond-left-inner {
+            gap: 16px;
+            margin-bottom: 36px;
+          }
+          .bond-right {
+            padding: 0 24px;
+          }
+          .bond-cards-container {
+            max-width: 100%;
+            gap: 28px;
+          }
         }
       `}</style>
 
@@ -156,21 +263,10 @@ const ChooseYourBondScreen = () => {
         />
       </div>
 
-      <div className="relative z-10 flex-1 flex min-h-0 w-full">
+      <div className="relative z-10 bond-layout">
         {/* CAJA IZQUIERDA */}
-        <div
-          className="h-full flex items-center justify-center flex-shrink-0"
-          style={{ width: '45%' }}
-        >
-          <div
-            className="flex flex-col items-start justify-center"
-            style={{
-              width: '100%',
-              paddingLeft: '6vw',
-              paddingRight: '3vw',
-              gap: '2.5vw',
-            }}
-          >
+        <div className="bond-left">
+          <div className="bond-left-inner">
             <h2
               className={`entrance-bond-title ${hasAnimated ? 'animate' : ''}`}
               style={{
@@ -178,7 +274,7 @@ const ChooseYourBondScreen = () => {
                 fontWeight: 300,
                 fontStyle: 'italic',
                 color: '#FFFFFF',
-                fontSize: 'clamp(48px, 5.8vw, 90px)',
+                fontSize: 'clamp(36px, 5.8vw, 90px)',
                 lineHeight: 1.15,
                 letterSpacing: '0.04em',
                 margin: 0,
@@ -196,12 +292,12 @@ const ChooseYourBondScreen = () => {
                 fontWeight: 400,
                 fontStyle: 'italic',
                 color: '#FFFFFF',
-                fontSize: 'clamp(22px, 2.3vw, 35px)',
+                fontSize: 'clamp(16px, 2.3vw, 35px)',
                 lineHeight: 1.5,
                 letterSpacing: '0.02em',
                 margin: 0,
                 opacity: 0.9,
-                maxWidth: '90%',
+                maxWidth: 'clamp(280px, 90%, 500px)',
               }}
             >
               Elegí el vínculo que mejor se adapte a vos y date el mimo
@@ -215,8 +311,8 @@ const ChooseYourBondScreen = () => {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '0.5vw',
-                padding: '0.7vw 2vw',
+                gap: 'clamp(6px, 0.5vw, 10px)',
+                padding: 'clamp(10px, 0.7vw, 14px) clamp(24px, 2vw, 36px)',
                 borderRadius: '50px',
                 background:
                   'linear-gradient(135deg, rgba(249,221,163,0.8), rgba(249,221,163,0.6))',
@@ -224,7 +320,7 @@ const ChooseYourBondScreen = () => {
                 color: '#5A4520',
                 fontFamily: "'Poppins', sans-serif",
                 fontWeight: 600,
-                fontSize: '0.95vw',
+                fontSize: 'clamp(13px, 0.95vw, 16px)',
                 letterSpacing: '0.04em',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
@@ -232,59 +328,46 @@ const ChooseYourBondScreen = () => {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow =
-                  '0 8px 25px rgba(249,221,163,0.35)';
+                e.currentTarget.style.boxShadow = '0 8px 25px rgba(249,221,163,0.35)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow =
-                  '0 4px 15px rgba(249,221,163,0.25)';
+                e.currentTarget.style.boxShadow = '0 4px 15px rgba(249,221,163,0.25)';
               }}
             >
               Ver precios
               <svg
-                style={{ width: '1vw', height: '1vw' }}
+                style={{ width: 'clamp(14px, 1vw, 18px)', height: 'clamp(14px, 1vw, 18px)' }}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 14l-7 7m0 0l-7-7"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7" />
               </svg>
             </button>
           </div>
         </div>
 
         {/* CAJA DERECHA */}
-        <div
-          className="h-full flex-shrink-0 flex items-center justify-center"
-          style={{ width: '55%' }}
-        >
-          <div
-            className="flex flex-col"
-            style={{ width: '100%', maxWidth: '40vw', gap: '1.5vw' }}
-          >
-            {/* Card 1 */}
+        <div className="bond-right">
+          <div className="bond-cards-container">
+
+            {/* Card 1 — Correspondencia */}
             <div
-              className={`bond-card relative entrance-bond-card bond-card-0 ${hasAnimated ? 'animate' : ''}`}
+              className={`bond-card bond-card-stagger-right relative entrance-bond-card bond-card-0 ${hasAnimated ? 'animate' : ''}`}
               onClick={() => scrollToSection('planes')}
               style={{
                 backgroundColor: 'rgba(14, 116, 144, 0.5)',
-                borderRadius: '19px',
-                padding: '1.6vw 1.8vw',
-                minHeight: '9.5vw',
-                boxShadow:
-                  '0px 4px 4px rgba(0,0,0,0.25), inset 1px 4px 8px rgba(0,0,0,0.25)',
+                borderRadius: 'clamp(14px, 1.2vw, 19px)',
+                padding: 'clamp(18px, 1.6vw, 28px) clamp(20px, 1.8vw, 30px)',
+                minHeight: 'clamp(100px, 9.5vw, 160px)',
+                boxShadow: '0px 4px 4px rgba(0,0,0,0.25), inset 1px 4px 8px rgba(0,0,0,0.25)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
-                marginLeft: '1vw',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
+                overflow: 'visible',
               }}
             >
               <h3
@@ -292,10 +375,10 @@ const ChooseYourBondScreen = () => {
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 400,
                   color: '#FFFFFF',
-                  fontSize: 'clamp(18px, 1.9vw, 30px)',
+                  fontSize: 'clamp(17px, 1.9vw, 30px)',
                   lineHeight: 1.3,
                   margin: 0,
-                  marginBottom: '0.6vw',
+                  marginBottom: 'clamp(6px, 0.6vw, 10px)',
                 }}
               >
                 Correspondencia especial
@@ -305,66 +388,62 @@ const ChooseYourBondScreen = () => {
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 300,
                   color: '#E5E5E5',
-                  fontSize: 'clamp(13px, 1.1vw, 18px)',
+                  fontSize: 'clamp(12px, 1.1vw, 18px)',
                   lineHeight: 1.5,
                   margin: 0,
+                  paddingRight: 'clamp(40px, 4vw, 70px)',
                 }}
               >
                 Dale chispa a tu semana con un toque encantador y un
                 espacio al mes para compartir tiempo juntos
               </p>
-              {/* Icon wrapper — opacity only */}
               <div
                 className={`absolute pointer-events-none bond-icon-wrapper ${hasAnimated ? 'animate-bond-icon-0' : ''}`}
                 style={{
-                  right: '-1.5vw',
-                  top: '-1.5vw',
-                  width: 'clamp(50px, 5vw, 80px)',
-                  height: 'clamp(50px, 5vw, 80px)',
+                  right: '0',
+                  top: '0',
+                  transform: 'translate(35%, -35%)',
+                  width: 'clamp(50px, 5.5vw, 90px)',
+                  height: 'clamp(50px, 5.5vw, 90px)',
                 }}
               >
-                <img
-                  src="/carta.png"
-                  alt=""
-                  className={`object-contain w-full h-full ${mounted ? 'card-icon-1' : ''}`}
-                />
+                <img src="/carta.png" alt="" className={`object-contain w-full h-full ${mounted ? 'card-icon-1' : ''}`} />
               </div>
             </div>
 
-            {/* Card 2 */}
+            {/* Card 2 — Casual */}
             <div
-              className={`bond-card relative entrance-bond-card bond-card-1 ${hasAnimated ? 'animate' : ''}`}
+              className={`bond-card bond-card-stagger-left relative entrance-bond-card bond-card-1 ${hasAnimated ? 'animate' : ''}`}
               onClick={() => scrollToSection('planes')}
               style={{
                 backgroundColor: 'rgba(244, 63, 94, 0.6)',
-                borderRadius: '19px',
-                padding: '1.6vw 1.8vw',
-                minHeight: '9.5vw',
-                boxShadow:
-                  '0px 4px 4px rgba(0,0,0,0.25), inset 1px 4px 8px rgba(0,0,0,0.25)',
+                borderRadius: 'clamp(14px, 1.2vw, 19px)',
+                padding: 'clamp(18px, 1.6vw, 28px) clamp(20px, 1.8vw, 30px)',
+                minHeight: 'clamp(100px, 9.5vw, 160px)',
+                boxShadow: '0px 4px 4px rgba(0,0,0,0.25), inset 1px 4px 8px rgba(0,0,0,0.25)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
-                marginLeft: '-1vw',
-                marginRight: '2.5vw',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
+                overflow: 'visible',
               }}
             >
               <div
                 style={{
                   position: 'absolute',
-                  top: '-0.6vw',
-                  right: '1.5vw',
-                  padding: '0.2vw 0.8vw',
+                  top: 'clamp(-8px, -0.6vw, -5px)',
+                  right: 'clamp(12px, 1.5vw, 24px)',
+                  padding: 'clamp(3px, 0.2vw, 5px) clamp(10px, 0.8vw, 14px)',
                   borderRadius: '50px',
                   backgroundColor: 'rgba(255,255,255,0.2)',
                   backdropFilter: 'blur(8px)',
                   color: '#FFFFFF',
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 500,
-                  fontSize: '0.65vw',
+                  fontSize: 'clamp(9px, 0.65vw, 12px)',
                   letterSpacing: '0.08em',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 ⭐ MÁS ELEGIDO
@@ -374,10 +453,10 @@ const ChooseYourBondScreen = () => {
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 400,
                   color: '#FFFFFF',
-                  fontSize: 'clamp(18px, 1.9vw, 30px)',
+                  fontSize: 'clamp(17px, 1.9vw, 30px)',
                   lineHeight: 1.3,
                   margin: 0,
-                  marginBottom: '0.6vw',
+                  marginBottom: 'clamp(6px, 0.6vw, 10px)',
                 }}
               >
                 Casualmente cotidiano
@@ -387,7 +466,7 @@ const ChooseYourBondScreen = () => {
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 300,
                   color: '#E5E5E5',
-                  fontSize: 'clamp(13px, 1.1vw, 18px)',
+                  fontSize: 'clamp(12px, 1.1vw, 18px)',
                   lineHeight: 1.5,
                   margin: 0,
                 }}
@@ -395,41 +474,36 @@ const ChooseYourBondScreen = () => {
                 Mantené una conversación para compartir más que el día a
                 día y juntarse de vez en cuando
               </p>
-              {/* Icon wrapper — opacity only */}
               <div
                 className={`absolute pointer-events-none bond-icon-wrapper ${hasAnimated ? 'animate-bond-icon-1' : ''}`}
                 style={{
-                  left: '-4vw',
-                  bottom: '-4.5vw',
-                  width: 'clamp(85px, 9vw, 140px)',
-                  height: 'clamp(85px, 9vw, 140px)',
+                  left: '-1.5vw',
+                  bottom: '-1vw',
+                  transform: 'translate(-40%, 40%)',
+                  width: 'clamp(100px, 10vw, 155px)',
+                  height: 'clamp(100px, 10vw, 155px)',
                 }}
               >
-                <img
-                  src="/celular.png"
-                  alt=""
-                  className={`object-contain w-full h-full ${mounted ? 'card-icon-2' : ''}`}
-                />
+                <img src="/celular.png" alt="" className={`object-contain w-full h-full ${mounted ? 'card-icon-2' : ''}`} />
               </div>
             </div>
 
-            {/* Card 3 */}
+            {/* Card 3 — Diaria */}
             <div
-              className={`bond-card relative entrance-bond-card bond-card-2 ${hasAnimated ? 'animate' : ''}`}
+              className={`bond-card bond-card-stagger-right relative entrance-bond-card bond-card-2 ${hasAnimated ? 'animate' : ''}`}
               onClick={() => scrollToSection('planes')}
               style={{
                 backgroundColor: 'rgba(234, 179, 8, 0.6)',
-                borderRadius: '19px',
-                padding: '1.6vw 1.8vw',
-                minHeight: '9.5vw',
-                boxShadow:
-                  '0px 4px 4px rgba(0,0,0,0.25), inset 1px 4px 8px rgba(0,0,0,0.25)',
+                borderRadius: 'clamp(14px, 1.2vw, 19px)',
+                padding: 'clamp(18px, 1.6vw, 28px) clamp(20px, 1.8vw, 30px)',
+                minHeight: 'clamp(100px, 9.5vw, 160px)',
+                boxShadow: '0px 4px 4px rgba(0,0,0,0.25), inset 1px 4px 8px rgba(0,0,0,0.25)',
                 backdropFilter: 'blur(24px)',
                 WebkitBackdropFilter: 'blur(24px)',
-                marginLeft: '1vw',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
+                overflow: 'visible',
               }}
             >
               <h3
@@ -437,10 +511,10 @@ const ChooseYourBondScreen = () => {
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 400,
                   color: '#FFFFFF',
-                  fontSize: 'clamp(18px, 1.9vw, 30px)',
+                  fontSize: 'clamp(17px, 1.9vw, 30px)',
                   lineHeight: 1.3,
                   margin: 0,
-                  marginBottom: '0.6vw',
+                  marginBottom: 'clamp(6px, 0.6vw, 10px)',
                 }}
               >
                 Compañía diaria
@@ -450,31 +524,29 @@ const ChooseYourBondScreen = () => {
                   fontFamily: "'Poppins', sans-serif",
                   fontWeight: 300,
                   color: '#E5E5E5',
-                  fontSize: 'clamp(13px, 1.1vw, 18px)',
+                  fontSize: 'clamp(12px, 1.1vw, 18px)',
                   lineHeight: 1.5,
                   margin: 0,
+                  paddingRight: 'clamp(40px, 4vw, 70px)',
                 }}
               >
                 Cómplice de cada momento, transformá lo cotidiano en pura
                 magia y alegría como tu fiel compañera
               </p>
-              {/* Icon wrapper — opacity only */}
               <div
                 className={`absolute pointer-events-none bond-icon-wrapper ${hasAnimated ? 'animate-bond-icon-2' : ''}`}
                 style={{
-                  right: '-1.5vw',
-                  bottom: '-1.5vw',
-                  width: 'clamp(50px, 5vw, 80px)',
-                  height: 'clamp(50px, 5vw, 80px)',
+                  right: '0',
+                  bottom: '0',
+                  transform: 'translate(35%, 35%)',
+                  width: 'clamp(55px, 6vw, 95px)',
+                  height: 'clamp(55px, 6vw, 95px)',
                 }}
               >
-                <img
-                  src="/billete.png"
-                  alt=""
-                  className={`object-contain w-full h-full ${mounted ? 'card-icon-3' : ''}`}
-                />
+                <img src="/billete.png" alt="" className={`object-contain w-full h-full ${mounted ? 'card-icon-3' : ''}`} />
               </div>
             </div>
+
           </div>
         </div>
       </div>
