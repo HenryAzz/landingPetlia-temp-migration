@@ -48,6 +48,7 @@ const FAQScreen = () => {
   const [mounted, setMounted] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const answerRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -62,7 +63,7 @@ const FAQScreen = () => {
           observer.disconnect();
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.15 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -72,45 +73,157 @@ const FAQScreen = () => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const getAnswerHeight = (index: number) => {
+    const el = answerRefs.current[index];
+    if (!el) return 0;
+    return el.scrollHeight;
+  };
+
   return (
     <section
       ref={sectionRef}
       id="faq"
-      className="relative w-full overflow-hidden flex flex-col"
-      style={{
-        backgroundColor: '#F3F3F3',
-        minHeight: '80vh',
-        paddingTop: '6vw',
-        paddingBottom: '6vw',
-      }}
+      className="faq-section"
     >
       <style>{`
+        /* ══════════════════════════════
+           BASE / SHARED
+        ══════════════════════════════ */
+        .faq-section {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          background-color: #F3F3F3;
+          min-height: 80vh;
+        }
+
+        /* ── FAQ Item ── */
         .faq-item {
-          transition: all 0.3s ease;
+          cursor: pointer;
+          border-radius: 16px;
+          transition: all 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
         }
         .faq-item:hover {
           border-color: rgba(246,158,130,0.4) !important;
         }
+        .faq-item-open {
+          background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.5)) !important;
+          border-color: rgba(246,158,130,0.35) !important;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.04) !important;
+        }
+
+        /* ── Answer transition ── */
         .faq-answer {
-          transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
           overflow: hidden;
+          transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                      opacity 0.3s ease,
+                      padding 0.3s ease;
         }
         .faq-answer-open {
-          max-height: 300px;
           opacity: 1;
-          padding-top: 0.8vw;
         }
         .faq-answer-closed {
-          max-height: 0;
+          max-height: 0 !important;
           opacity: 0;
-          padding-top: 0;
+          padding-top: 0 !important;
         }
+
+        /* ── Chevron ── */
         .faq-chevron {
           transition: transform 0.3s ease;
+          flex-shrink: 0;
         }
         .faq-chevron-open {
           transform: rotate(180deg);
         }
+
+        /* ── Question text transition ── */
+        .faq-question {
+          font-family: 'Poppins', sans-serif;
+          margin: 0;
+          transition: all 0.3s ease;
+          letter-spacing: 0.02em;
+        }
+        .faq-question-open {
+          color: #F69E82;
+          font-weight: 500;
+        }
+        .faq-question-closed {
+          color: #3A3A3A;
+          font-weight: 400;
+        }
+
+        /* ── Answer text ── */
+        .faq-answer-text {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          color: #5A5A5A;
+          line-height: 1.7;
+          letter-spacing: 0.01em;
+          margin: 0;
+        }
+
+        /* ── CTA Button ── */
+        .faq-cta-btn {
+          display: inline-flex;
+          align-items: center;
+          border-radius: 50px;
+          background: linear-gradient(135deg, rgba(246,158,130,0.75), rgba(246,158,130,0.55));
+          border: 1px solid rgba(255,255,255,0.45);
+          color: #FFFFFF;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .faq-cta-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(246,158,130,0.25);
+        }
+        .faq-cta-btn:active {
+          transform: scale(0.97);
+        }
+
+        /* ── Badge ── */
+        .faq-badge {
+          display: inline-flex;
+          align-items: center;
+          border-radius: 50px;
+          background: linear-gradient(135deg, rgba(249,221,163,0.3), rgba(246,158,130,0.15));
+          border: 1px solid rgba(246,158,130,0.25);
+          color: #9E6B55;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 500;
+          letter-spacing: 0.07em;
+        }
+
+        /* ── Title ── */
+        .faq-title {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          color: #F69E82;
+          line-height: 1.3;
+          letter-spacing: 0.02em;
+          margin: 0;
+        }
+        .faq-title span {
+          font-weight: 600;
+        }
+
+        /* ── Description ── */
+        .faq-desc {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          color: #5A5A5A;
+          line-height: 1.7;
+          margin: 0;
+        }
+
+        /* ── Deco Animations ── */
         @keyframes faqPulse1 {
           0%, 100% { transform: scale(1) rotate(0deg); }
           50% { transform: scale(1.06) rotate(2deg); }
@@ -127,13 +240,17 @@ const FAQScreen = () => {
         .faq-deco-2 { animation: faqPulse2 4.8s ease-in-out infinite; }
         .faq-deco-3 { animation: faqPulse3 3.6s ease-in-out infinite; }
 
-        /* ── Entrance animations (one-time) ── */
+        /* ── Entrance Animations ── */
         @keyframes fadeSlideRight {
           0%   { opacity: 0; transform: translateX(-40px); }
           100% { opacity: 1; transform: translateX(0); }
         }
         @keyframes fadeSlideUp {
           0%   { opacity: 0; transform: translateY(35px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeSlideDown {
+          0%   { opacity: 0; transform: translateY(-25px); }
           100% { opacity: 1; transform: translateY(0); }
         }
         @keyframes pillPop {
@@ -145,53 +262,40 @@ const FAQScreen = () => {
           0%   { opacity: 0; transform: translateX(30px); }
           100% { opacity: 1; transform: translateX(0); }
         }
+        @keyframes faqItemSlideUp {
+          0%   { opacity: 0; transform: translateY(25px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
         @keyframes iconFadeIn {
           0%   { opacity: 0; }
           100% { opacity: 1; }
         }
 
-        /* Badge */
-        .entrance-faq-badge {
-          opacity: 0;
-        }
+        .entrance-faq-badge { opacity: 0; }
         .entrance-faq-badge.animate {
-          animation: pillPop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation: pillPop 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
           animation-delay: 0.1s;
         }
-
-        /* Título */
-        .entrance-faq-title {
-          opacity: 0;
-        }
+        .entrance-faq-title { opacity: 0; }
         .entrance-faq-title.animate {
-          animation: fadeSlideRight 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation: fadeSlideRight 0.8s cubic-bezier(0.22,1,0.36,1) forwards;
           animation-delay: 0.2s;
         }
-
-        /* Descripción */
-        .entrance-faq-desc {
-          opacity: 0;
-        }
+        .entrance-faq-desc { opacity: 0; }
         .entrance-faq-desc.animate {
-          animation: fadeSlideRight 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation: fadeSlideRight 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
           animation-delay: 0.35s;
         }
-
-        /* CTA */
-        .entrance-faq-cta {
-          opacity: 0;
-        }
+        .entrance-faq-cta { opacity: 0; }
         .entrance-faq-cta.animate {
-          animation: fadeSlideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation: fadeSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
           animation-delay: 0.5s;
         }
 
-        /* FAQ items */
-        .entrance-faq-item {
-          opacity: 0;
-        }
+        /* Desktop: slide from right */
+        .entrance-faq-item { opacity: 0; }
         .entrance-faq-item.animate {
-          animation: faqItemSlide 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+          animation: faqItemSlide 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
         }
         .entrance-faq-item.animate.faq-i-0 { animation-delay: 0.25s; }
         .entrance-faq-item.animate.faq-i-1 { animation-delay: 0.33s; }
@@ -202,148 +306,408 @@ const FAQScreen = () => {
         .entrance-faq-item.animate.faq-i-6 { animation-delay: 0.73s; }
         .entrance-faq-item.animate.faq-i-7 { animation-delay: 0.81s; }
 
-        /* Deco icon wrappers — solo opacity */
-        .faq-icon-wrapper {
-          opacity: 0;
+        .faq-icon-wrapper { opacity: 0; }
+        .faq-icon-wrapper.animate-faq-deco-1 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.6s; }
+        .faq-icon-wrapper.animate-faq-deco-2 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.75s; }
+        .faq-icon-wrapper.animate-faq-deco-3 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.9s; }
+
+        /* ══════════════════════════════
+           DESKTOP (> 1024px)
+        ══════════════════════════════ */
+        .faq-section {
+          padding-top: 6vw;
+          padding-bottom: 6vw;
         }
-        .faq-icon-wrapper.animate-faq-deco-1 {
-          animation: iconFadeIn 0.6s ease forwards;
-          animation-delay: 0.6s;
+
+        .faq-layout {
+          position: relative;
+          z-index: 10;
+          display: flex;
+          width: 100%;
+          padding-left: 6vw;
+          padding-right: 6vw;
+          gap: 4vw;
         }
-        .faq-icon-wrapper.animate-faq-deco-2 {
-          animation: iconFadeIn 0.6s ease forwards;
-          animation-delay: 0.75s;
+
+        .faq-left {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          flex-shrink: 0;
+          width: 30%;
+          padding-top: 1vw;
         }
-        .faq-icon-wrapper.animate-faq-deco-3 {
-          animation: iconFadeIn 0.6s ease forwards;
-          animation-delay: 0.9s;
+
+        .faq-right {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+          gap: 0.8vw;
+        }
+
+        /* Desktop sizes */
+        .faq-badge {
+          gap: 0.4vw;
+          padding: 0.35vw 1vw;
+          font-size: 0.82vw;
+          margin-bottom: 1.2vw;
+        }
+        .faq-badge-icon { font-size: 0.85vw; }
+
+        .faq-title { font-size: 3.2vw; }
+
+        .faq-desc {
+          font-size: 1vw;
+          margin-top: 1vw;
+          max-width: 20vw;
+        }
+
+        .faq-cta-btn {
+          gap: 0.4vw;
+          margin-top: 1.5vw;
+          padding: 0.55vw 1.6vw;
+          font-size: 0.88vw;
+        }
+        .faq-cta-icon { width: 0.9vw; height: 0.9vw; }
+
+        .faq-item {
+          padding: 1.2vw 1.5vw;
+          background: rgba(255,255,255,0.4);
+          border: 1px solid rgba(0,0,0,0.06);
+        }
+
+        .faq-question { font-size: 1vw; }
+        .faq-chevron { width: 1.2vw; height: 1.2vw; }
+
+        .faq-answer-open { padding-top: 0.8vw; }
+        .faq-answer-text { font-size: 0.88vw; }
+
+        .faq-q-row { gap: 1vw; }
+
+        /* Deco positions desktop */
+        .faq-deco-pos-1 { left: 2.5vw; top: 55%; width: clamp(30px,3.5vw,55px); height: clamp(30px,3.5vw,55px); }
+        .faq-deco-pos-2 { left: 4.5vw; top: 68%; width: clamp(28px,3.2vw,50px); height: clamp(28px,3.2vw,50px); }
+        .faq-deco-pos-3 { left: 2vw; top: 80%; width: clamp(25px,2.8vw,45px); height: clamp(25px,2.8vw,45px); }
+
+        /* ══════════════════════════════
+           TABLET (769px – 1024px)
+        ══════════════════════════════ */
+        @media (max-width: 1024px) {
+          .faq-section {
+            min-height: auto;
+            padding-top: 70px;
+            padding-bottom: 70px;
+          }
+
+          .faq-layout {
+            flex-direction: column;
+            align-items: center;
+            padding-left: 40px;
+            padding-right: 40px;
+            gap: 36px;
+          }
+
+          .faq-left {
+            width: 100%;
+            align-items: center;
+            text-align: center;
+            padding-top: 0;
+          }
+
+          .faq-right {
+            width: 100%;
+            max-width: 640px;
+            gap: 12px;
+          }
+
+          .faq-badge {
+            gap: 6px; padding: 6px 16px;
+            font-size: 12px; margin-bottom: 14px;
+          }
+          .faq-badge-icon { font-size: 13px; }
+
+          .faq-title { font-size: 34px; }
+
+          .faq-desc {
+            font-size: 15px; margin-top: 12px;
+            max-width: 440px;
+          }
+
+          .faq-cta-btn {
+            gap: 6px; margin-top: 18px;
+            padding: 12px 28px; font-size: 14px;
+          }
+          .faq-cta-icon { width: 14px; height: 14px; }
+
+          .faq-item { padding: 18px 22px; border-radius: 14px; }
+          .faq-question { font-size: 15px; }
+          .faq-chevron { width: 18px; height: 18px; }
+          .faq-answer-open { padding-top: 10px; }
+          .faq-answer-text { font-size: 14px; }
+          .faq-q-row { gap: 12px; }
+
+          /* Entrance: slide up on tablet */
+          .entrance-faq-title.animate { animation-name: fadeSlideUp; }
+          .entrance-faq-desc.animate { animation-name: fadeSlideUp; }
+          .entrance-faq-item.animate { animation-name: faqItemSlideUp; }
+
+          /* Deco - reposition for tablet */
+          .faq-deco-pos-1 { left: 20px; top: auto; bottom: 180px; width: 38px; height: 38px; }
+          .faq-deco-pos-2 { left: auto; right: 24px; top: auto; bottom: 120px; width: 34px; height: 34px; }
+          .faq-deco-pos-3 { left: 30px; top: auto; bottom: 60px; width: 30px; height: 30px; }
+        }
+
+        /* ══════════════════════════════
+           MOBILE (≤ 768px)
+        ══════════════════════════════ */
+        @media (max-width: 768px) {
+          .faq-section {
+            padding-top: 60px;
+            padding-bottom: 60px;
+            min-height: auto;
+          }
+
+          .faq-layout {
+            flex-direction: column;
+            align-items: center;
+            padding-left: 24px;
+            padding-right: 24px;
+            gap: 30px;
+          }
+
+          .faq-left {
+            width: 100%;
+            align-items: center;
+            text-align: center;
+          }
+
+          .faq-right {
+            width: 100%;
+            max-width: 100%;
+            gap: 10px;
+          }
+
+          .faq-badge {
+            gap: 5px; padding: 5px 14px;
+            font-size: 11.5px; margin-bottom: 12px;
+          }
+          .faq-badge-icon { font-size: 12px; }
+
+          .faq-title { font-size: 28px; }
+
+          .faq-desc {
+            font-size: 14px; margin-top: 10px;
+            max-width: 340px;
+          }
+
+          .faq-cta-btn {
+            gap: 6px; margin-top: 16px;
+            padding: 11px 26px; font-size: 13.5px;
+          }
+          .faq-cta-icon { width: 13px; height: 13px; }
+
+          .faq-item { padding: 16px 18px; border-radius: 14px; }
+          .faq-question { font-size: 14.5px; }
+          .faq-chevron { width: 18px; height: 18px; }
+          .faq-answer-open { padding-top: 10px; }
+          .faq-answer-text { font-size: 13.5px; line-height: 1.65; }
+          .faq-q-row { gap: 10px; }
+
+          .entrance-faq-title.animate { animation-name: fadeSlideUp; }
+          .entrance-faq-desc.animate { animation-name: fadeSlideUp; }
+          .entrance-faq-item.animate { animation-name: faqItemSlideUp; }
+
+          .faq-deco-pos-1 { left: 12px; top: auto; bottom: 160px; width: 32px; height: 32px; }
+          .faq-deco-pos-2 { left: auto; right: 16px; top: auto; bottom: 100px; width: 28px; height: 28px; }
+          .faq-deco-pos-3 { left: 18px; top: auto; bottom: 45px; width: 26px; height: 26px; }
+        }
+
+        /* ══════════════════════════════
+           SMALL MOBILE (≤ 480px)
+        ══════════════════════════════ */
+        @media (max-width: 480px) {
+          .faq-section {
+            padding-top: 50px;
+            padding-bottom: 50px;
+          }
+
+          .faq-layout {
+            padding-left: 18px;
+            padding-right: 18px;
+            gap: 26px;
+          }
+
+          .faq-badge {
+            gap: 4px; padding: 4px 12px;
+            font-size: 11px; margin-bottom: 10px;
+          }
+          .faq-badge-icon { font-size: 11px; }
+
+          .faq-title { font-size: 24px; }
+
+          .faq-desc {
+            font-size: 13px; margin-top: 8px;
+            max-width: 300px;
+          }
+
+          .faq-cta-btn {
+            gap: 5px; margin-top: 14px;
+            padding: 10px 22px; font-size: 13px;
+          }
+          .faq-cta-icon { width: 12px; height: 12px; }
+
+          .faq-right { gap: 8px; }
+          .faq-item { padding: 14px 16px; border-radius: 12px; }
+          .faq-question { font-size: 13.5px; }
+          .faq-chevron { width: 16px; height: 16px; }
+          .faq-answer-open { padding-top: 8px; }
+          .faq-answer-text { font-size: 13px; line-height: 1.6; }
+          .faq-q-row { gap: 8px; }
+
+          .faq-deco-pos-1 { left: 8px; bottom: 140px; width: 28px; height: 28px; }
+          .faq-deco-pos-2 { right: 10px; bottom: 85px; width: 24px; height: 24px; }
+          .faq-deco-pos-3 { left: 12px; bottom: 35px; width: 22px; height: 22px; }
+        }
+
+        /* ══════════════════════════════
+           VERY SMALL (≤ 380px)
+        ══════════════════════════════ */
+        @media (max-width: 380px) {
+          .faq-section {
+            padding-top: 44px;
+            padding-bottom: 44px;
+          }
+
+          .faq-layout {
+            padding-left: 14px;
+            padding-right: 14px;
+            gap: 22px;
+          }
+
+          .faq-badge {
+            padding: 3px 10px;
+            font-size: 10.5px; margin-bottom: 8px;
+          }
+
+          .faq-title { font-size: 21px; }
+
+          .faq-desc {
+            font-size: 12.5px; margin-top: 7px;
+            max-width: 260px;
+          }
+
+          .faq-cta-btn {
+            margin-top: 12px;
+            padding: 9px 20px; font-size: 12.5px;
+          }
+
+          .faq-right { gap: 7px; }
+          .faq-item { padding: 12px 14px; border-radius: 11px; }
+          .faq-question { font-size: 13px; }
+          .faq-chevron { width: 15px; height: 15px; }
+          .faq-answer-open { padding-top: 7px; }
+          .faq-answer-text { font-size: 12.5px; }
+          .faq-q-row { gap: 7px; }
+
+          .faq-deco-pos-1 { left: 6px; bottom: 120px; width: 24px; height: 24px; }
+          .faq-deco-pos-2 { right: 8px; bottom: 70px; width: 20px; height: 20px; }
+          .faq-deco-pos-3 { left: 10px; bottom: 28px; width: 18px; height: 18px; }
+        }
+
+        /* ══════════════════════════════
+           MINIMUM (≤ 320px)
+        ══════════════════════════════ */
+        @media (max-width: 320px) {
+          .faq-section {
+            padding-top: 38px;
+            padding-bottom: 38px;
+          }
+
+          .faq-layout {
+            padding-left: 12px;
+            padding-right: 12px;
+            gap: 20px;
+          }
+
+          .faq-badge {
+            padding: 3px 9px;
+            font-size: 10px; margin-bottom: 7px;
+          }
+
+          .faq-title { font-size: 19px; }
+
+          .faq-desc {
+            font-size: 12px; margin-top: 6px;
+            max-width: 240px;
+          }
+
+          .faq-cta-btn {
+            margin-top: 10px;
+            padding: 8px 18px; font-size: 12px;
+          }
+          .faq-cta-icon { width: 11px; height: 11px; }
+
+          .faq-right { gap: 6px; }
+          .faq-item { padding: 11px 12px; border-radius: 10px; }
+          .faq-question { font-size: 12.5px; }
+          .faq-chevron { width: 14px; height: 14px; }
+          .faq-answer-open { padding-top: 6px; }
+          .faq-answer-text { font-size: 12px; line-height: 1.55; }
+          .faq-q-row { gap: 6px; }
+
+          .faq-deco-pos-1 { display: none; }
+          .faq-deco-pos-2 { display: none; }
+          .faq-deco-pos-3 { display: none; }
         }
       `}</style>
 
-      {/* ===== Decoraciones — wrapper (opacity) + hijo (pulse) ===== */}
+      {/* ═══ Decoraciones flotantes ═══ */}
       <div
-        className={`absolute pointer-events-none faq-icon-wrapper ${hasAnimated ? 'animate-faq-deco-1' : ''}`}
-        style={{ left: '2.5vw', top: '55%', width: 'clamp(30px, 3.5vw, 55px)', height: 'clamp(30px, 3.5vw, 55px)' }}
+        className={`absolute pointer-events-none faq-deco-pos-1 faq-icon-wrapper ${hasAnimated ? 'animate-faq-deco-1' : ''}`}
       >
         <img src="/corazonderecha.png" alt="" className={`object-contain w-full h-full ${mounted ? 'faq-deco-1' : ''}`} />
       </div>
       <div
-        className={`absolute pointer-events-none faq-icon-wrapper ${hasAnimated ? 'animate-faq-deco-2' : ''}`}
-        style={{ left: '4.5vw', top: '68%', width: 'clamp(28px, 3.2vw, 50px)', height: 'clamp(28px, 3.2vw, 50px)' }}
+        className={`absolute pointer-events-none faq-deco-pos-2 faq-icon-wrapper ${hasAnimated ? 'animate-faq-deco-2' : ''}`}
       >
         <img src="/carta.png" alt="" className={`object-contain w-full h-full ${mounted ? 'faq-deco-2' : ''}`} />
       </div>
       <div
-        className={`absolute pointer-events-none faq-icon-wrapper ${hasAnimated ? 'animate-faq-deco-3' : ''}`}
-        style={{ left: '2vw', top: '80%', width: 'clamp(25px, 2.8vw, 45px)', height: 'clamp(25px, 2.8vw, 45px)' }}
+        className={`absolute pointer-events-none faq-deco-pos-3 faq-icon-wrapper ${hasAnimated ? 'animate-faq-deco-3' : ''}`}
       >
         <img src="/corazonizquierda.png" alt="" className={`object-contain w-full h-full ${mounted ? 'faq-deco-3' : ''}`} />
       </div>
 
-      <div
-        className="relative z-10 flex w-full"
-        style={{
-          paddingLeft: '6vw',
-          paddingRight: '6vw',
-          gap: '4vw',
-        }}
-      >
-        {/* Lado izquierdo — Título */}
-        <div
-          className="flex flex-col items-start flex-shrink-0"
-          style={{ width: '30%', paddingTop: '1vw' }}
-        >
-          <span
-            className={`entrance-faq-badge ${hasAnimated ? 'animate' : ''}`}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4vw',
-              padding: '0.35vw 1vw',
-              borderRadius: '50px',
-              background:
-                'linear-gradient(135deg, rgba(249,221,163,0.3), rgba(246,158,130,0.15))',
-              border: '1px solid rgba(246,158,130,0.25)',
-              color: '#9E6B55',
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 500,
-              fontSize: '0.82vw',
-              letterSpacing: '0.07em',
-              marginBottom: '1.2vw',
-            }}
-          >
-            <span style={{ fontSize: '0.85vw' }}>❓</span>
+      {/* ═══ Layout principal ═══ */}
+      <div className="faq-layout">
+
+        {/* ── Lado izquierdo / Header ── */}
+        <div className="faq-left">
+          <span className={`faq-badge entrance-faq-badge ${hasAnimated ? 'animate' : ''}`}>
+            <span className="faq-badge-icon">❓</span>
             FAQ
           </span>
 
-          <h2
-            className={`entrance-faq-title ${hasAnimated ? 'animate' : ''}`}
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 400,
-              color: '#F69E82',
-              fontSize: '3.2vw',
-              lineHeight: 1.3,
-              letterSpacing: '0.02em',
-              margin: 0,
-            }}
-          >
-            Preguntas{' '}
-            <span style={{ fontWeight: 600 }}>frecuentes</span>
+          <h2 className={`faq-title entrance-faq-title ${hasAnimated ? 'animate' : ''}`}>
+            Preguntas <span>frecuentes</span>
           </h2>
 
-          <p
-            className={`entrance-faq-desc ${hasAnimated ? 'animate' : ''}`}
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 400,
-              color: '#5A5A5A',
-              fontSize: '1vw',
-              lineHeight: 1.7,
-              margin: 0,
-              marginTop: '1vw',
-              maxWidth: '20vw',
-            }}
-          >
+          <p className={`faq-desc entrance-faq-desc ${hasAnimated ? 'animate' : ''}`}>
             Todo lo que necesitás saber antes de dar el primer paso.
             Si tenés otra duda, escribinos.
           </p>
 
           <button
             type="button"
-            className={`entrance-faq-cta ${hasAnimated ? 'animate' : ''}`}
+            className={`faq-cta-btn entrance-faq-cta ${hasAnimated ? 'animate' : ''}`}
             onClick={() => {
               const el = document.getElementById('contacto');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.4vw',
-              marginTop: '1.5vw',
-              padding: '0.55vw 1.6vw',
-              borderRadius: '50px',
-              background:
-                'linear-gradient(135deg, rgba(246,158,130,0.75), rgba(246,158,130,0.55))',
-              border: '1px solid rgba(255,255,255,0.45)',
-              color: '#FFFFFF',
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 500,
-              fontSize: '0.88vw',
-              letterSpacing: '0.05em',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
           >
             Contactar
             <svg
-              style={{ width: '0.9vw', height: '0.9vw' }}
+              className="faq-cta-icon"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -358,84 +722,49 @@ const FAQScreen = () => {
           </button>
         </div>
 
-        {/* Lado derecho — Acordeón */}
-        <div className="flex flex-col flex-1" style={{ gap: '0.8vw' }}>
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className={`faq-item entrance-faq-item faq-i-${index} ${hasAnimated ? 'animate' : ''}`}
-              style={{
-                padding: '1.2vw 1.5vw',
-                borderRadius: '16px',
-                background:
-                  openIndex === index
-                    ? 'linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.5))'
-                    : 'rgba(255,255,255,0.4)',
-                border: `1px solid ${openIndex === index ? 'rgba(246,158,130,0.35)' : 'rgba(0,0,0,0.06)'}`,
-                boxShadow:
-                  openIndex === index
-                    ? '0 4px 15px rgba(0,0,0,0.04)'
-                    : 'none',
-                cursor: 'pointer',
-              }}
-              onClick={() => toggleFAQ(index)}
-            >
+        {/* ── Lado derecho / Acordeón ── */}
+        <div className="faq-right">
+          {faqs.map((faq, index) => {
+            const isOpen = openIndex === index;
+            return (
               <div
-                className="flex items-center justify-between"
-                style={{ gap: '1vw' }}
+                key={index}
+                className={`faq-item entrance-faq-item faq-i-${index} ${hasAnimated ? 'animate' : ''} ${isOpen ? 'faq-item-open' : ''}`}
+                onClick={() => toggleFAQ(index)}
               >
-                <h3
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: openIndex === index ? 500 : 400,
-                    color: openIndex === index ? '#F69E82' : '#3A3A3A',
-                    fontSize: '1vw',
-                    letterSpacing: '0.02em',
-                    margin: 0,
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  {faq.question}
-                </h3>
-                <svg
-                  className={`faq-chevron ${openIndex === index ? 'faq-chevron-open' : ''}`}
-                  style={{
-                    width: '1.2vw',
-                    height: '1.2vw',
-                    flexShrink: 0,
-                  }}
-                  fill="none"
-                  stroke={openIndex === index ? '#F69E82' : '#AAA'}
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
+                <div className="flex items-center justify-between faq-q-row">
+                  <h3 className={`faq-question ${isOpen ? 'faq-question-open' : 'faq-question-closed'}`}>
+                    {faq.question}
+                  </h3>
+                  <svg
+                    className={`faq-chevron ${isOpen ? 'faq-chevron-open' : ''}`}
+                    fill="none"
+                    stroke={isOpen ? '#F69E82' : '#AAA'}
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
 
-              <div
-                className={`faq-answer ${openIndex === index ? 'faq-answer-open' : 'faq-answer-closed'}`}
-              >
-                <p
+                <div
+                  ref={(el) => { answerRefs.current[index] = el; }}
+                  className={`faq-answer ${isOpen ? 'faq-answer-open' : 'faq-answer-closed'}`}
                   style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: 400,
-                    color: '#5A5A5A',
-                    fontSize: '0.88vw',
-                    lineHeight: 1.7,
-                    letterSpacing: '0.01em',
-                    margin: 0,
+                    maxHeight: isOpen ? `${getAnswerHeight(index)}px` : '0px',
                   }}
                 >
-                  {faq.answer}
-                </p>
+                  <p className="faq-answer-text">
+                    {faq.answer}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
