@@ -575,7 +575,7 @@ const TestimonialsScreen = () => {
           opacity: 0;
         }
 
-        /* ═══ FLOATING DECO ═══ */
+        /* ═══ FLOATING DECO — premium swing ═══ */
         .tst-deco {
           position: absolute;
           pointer-events: none;
@@ -587,35 +587,63 @@ const TestimonialsScreen = () => {
           width: 100%;
           height: 100%;
           object-fit: contain;
+          filter: drop-shadow(0 3px 8px rgba(246,158,130,0.15));
+          transition: filter 0.4s ease;
         }
 
-        /* ═══ Premium swing — same pattern as EverythingGoodScreen ═══ */
+        /* Premium swing animations — organic, async, subtle */
         @keyframes tstSwing1 {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          25% { transform: translateY(-4px) rotate(2deg); }
-          75% { transform: translateY(-5px) rotate(-1.5deg); }
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          20% { transform: translateY(-4px) rotate(2.5deg) scale(1.03); }
+          50% { transform: translateY(-6px) rotate(-1.5deg) scale(1.01); }
+          80% { transform: translateY(-3px) rotate(1deg) scale(1.02); }
         }
         @keyframes tstSwing2 {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          30% { transform: translateY(-3px) rotate(-2.5deg); }
-          70% { transform: translateY(-5px) rotate(1.5deg); }
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          25% { transform: translateY(-3px) rotate(-2deg) scale(1.02); }
+          55% { transform: translateY(-5px) rotate(2deg) scale(1.04); }
+          75% { transform: translateY(-4px) rotate(-1deg) scale(1.01); }
         }
         @keyframes tstSwing3 {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          35% { transform: translateY(-4px) rotate(1.8deg); }
-          65% { transform: translateY(-3px) rotate(-2deg); }
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          30% { transform: translateY(-5px) rotate(1.8deg) scale(1.03); }
+          60% { transform: translateY(-3px) rotate(-2.5deg) scale(1.01); }
+          85% { transform: translateY(-4px) rotate(0.5deg) scale(1.02); }
         }
         @keyframes tstSwing4 {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          20% { transform: translateY(-3px) rotate(-1.5deg); }
-          50% { transform: translateY(-6px) rotate(2deg); }
-          80% { transform: translateY(-2px) rotate(-1deg); }
+          0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+          15% { transform: translateY(-3px) rotate(-1.5deg) scale(1.02); }
+          45% { transform: translateY(-6px) rotate(2deg) scale(1.04); }
+          70% { transform: translateY(-4px) rotate(-1deg) scale(1.01); }
+          90% { transform: translateY(-2px) rotate(0.5deg) scale(1.03); }
         }
 
-        .tst-fl-1 { animation: tstSwing1 5s ease-in-out infinite; }
-        .tst-fl-2 { animation: tstSwing2 5.5s ease-in-out infinite 0.8s; }
-        .tst-fl-3 { animation: tstSwing3 4.8s ease-in-out infinite 1.5s; }
-        .tst-fl-4 { animation: tstSwing4 5.2s ease-in-out infinite 0.3s; }
+        /* Soft glow pulse overlay */
+        @keyframes tstGlowPulse {
+          0%, 100% { filter: drop-shadow(0 3px 8px rgba(246,158,130,0.15)); }
+          50% { filter: drop-shadow(0 4px 14px rgba(246,158,130,0.3)); }
+        }
+
+        .tst-fl-1 {
+          animation:
+            tstSwing1 5s ease-in-out infinite,
+            tstGlowPulse 4s ease-in-out infinite 0.5s;
+        }
+        .tst-fl-2 {
+          animation:
+            tstSwing2 5.5s ease-in-out infinite 0.8s,
+            tstGlowPulse 4.5s ease-in-out infinite 1.2s;
+        }
+        .tst-fl-3 {
+          animation:
+            tstSwing3 4.8s ease-in-out infinite 1.5s,
+            tstGlowPulse 5s ease-in-out infinite 0.3s;
+        }
+        .tst-fl-4 {
+          animation:
+            tstSwing4 5.2s ease-in-out infinite 0.3s,
+            tstGlowPulse 4.2s ease-in-out infinite 1.8s;
+        }
 
         /* ═══ ENTRANCE ═══ */
         @keyframes tstUp {
@@ -647,112 +675,220 @@ const TestimonialsScreen = () => {
         .tst-a-nav { animation: tstNavIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
 
         @media (max-width: 1024px) {
-          .tst-carousel-row { max-width: 600px; }
+          .tst-carousel-row {
+            max-width: 600px;
+          }
           .tst-deco { display: none !important; }
         }
 
         @media (max-width: 768px) {
-          .tst-container { padding: clamp(24px, 4vw, 40px) 24px clamp(40px, 5vw, 60px); }
-          .tst-header { margin-bottom: clamp(28px, 3.5vw, 40px); }
-          .tst-title { font-size: clamp(24px, 5.5vw, 30px); margin-bottom: 16px; }
-          .tst-rating { padding: 7px 16px; gap: 8px; }
+          .tst-container {
+            padding: clamp(24px, 4vw, 40px) 24px clamp(40px, 5vw, 60px);
+          }
+
+          .tst-header {
+            margin-bottom: clamp(28px, 3.5vw, 40px);
+          }
+
+          .tst-title {
+            font-size: clamp(24px, 5.5vw, 30px);
+            margin-bottom: 16px;
+          }
+
+          .tst-rating {
+            padding: 7px 16px;
+            gap: 8px;
+          }
+
           .tst-rating-score { font-size: 16px; }
           .tst-rating-volume { font-size: 12px; }
           .tst-rating-divider { height: 14px; }
-          .tst-carousel-row { max-width: 100%; gap: 0; margin-bottom: 20px; }
-          .tst-nav { display: none; }
-          .tst-card {
-            padding: 28px 24px; border-radius: 20px;
-            background: linear-gradient(160deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7));
-            box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 8px rgba(246,158,130,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
+
+          .tst-carousel-row {
+            max-width: 100%;
+            gap: 0;
+            margin-bottom: 20px;
           }
-          .tst-text { font-size: 14.5px; max-width: 100%; margin-bottom: 18px; }
-          .tst-avatar { width: 42px; height: 42px; }
+
+          .tst-nav { display: none; }
+
+          .tst-card {
+            padding: 28px 24px;
+            border-radius: 20px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7));
+            box-shadow:
+              0 12px 40px rgba(0,0,0,0.06),
+              0 2px 8px rgba(246,158,130,0.06),
+              inset 0 1px 0 rgba(255,255,255,0.9);
+          }
+
+          .tst-text {
+            font-size: 14.5px;
+            max-width: 100%;
+            margin-bottom: 18px;
+          }
+
+          .tst-avatar {
+            width: 42px;
+            height: 42px;
+          }
+
           .tst-author-name { font-size: 14px; }
           .tst-author-plan { font-size: 12px; }
           .tst-author-time { font-size: 11px; }
+
           .tst-swipe { display: flex; }
+
           .tst-dots { margin-bottom: 24px; }
-          .tst-btn { padding: 13px 28px; font-size: 14px; }
+
+          .tst-btn {
+            padding: 13px 28px;
+            font-size: 14px;
+          }
         }
 
         @media (max-width: 540px) {
-          .tst-container { padding: 20px 20px 40px; }
-          .tst-title { font-size: clamp(22px, 5vw, 26px); }
-        .tst-label { font-size: 10px; }
-          .tst-card { padding: 24px 20px; border-radius: 18px; }
+          .tst-container {
+            padding: 20px 20px 40px;
+          }
+
+          .tst-title {
+            font-size: clamp(22px, 5vw, 26px);
+          }
+
+          .tst-label { font-size: 10px; }
+
+          .tst-card {
+            padding: 24px 20px;
+            border-radius: 18px;
+          }
+
           .tst-text { font-size: 14px; }
-          .tst-author { flex-direction: column; gap: 10px; }
-          .tst-author-info { align-items: center; text-align: center; }
-          .tst-author-meta { justify-content: center; }
-          .tst-rating { padding: 6px 14px; gap: 7px; }
+
+          .tst-author {
+            flex-direction: column;
+            gap: 10px;
+          }
+
+          .tst-author-info {
+            align-items: center;
+            text-align: center;
+          }
+
+          .tst-author-meta {
+            justify-content: center;
+          }
+
+          .tst-rating {
+            padding: 6px 14px;
+            gap: 7px;
+          }
+
           .tst-rating-stars { font-size: 13px; }
           .tst-rating-score { font-size: 15px; }
-        .tst-rating-volume { font-size: 11px; }
+          .tst-rating-volume { font-size: 11px; }
         }
 
         @media (max-width: 400px) {
-          .tst-container { padding: 18px 18px 36px; }
+          .tst-container {
+            padding: 18px 18px 36px;
+          }
+
           .tst-header { margin-bottom: 22px; }
+
           .tst-accent { width: 30px; margin-bottom: 12px; }
           .tst-label { margin-bottom: 12px; font-size: 9.5px; }
-          .tst-title { font-size: 21px; margin-bottom: 14px; }
-          .tst-rating { padding: 5px 12px; gap: 6px; }
+
+          .tst-title {
+            font-size: 21px;
+            margin-bottom: 14px;
+          }
+
+          .tst-rating {
+            padding: 5px 12px;
+            gap: 6px;
+          }
+
           .tst-rating-stars { font-size: 12px; letter-spacing: 0; }
           .tst-rating-score { font-size: 14px; }
           .tst-rating-volume { font-size: 10.5px; }
           .tst-rating-divider { height: 12px; }
-          .tst-card { padding: 22px 18px; border-radius: 16px; }
+
+          .tst-card {
+            padding: 22px 18px;
+            border-radius: 16px;
+          }
+
           .tst-quote { font-size: 24px; }
           .tst-stars { font-size: 14px; margin-bottom: 10px; }
           .tst-text { font-size: 13.5px; line-height: 1.75; margin-bottom: 16px; }
           .tst-divider { width: 32px; margin-bottom: 14px; }
-          .tst-avatar { width: 38px; height: 38px; font-size: 14px; }
+
+          .tst-avatar {
+            width: 38px;
+            height: 38px;
+            font-size: 14px;
+          }
+
           .tst-author-name { font-size: 13px; }
-        .tst-author-plan { font-size: 11px; }
+          .tst-author-plan { font-size: 11px; }
           .tst-author-time { font-size: 10.5px; }
+
           .tst-dots { gap: 6px; margin-bottom: 20px; }
           .tst-dot { height: 7px; }
           .tst-dot--active { width: 24px; }
           .tst-dot--idle { width: 7px; }
-          .tst-btn { padding: 12px 24px; font-size: 13px; gap: 8px; }
+
+          .tst-btn {
+            padding: 12px 24px;
+            font-size: 13px;
+            gap: 8px;
+          }
+
           .tst-btn-arrow { width: 14px; height: 14px; }
-        .tst-microtrust { font-size: 11px; }
+          .tst-microtrust { font-size: 11px; }
+
           .tst-swipe { font-size: 10.5px; }
         }
 
         @media (max-width: 340px) {
           .tst-container { padding: 16px 14px 32px; }
           .tst-title { font-size: 19px; }
+
           .tst-card { padding: 20px 16px; border-radius: 14px; }
           .tst-quote { font-size: 20px; }
           .tst-stars { font-size: 12px; margin-bottom: 8px; }
           .tst-text { font-size: 13px; line-height: 1.7; margin-bottom: 14px; }
           .tst-divider { width: 26px; margin-bottom: 12px; }
+
           .tst-avatar { width: 34px; height: 34px; font-size: 13px; border-width: 1.5px; }
           .tst-author-name { font-size: 12px; }
-        .tst-author-plan { font-size: 10px; }
-        .tst-author-time { font-size: 10px; }
+          .tst-author-plan { font-size: 10px; }
+          .tst-author-time { font-size: 10px; }
+
           .tst-dots { gap: 5px; margin-bottom: 18px; }
           .tst-dot { height: 6px; }
           .tst-dot--active { width: 20px; }
           .tst-dot--idle { width: 6px; }
+
           .tst-btn { padding: 11px 20px; font-size: 12.5px; }
           .tst-microtrust { font-size: 10.5px; }
+
           .tst-rating { padding: 4px 10px; gap: 5px; }
-        .tst-rating-stars { font-size: 11px; }
+          .tst-rating-stars { font-size: 11px; }
           .tst-rating-score { font-size: 13px; }
           .tst-rating-volume { font-size: 10px; }
         }
       `}</style>
 
+      {/* Wave */}
       <div className="tst-wave">
         <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: 'rotate(180deg)' }}>
           <path d="M0,40 Q180,0 360,25 Q540,50 720,20 Q900,0 1080,30 Q1260,55 1440,15 L1440,120 L0,120 Z" fill="#F9DDA3" />
         </svg>
       </div>
 
-      {/* Floating deco */}
+      {/* Floating deco — premium swing */}
       <div
         className={`tst-deco ${a ? 'tst-a-pop' : ''}`}
         style={{ left: '4vw', top: '18%', width: 'clamp(28px, 3.2vw, 50px)', height: 'clamp(28px, 3.2vw, 50px)', animationDelay: '0.6s' }}
@@ -778,6 +914,7 @@ const TestimonialsScreen = () => {
         <img src="/corazonizquierda.png" alt="" className={mounted ? 'tst-fl-4' : ''} />
       </div>
 
+      {/* Content */}
       <div className="tst-container">
         <div className="tst-header">
           <div className={`tst-accent ${a ? 'tst-a-down' : ''}`} style={{ animationDelay: '0.1s' }} />
