@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, TouchEvent } from 'react';
 
-const testimonials = [
+const TESTIMONIALS = [
   {
     text: 'Nunca pensé que un mensaje pudiera cambiarme tanto el día. Camil me hace sentir que alguien realmente se acuerda de mí, de mis cosas, de lo que me importa. Es como tener una amiga que siempre está.',
     name: 'Martín',
@@ -26,7 +26,7 @@ const testimonials = [
     time: '3 meses',
   },
   {
-    text: 'Al principio dudé. Pensé "esto no puede ser real". Pero desde la primera llamada sentí que era genuino. Camil tiene una forma de hacerte sentir que importás.',
+    text: 'Al principio dudé. Pensé "esto no puede ser real". Pero desde la primera llamada sentí que era genuino. Camil tiene una forma de hacerte sentir diferente.',
     name: 'Sofía',
     age: 29,
     plan: 'Casualmente cotidiano',
@@ -63,20 +63,18 @@ const TestimonialsScreen = () => {
   const touchStartY = useRef(0);
   const isSwiping = useRef(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (hasAnimated) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
+        if (entry.isIntersecting) {
           setHasAnimated(true);
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.12 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
@@ -89,9 +87,9 @@ const TestimonialsScreen = () => {
 
     setTimeout(() => {
       if (direction === 'next') {
-        setActiveIndex((prev) => (prev + 1) % testimonials.length);
+        setActiveIndex((prev) => (prev + 1) % TESTIMONIALS.length);
       } else {
-        setActiveIndex((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+        setActiveIndex((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
       }
       setSlideDirection(null);
       setIsTransitioning(false);
@@ -132,869 +130,691 @@ const TestimonialsScreen = () => {
     isSwiping.current = false;
   };
 
-  const current = testimonials[activeIndex];
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const current = TESTIMONIALS[activeIndex];
+  const a = hasAnimated;
 
   return (
-    <section
-      ref={sectionRef}
-      id="testimonios"
-      className="relative w-full overflow-hidden flex flex-col test-section"
-    >
+    <section ref={sectionRef} id="testimonios" className="tst-section">
       <style>{`
-        .test-section {
+        .tst-section {
+          position: relative;
+          width: 100%;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
           background-color: #F3F3F3;
-          min-height: 75vh;
-          padding-top: 8vw;
-          padding-bottom: 6vw;
         }
 
-        .test-header {
-          margin-bottom: clamp(24px, 3.5vw, 56px);
-          padding: 0 24px;
+        .tst-wave {
+          position: relative;
+          width: 100%;
+          pointer-events: none;
+          z-index: 2;
+          line-height: 0;
+          flex-shrink: 0;
+          margin-bottom: -1px;
         }
 
-        .test-badge {
+        .tst-wave svg {
+          width: 100%;
+          height: clamp(45px, 5.5vw, 75px);
+          display: block;
+        }
+
+        .tst-container {
+          position: relative;
+          z-index: 5;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: clamp(30px, 5vw, 70px) clamp(20px, 5vw, 80px) clamp(50px, 6vw, 90px);
+        }
+
+        .tst-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          margin-bottom: clamp(36px, 4vw, 56px);
+        }
+
+        .tst-accent {
+          width: 38px;
+          height: 2.5px;
+          border-radius: 2px;
+          background: linear-gradient(90deg, #F69E82, rgba(246,158,130,0.15));
+          margin-bottom: 16px;
+          opacity: 0;
+        }
+
+        .tst-label {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: clamp(12px, 1vw, 13px);
+          letter-spacing: 0.22em;
+          color: #F69E82;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+          opacity: 0;
+        }
+
+        .tst-title {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: clamp(32px, 4vw, 56px);
+          line-height: 1.18;
+          color: #1C1C1E;
+          letter-spacing: -0.025em;
+          margin: 0 0 20px;
+          opacity: 0;
+        }
+
+        .tst-title-light {
+          font-weight: 400;
+          color: #555;
+        }
+
+        .tst-rating {
           display: inline-flex;
           align-items: center;
-          gap: clamp(4px, 0.4vw, 8px);
-          padding: clamp(5px, 0.4vw, 8px) clamp(14px, 1vw, 20px);
+          gap: clamp(8px, 0.8vw, 14px);
+          padding: clamp(8px, 0.6vw, 12px) clamp(18px, 1.4vw, 28px);
           border-radius: 50px;
-          background: linear-gradient(135deg, rgba(249,221,163,0.3), rgba(246,158,130,0.15));
-          border: 1px solid rgba(246,158,130,0.25);
-          color: #9E6B55;
+          background: linear-gradient(135deg, rgba(249,221,163,0.25), rgba(246,158,130,0.12));
+          border: 1px solid rgba(246,158,130,0.2);
+          opacity: 0;
+        }
+
+        .tst-rating-stars {
+          font-size: clamp(14px, 1.1vw, 18px);
+          letter-spacing: 1px;
+          line-height: 1;
+        }
+
+        .tst-rating-score {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: clamp(16px, 1.3vw, 22px);
+          color: #2A2A2A;
+          line-height: 1;
+        }
+
+        .tst-rating-divider {
+          width: 1px;
+          height: 18px;
+          background: rgba(0,0,0,0.1);
+          flex-shrink: 0;
+        }
+
+        .tst-rating-volume {
           font-family: 'Poppins', sans-serif;
           font-weight: 500;
-          font-size: clamp(11px, 0.82vw, 14px);
-          letter-spacing: 0.07em;
-          margin-bottom: clamp(10px, 1vw, 16px);
+          font-size: clamp(12px, 0.85vw, 14px);
+          color: #888;
+          letter-spacing: 0.02em;
         }
 
-        .test-badge-emoji {
-          font-size: clamp(12px, 0.85vw, 15px);
-        }
-
-        .test-title {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: #F69E82;
-          font-size: clamp(22px, 3.2vw, 55px);
-          line-height: 1.3;
-          margin: 0;
-          text-align: center;
-        }
-
-        .test-content-row {
+        .tst-carousel-row {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: clamp(10px, 2vw, 32px);
+          gap: clamp(14px, 2vw, 32px);
           width: 100%;
-          max-width: 60vw;
-          margin: 0 auto;
-          padding: 0 clamp(16px, 4vw, 80px);
+          max-width: 780px;
+          margin-bottom: clamp(20px, 2.5vw, 36px);
         }
 
-        .testimonial-nav {
-          width: clamp(40px, 3vw, 52px);
-          height: clamp(40px, 3vw, 52px);
-          min-width: 40px;
-          min-height: 40px;
+        .tst-nav {
+          width: clamp(44px, 3.2vw, 54px);
+          height: clamp(44px, 3.2vw, 54px);
+          min-width: 44px;
+          min-height: 44px;
           border-radius: 50%;
           background: linear-gradient(135deg, #F9DDA3, #F6C97A);
-          border: 2px solid rgba(249, 221, 163, 0.6);
+          border: 2px solid rgba(249,221,163,0.6);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
           cursor: pointer;
-          transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(249, 221, 163, 0.35);
+          transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+          box-shadow: 0 4px 16px rgba(249,221,163,0.3);
+          outline: none;
           -webkit-tap-highlight-color: transparent;
+          opacity: 0;
         }
 
-        .testimonial-nav:hover {
-          background: linear-gradient(135deg, #F6C97A, #F69E82) !important;
-          border-color: rgba(246, 158, 130, 0.5) !important;
-          box-shadow: 0 6px 20px rgba(246, 158, 130, 0.3) !important;
+        .tst-nav:hover {
+          background: linear-gradient(135deg, #F6C97A, #F69E82);
+          border-color: rgba(246,158,130,0.5);
+          box-shadow: 0 6px 24px rgba(246,158,130,0.3);
           transform: scale(1.08);
         }
 
-        .testimonial-nav:active {
+        .tst-nav:active {
           transform: scale(0.93);
         }
 
-        .test-nav-icon {
-          width: clamp(14px, 1.2vw, 20px);
-          height: clamp(14px, 1.2vw, 20px);
-          min-width: 14px;
-          min-height: 14px;
+        .tst-nav-icon {
+          width: clamp(16px, 1.2vw, 20px);
+          height: clamp(16px, 1.2vw, 20px);
         }
 
-        .testimonial-card-wrapper {
+        .tst-card-wrap {
           flex: 1;
           min-width: 0;
           overflow: hidden;
           position: relative;
+          opacity: 0;
         }
 
-        .testimonial-card {
-          transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease;
-          padding: clamp(20px, 2.5vw, 40px) clamp(20px, 3vw, 48px);
-          border-radius: clamp(16px, 1.5vw, 24px);
-          background: linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
+        .tst-card {
+          padding: clamp(28px, 2.8vw, 44px) clamp(28px, 3.2vw, 52px);
+          border-radius: clamp(18px, 1.5vw, 26px);
+          background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
           backdrop-filter: blur(12px);
-          border: 1px solid rgba(246,158,130,0.2);
-          box-shadow: 0 8px 30px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(246,158,130,0.15);
+          box-shadow:
+            0 8px 32px rgba(0,0,0,0.04),
+            0 2px 8px rgba(246,158,130,0.04),
+            inset 0 1px 0 rgba(255,255,255,0.8);
           text-align: center;
           touch-action: pan-y;
           will-change: transform;
+          transition: transform 0.28s cubic-bezier(0.4,0,0.2,1),
+                      opacity 0.28s ease;
         }
 
-        .testimonial-card.slide-left {
-          animation: slideOutLeft 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        .tst-card--slide-left {
+          animation: tstSlideLeft 0.28s cubic-bezier(0.4,0,0.2,1) forwards;
         }
 
-        .testimonial-card.slide-right {
-          animation: slideOutRight 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        .tst-card--slide-right {
+          animation: tstSlideRight 0.28s cubic-bezier(0.4,0,0.2,1) forwards;
         }
 
-        @keyframes slideOutLeft {
+        @keyframes tstSlideLeft {
           0% { transform: translateX(0); opacity: 1; }
           100% { transform: translateX(-40px); opacity: 0; }
         }
 
-        @keyframes slideOutRight {
+        @keyframes tstSlideRight {
           0% { transform: translateX(0); opacity: 1; }
           100% { transform: translateX(40px); opacity: 0; }
         }
 
-        .test-quote-mark {
-          font-size: clamp(24px, 2.5vw, 45px);
+        .tst-quote {
+          font-size: clamp(28px, 2.5vw, 42px);
           line-height: 1;
-          color: rgba(246,158,130,0.25);
+          color: rgba(246,158,130,0.2);
           font-family: Georgia, serif;
-          margin-bottom: clamp(2px, 0.5vw, 8px);
+          margin-bottom: clamp(4px, 0.5vw, 8px);
           user-select: none;
         }
 
-        .test-stars {
-          margin-bottom: clamp(8px, 1vw, 16px);
-          font-size: clamp(14px, 1.2vw, 22px);
-          letter-spacing: 1px;
+        .tst-stars {
+          margin-bottom: clamp(12px, 1.2vw, 18px);
+          font-size: clamp(15px, 1.2vw, 20px);
+          letter-spacing: 2px;
+          line-height: 1;
         }
 
-        .test-text {
+        .tst-text {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           font-style: italic;
           color: #4A4A4A;
-          font-size: clamp(13px, 1.15vw, 18px);
-          line-height: 1.75;
-          margin: 0 auto;
-          margin-bottom: clamp(14px, 1.5vw, 24px);
-          max-width: clamp(240px, 40vw, 600px);
+          font-size: clamp(14px, 1.15vw, 18px);
+          line-height: 1.8;
+          margin: 0 auto clamp(18px, 1.8vw, 28px);
+          max-width: 540px;
           word-break: break-word;
           overflow-wrap: break-word;
-          hyphens: auto;
         }
 
-        .test-divider {
-          width: clamp(35px, 3vw, 50px);
+        .tst-divider {
+          width: clamp(36px, 3vw, 50px);
           height: 2px;
           border-radius: 2px;
-          background: linear-gradient(90deg, transparent, rgba(246,158,130,0.4), transparent);
-          margin: 0 auto clamp(12px, 1.2vw, 20px) auto;
+          background: linear-gradient(90deg, transparent, rgba(246,158,130,0.35), transparent);
+          margin: 0 auto clamp(14px, 1.4vw, 22px);
         }
 
-        .test-author-row {
+        .tst-author {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: clamp(8px, 0.8vw, 16px);
+          gap: clamp(10px, 0.9vw, 16px);
         }
 
-        .test-avatar {
-          width: clamp(36px, 3vw, 50px);
-          height: clamp(36px, 3vw, 50px);
-          min-width: 36px;
-          min-height: 36px;
+        .tst-avatar {
+          width: clamp(40px, 3.2vw, 52px);
+          height: clamp(40px, 3.2vw, 52px);
           border-radius: 50%;
-          background: linear-gradient(135deg, rgba(249,221,163,0.45), rgba(246,158,130,0.3));
-          border: 2px solid rgba(246,158,130,0.3);
+          background: linear-gradient(135deg, rgba(249,221,163,0.4), rgba(246,158,130,0.25));
+          border: 2px solid rgba(246,158,130,0.25);
           display: flex;
           align-items: center;
           justify-content: center;
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
           color: #F69E82;
-          font-size: clamp(14px, 1.1vw, 18px);
+          font-size: clamp(15px, 1.2vw, 20px);
           flex-shrink: 0;
         }
 
-        .test-author-info {
+        .tst-author-info {
           display: flex;
           flex-direction: column;
           align-items: flex-start;
+          gap: 2px;
         }
 
-        .test-author-name {
+        .tst-author-name {
           font-family: 'Poppins', sans-serif;
-          font-weight: 500;
+          font-weight: 600;
           color: #2A2A2A;
-          font-size: clamp(12px, 0.95vw, 16px);
+          font-size: clamp(13px, 1vw, 16px);
           line-height: 1.3;
         }
 
-        .test-author-meta {
+        .tst-author-meta {
           display: flex;
           align-items: center;
-          gap: clamp(3px, 0.5vw, 8px);
+          gap: clamp(4px, 0.4vw, 8px);
           flex-wrap: wrap;
         }
 
-        .test-author-plan {
+        .tst-author-plan {
           font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          font-size: clamp(10px, 0.78vw, 14px);
+          font-weight: 500;
+          font-size: clamp(11px, 0.8vw, 13px);
           line-height: 1.3;
         }
 
-        .test-author-time {
+        .tst-author-time {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           color: #AAA;
-          font-size: clamp(10px, 0.72vw, 13px);
+          font-size: clamp(10.5px, 0.75vw, 13px);
           line-height: 1.3;
         }
 
-        .test-dots {
+        .tst-dots {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           gap: clamp(6px, 0.5vw, 10px);
-          margin-top: clamp(18px, 2vw, 32px);
+          margin-bottom: clamp(28px, 3vw, 44px);
+          opacity: 0;
         }
 
-        .test-dot {
-          height: 10px;
+        .tst-dot {
+          height: 8px;
           border-radius: 50px;
           border: none;
           cursor: pointer;
-          transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
           padding: 0;
+          outline: none;
+          transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
           -webkit-tap-highlight-color: transparent;
         }
 
-        .test-dot-active {
+        .tst-dot--active {
           width: 28px;
-          background-color: #F69E82;
+          background: #F69E82;
+          box-shadow: 0 2px 8px rgba(246,158,130,0.3);
         }
 
-        .test-dot-inactive {
-          width: 10px;
-          background-color: rgba(246,158,130,0.2);
+        .tst-dot--idle {
+          width: 8px;
+          background: rgba(246,158,130,0.18);
         }
 
-        .test-dot-inactive:hover {
-          background-color: rgba(246,158,130,0.4);
-          transform: scale(1.2);
+        .tst-dot--idle:hover {
+          background: rgba(246,158,130,0.4);
+          transform: scale(1.3);
         }
 
-        .test-deco-item { display: block; }
-
-        @keyframes testDeco1 {
-          0%, 100% { transform: translateY(0px) rotate(-10deg); }
-          25% { transform: translateY(-5px) rotate(-7deg); }
-          50% { transform: translateY(-2px) rotate(-12deg); }
-          75% { transform: translateY(-6px) rotate(-8deg); }
-        }
-        @keyframes testDeco2 {
-          0%, 100% { transform: translateY(0px) rotate(8deg); }
-          30% { transform: translateY(-4px) rotate(11deg); }
-          60% { transform: translateY(-7px) rotate(6deg); }
-          85% { transform: translateY(-2px) rotate(9deg); }
-        }
-        @keyframes testDeco3 {
-          0%, 100% { transform: translateY(0px) rotate(12deg); }
-          25% { transform: translateY(-6px) rotate(15deg); }
-          50% { transform: translateY(-3px) rotate(10deg); }
-          75% { transform: translateY(-5px) rotate(13deg); }
-        }
-        @keyframes testDeco4 {
-          0%, 100% { transform: translateY(0px) rotate(-6deg); }
-          30% { transform: translateY(-5px) rotate(-3deg); }
-          60% { transform: translateY(-8px) rotate(-8deg); }
-          85% { transform: translateY(-3px) rotate(-5deg); }
-        }
-        .test-deco-1 { animation: testDeco1 4.3s ease-in-out infinite; }
-        .test-deco-2 { animation: testDeco2 4.7s ease-in-out infinite; animation-delay: 0.5s; }
-        .test-deco-3 { animation: testDeco3 4s ease-in-out infinite; animation-delay: 1s; }
-        .test-deco-4 { animation: testDeco4 4.5s ease-in-out infinite; animation-delay: 0.7s; }
-
-        @keyframes fadeSlideDown {
-          0%   { opacity: 0; transform: translateY(-30px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeSlideUp {
-          0%   { opacity: 0; transform: translateY(40px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pillPop {
-          0%   { opacity: 0; transform: scale(0.7) translateY(10px); }
-          60%  { opacity: 1; transform: scale(1.05) translateY(-2px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes cardScaleIn {
-          0%   { opacity: 0; transform: scale(0.92) translateY(25px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes navFadeIn {
-          0%   { opacity: 0; transform: scale(0.8); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes iconFadeIn {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
-        }
-
-        .entrance-test-badge { opacity: 0; }
-        .entrance-test-badge.animate {
-          animation: pillPop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.1s;
-        }
-        .entrance-test-title { opacity: 0; }
-        .entrance-test-title.animate {
-          animation: fadeSlideDown 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.25s;
-        }
-        .entrance-test-nav-left { opacity: 0; }
-        .entrance-test-nav-left.animate {
-          animation: navFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.55s;
-        }
-        .entrance-test-nav-right { opacity: 0; }
-        .entrance-test-nav-right.animate {
-          animation: navFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.6s;
-        }
-        .entrance-test-card { opacity: 0; }
-        .entrance-test-card.animate {
-          animation: cardScaleIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.4s;
-        }
-        .entrance-test-dots { opacity: 0; }
-        .entrance-test-dots.animate {
-          animation: fadeSlideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.7s;
-        }
-        .test-icon-wrapper { opacity: 0; }
-        .test-icon-wrapper.animate-test-deco-1 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.5s; }
-        .test-icon-wrapper.animate-test-deco-2 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.65s; }
-        .test-icon-wrapper.animate-test-deco-3 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.8s; }
-        .test-icon-wrapper.animate-test-deco-4 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.95s; }
-
-        .swipe-hint {
+        .tst-swipe {
           display: none;
           align-items: center;
           justify-content: center;
           gap: 6px;
-          margin-top: 12px;
-          color: rgba(158, 107, 85, 0.5);
+          margin-bottom: 24px;
           font-family: 'Poppins', sans-serif;
-          font-size: 11px;
           font-weight: 400;
+          font-size: 11px;
+          color: rgba(0,0,0,0.3);
           letter-spacing: 0.03em;
-          animation: swipeHintPulse 2.5s ease-in-out infinite;
         }
 
-        .swipe-hint-icon {
+        .tst-swipe-icon {
           font-size: 14px;
-          animation: swipeHintSlide 2.5s ease-in-out infinite;
+          animation: tstSwipeSlide 2.5s ease-in-out infinite;
         }
 
-        @keyframes swipeHintPulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 0.7; }
-        }
-
-        @keyframes swipeHintSlide {
+        @keyframes tstSwipeSlide {
           0%, 100% { transform: translateX(0); }
           25% { transform: translateX(4px); }
           75% { transform: translateX(-4px); }
         }
 
-        /* ══════════════════════════════════
-           TABLET (≤ 1024px)
-        ══════════════════════════════════ */
+        .tst-cta-area {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .tst-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 15px 34px;
+          border-radius: 50px;
+          background: linear-gradient(135deg, #F69E82 0%, #e8856a 100%);
+          color: #FFFFFF;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: 15px;
+          letter-spacing: 0.03em;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 4px 20px rgba(246,158,130,0.25), 0 1px 3px rgba(0,0,0,0.06);
+          transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+          position: relative;
+          overflow: hidden;
+          opacity: 0;
+        }
+
+        .tst-btn::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 50px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, transparent 50%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .tst-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 32px rgba(246,158,130,0.35), 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .tst-btn:hover::before { opacity: 1; }
+
+        .tst-btn:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 12px rgba(246,158,130,0.2);
+        }
+
+        .tst-btn-arrow {
+          width: 16px;
+          height: 16px;
+          transition: transform 0.3s ease;
+        }
+
+        .tst-btn:hover .tst-btn-arrow {
+          transform: translateX(3px);
+        }
+
+        .tst-microtrust {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: 12px;
+          color: #BBB;
+          letter-spacing: 0.03em;
+          opacity: 0;
+        }
+
+        /* ═══ FLOATING DECO ═══ */
+        .tst-deco {
+          position: absolute;
+          pointer-events: none;
+          z-index: 3;
+          opacity: 0;
+        }
+
+        .tst-deco img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+
+        /* ═══ Premium swing — same pattern as EverythingGoodScreen ═══ */
+        @keyframes tstSwing1 {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          25% { transform: translateY(-4px) rotate(2deg); }
+          75% { transform: translateY(-5px) rotate(-1.5deg); }
+        }
+        @keyframes tstSwing2 {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          30% { transform: translateY(-3px) rotate(-2.5deg); }
+          70% { transform: translateY(-5px) rotate(1.5deg); }
+        }
+        @keyframes tstSwing3 {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          35% { transform: translateY(-4px) rotate(1.8deg); }
+          65% { transform: translateY(-3px) rotate(-2deg); }
+        }
+        @keyframes tstSwing4 {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          20% { transform: translateY(-3px) rotate(-1.5deg); }
+          50% { transform: translateY(-6px) rotate(2deg); }
+          80% { transform: translateY(-2px) rotate(-1deg); }
+        }
+
+        .tst-fl-1 { animation: tstSwing1 5s ease-in-out infinite; }
+        .tst-fl-2 { animation: tstSwing2 5.5s ease-in-out infinite 0.8s; }
+        .tst-fl-3 { animation: tstSwing3 4.8s ease-in-out infinite 1.5s; }
+        .tst-fl-4 { animation: tstSwing4 5.2s ease-in-out infinite 0.3s; }
+
+        /* ═══ ENTRANCE ═══ */
+        @keyframes tstUp {
+          0% { opacity: 0; transform: translateY(28px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes tstDown {
+          0% { opacity: 0; transform: translateY(-24px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes tstScale {
+          0% { opacity: 0; transform: scale(0.92) translateY(20px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes tstPop {
+          0% { opacity: 0; transform: scale(0) rotate(-10deg); }
+          60% { opacity: 1; transform: scale(1.08) rotate(3deg); }
+          100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes tstNavIn {
+          0% { opacity: 0; transform: scale(0.8); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+
+        .tst-a-up { animation: tstUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+        .tst-a-down { animation: tstDown 0.85s cubic-bezier(0.22,1,0.36,1) both; }
+        .tst-a-scale { animation: tstScale 0.85s cubic-bezier(0.22,1,0.36,1) both; }
+        .tst-a-pop { animation: tstPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .tst-a-nav { animation: tstNavIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
+
         @media (max-width: 1024px) {
-          .test-section {
-            min-height: auto;
-            padding-top: 75px;
-            padding-bottom: 50px;
-          }
-          .test-content-row {
-            max-width: 88vw;
-            padding: 0 16px;
-          }
-          .test-text {
-            max-width: 100%;
-          }
-          .test-deco-item {
-            display: none !important;
-          }
-          .entrance-test-badge.animate,
-          .entrance-test-title.animate {
-            animation-name: fadeSlideUp;
-          }
+          .tst-carousel-row { max-width: 600px; }
+          .tst-deco { display: none !important; }
         }
 
-        /* ══════════════════════════════════
-           MOBILE (≤ 768px)
-        ══════════════════════════════════ */
         @media (max-width: 768px) {
-          .test-section {
-            padding-top: 65px;
-            padding-bottom: 40px;
-          }
-          .test-header {
-            margin-bottom: 22px;
-            padding: 0 20px;
-          }
-          .test-content-row {
-            max-width: 100%;
-            padding: 0 20px;
-            gap: 0;
-          }
-          .testimonial-card {
-            padding: 28px 24px;
-            border-radius: 20px;
+          .tst-container { padding: clamp(24px, 4vw, 40px) 24px clamp(40px, 5vw, 60px); }
+          .tst-header { margin-bottom: clamp(28px, 3.5vw, 40px); }
+          .tst-title { font-size: clamp(24px, 5.5vw, 30px); margin-bottom: 16px; }
+          .tst-rating { padding: 7px 16px; gap: 8px; }
+          .tst-rating-score { font-size: 16px; }
+          .tst-rating-volume { font-size: 12px; }
+          .tst-rating-divider { height: 14px; }
+          .tst-carousel-row { max-width: 100%; gap: 0; margin-bottom: 20px; }
+          .tst-nav { display: none; }
+          .tst-card {
+            padding: 28px 24px; border-radius: 20px;
             background: linear-gradient(160deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7));
-            border: 1px solid rgba(246,158,130,0.15);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 8px rgba(246,158,130,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.06), 0 2px 8px rgba(246,158,130,0.06), inset 0 1px 0 rgba(255,255,255,0.9);
           }
-          .testimonial-nav {
-            display: none !important;
-          }
-          .swipe-hint {
-            display: flex;
-          }
-          .test-quote-mark {
-            font-size: 32px;
-            margin-bottom: 4px;
-          }
-          .test-stars {
-            font-size: 16px;
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-          }
-          .test-text {
-            font-size: 14.5px;
-            line-height: 1.8;
-            margin-bottom: 18px;
-            max-width: 100%;
-          }
-          .test-divider {
-            width: 40px;
-            margin-bottom: 16px;
-          }
-          .test-author-row {
-            gap: 12px;
-          }
-          .test-avatar {
-            width: 42px !important;
-            height: 42px !important;
-            min-width: 42px;
-            min-height: 42px;
-            font-size: 16px !important;
-            border-width: 2px;
-          }
-          .test-author-name {
-            font-size: 14px;
-            font-weight: 500;
-          }
-          .test-author-plan {
-            font-size: 12px;
-          }
-          .test-author-time {
-            font-size: 11px;
-          }
-          .test-dots {
-            margin-top: 20px;
-            gap: 8px;
-          }
-          .test-dot {
-            height: 10px;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-          .test-dot-active {
-            width: 30px;
-            background: linear-gradient(90deg, #F69E82, #F6B89A);
-            box-shadow: 0 2px 8px rgba(246,158,130,0.35);
-          }
-          .test-dot-inactive {
-            width: 10px;
-          }
+          .tst-text { font-size: 14.5px; max-width: 100%; margin-bottom: 18px; }
+          .tst-avatar { width: 42px; height: 42px; }
+          .tst-author-name { font-size: 14px; }
+          .tst-author-plan { font-size: 12px; }
+          .tst-author-time { font-size: 11px; }
+          .tst-swipe { display: flex; }
+          .tst-dots { margin-bottom: 24px; }
+          .tst-btn { padding: 13px 28px; font-size: 14px; }
         }
 
-        /* ══════════════════════════════════
-           MOBILE (≤ 640px)  — MÁS AIRE
-        ══════════════════════════════════ */
-        @media (max-width: 640px) {
-          .test-section {
-            padding-top: 80px;
-            padding-bottom: 50px;
-          }
-          .test-header {
-            margin-bottom: 28px;
-            padding: 0 16px;
-          }
-          .test-badge {
-            margin-bottom: 14px;
-          }
-          .test-content-row {
-            padding: 0 16px;
-          }
-          .testimonial-card {
-            padding: 30px 24px;
-            border-radius: 18px;
-          }
-          .test-text {
-            font-size: 14px;
-            line-height: 1.75;
-          }
-          .test-author-row {
-            flex-direction: column;
-            gap: 10px;
-          }
-          .test-author-info {
-            align-items: center !important;
-            text-align: center;
-          }
-          .test-author-meta {
-            justify-content: center;
-          }
-          .test-dots {
-            margin-top: 24px;
-          }
-          .swipe-hint {
-            margin-top: 16px;
-          }
+        @media (max-width: 540px) {
+          .tst-container { padding: 20px 20px 40px; }
+          .tst-title { font-size: clamp(22px, 5vw, 26px); }
+        .tst-label { font-size: 10px; }
+          .tst-card { padding: 24px 20px; border-radius: 18px; }
+          .tst-text { font-size: 14px; }
+          .tst-author { flex-direction: column; gap: 10px; }
+          .tst-author-info { align-items: center; text-align: center; }
+          .tst-author-meta { justify-content: center; }
+          .tst-rating { padding: 6px 14px; gap: 7px; }
+          .tst-rating-stars { font-size: 13px; }
+          .tst-rating-score { font-size: 15px; }
+        .tst-rating-volume { font-size: 11px; }
         }
 
-        /* ══════════════════════════════════
-           SMALL MOBILE (≤ 480px)  — MÁS AIRE
-        ══════════════════════════════════ */
-        @media (max-width: 480px) {
-          .test-section {
-            padding-top: 75px;
-            padding-bottom: 45px;
-          }
-          .test-header {
-            margin-bottom: 26px;
-            padding: 0 14px;
-          }
-          .test-badge {
-            margin-bottom: 13px;
-          }
-          .test-content-row {
-            padding: 0 14px;
-          }
-          .testimonial-card {
-            padding: 28px 22px;
-            border-radius: 16px;
-          }
-          .test-quote-mark {
-            font-size: 28px;
-            margin-bottom: 6px;
-          }
-          .test-stars {
-            font-size: 14px;
-            margin-bottom: 12px;
-          }
-          .test-text {
-            font-size: 13.5px;
-            line-height: 1.75;
-            margin-bottom: 16px;
-          }
-          .test-divider {
-            margin-bottom: 14px;
-          }
-          .test-avatar {
-            width: 38px !important;
-            height: 38px !important;
-            min-width: 38px;
-            min-height: 38px;
-            font-size: 14px !important;
-          }
-          .test-author-name {
-            font-size: 13px;
-          }
-          .test-author-plan {
-            font-size: 11px;
-          }
-          .test-author-time {
-            font-size: 10.5px;
-          }
-          .test-dots {
-            margin-top: 22px;
-            gap: 7px;
-          }
-          .test-dot {
-            height: 8px;
-          }
-          .test-dot-active {
-            width: 26px;
-          }
-          .test-dot-inactive {
-            width: 8px;
-          }
-          .swipe-hint {
-            margin-top: 14px;
-            font-size: 10.5px;
-          }
+        @media (max-width: 400px) {
+          .tst-container { padding: 18px 18px 36px; }
+          .tst-header { margin-bottom: 22px; }
+          .tst-accent { width: 30px; margin-bottom: 12px; }
+          .tst-label { margin-bottom: 12px; font-size: 9.5px; }
+          .tst-title { font-size: 21px; margin-bottom: 14px; }
+          .tst-rating { padding: 5px 12px; gap: 6px; }
+          .tst-rating-stars { font-size: 12px; letter-spacing: 0; }
+          .tst-rating-score { font-size: 14px; }
+          .tst-rating-volume { font-size: 10.5px; }
+          .tst-rating-divider { height: 12px; }
+          .tst-card { padding: 22px 18px; border-radius: 16px; }
+          .tst-quote { font-size: 24px; }
+          .tst-stars { font-size: 14px; margin-bottom: 10px; }
+          .tst-text { font-size: 13.5px; line-height: 1.75; margin-bottom: 16px; }
+          .tst-divider { width: 32px; margin-bottom: 14px; }
+          .tst-avatar { width: 38px; height: 38px; font-size: 14px; }
+          .tst-author-name { font-size: 13px; }
+        .tst-author-plan { font-size: 11px; }
+          .tst-author-time { font-size: 10.5px; }
+          .tst-dots { gap: 6px; margin-bottom: 20px; }
+          .tst-dot { height: 7px; }
+          .tst-dot--active { width: 24px; }
+          .tst-dot--idle { width: 7px; }
+          .tst-btn { padding: 12px 24px; font-size: 13px; gap: 8px; }
+          .tst-btn-arrow { width: 14px; height: 14px; }
+        .tst-microtrust { font-size: 11px; }
+          .tst-swipe { font-size: 10.5px; }
         }
 
-        /* ══════════════════════════════════
-           VERY SMALL (≤ 380px)  — MÁS AIRE
-        ══════════════════════════════════ */
-        @media (max-width: 380px) {
-          .test-section {
-            padding-top: 70px;
-            padding-bottom: 40px;
-          }
-          .test-header {
-            margin-bottom: 24px;
-            padding: 0 12px;
-          }
-          .test-title {
-            font-size: 20px;
-          }
-          .test-badge {
-            font-size: 10px;
-            padding: 4px 10px;
-            margin-bottom: 12px;
-          }
-          .test-content-row {
-            padding: 0 12px;
-          }
-          .testimonial-card {
-            padding: 26px 20px;
-            border-radius: 14px;
-          }
-          .test-quote-mark {
-            font-size: 24px;
-            margin-bottom: 5px;
-          }
-          .test-stars {
-            font-size: 13px;
-            margin-bottom: 10px;
-          }
-          .test-text {
-            font-size: 13px;
-            line-height: 1.7;
-            margin-bottom: 14px;
-          }
-          .test-divider {
-            width: 30px;
-            margin-bottom: 12px;
-          }
-          .test-avatar {
-            width: 36px !important;
-            height: 36px !important;
-            min-width: 36px;
-            min-height: 36px;
-            font-size: 13px !important;
-            border-width: 1.5px;
-          }
-          .test-author-name {
-            font-size: 12px;
-          }
-          .test-author-plan {
-            font-size: 10px;
-          }
-          .test-author-time {
-            font-size: 10px;
-          }
-          .test-dots {
-            margin-top: 20px;
-            gap: 6px;
-          }
-          .test-dot {
-            height: 7px;
-          }
-          .test-dot-active {
-            width: 22px;
-          }
-          .test-dot-inactive {
-            width: 7px;
-          }
-          .swipe-hint {
-            margin-top: 12px;
-          }
-        }
-
-        /* ══════════════════════════════════
-           MINIMUM (≤ 320px)  — MÁS AIRE
-        ══════════════════════════════════ */
-        @media (max-width: 320px) {
-          .test-section {
-            padding-top: 65px;
-            padding-bottom: 36px;
-          }
-          .test-header {
-            margin-bottom: 22px;
-            padding: 0 10px;
-          }
-          .test-title {
-            font-size: 18px;
-            line-height: 1.35;
-          }
-          .test-badge {
-            font-size: 9.5px;
-            padding: 3px 9px;
-            gap: 3px;
-            margin-bottom: 11px;
-          }
-          .test-badge-emoji {
-            font-size: 11px;
-          }
-          .test-content-row {
-            padding: 0 10px;
-          }
-          .testimonial-card {
-            padding: 24px 18px;
-            border-radius: 12px;
-          }
-          .test-quote-mark {
-            font-size: 20px;
-            margin-bottom: 4px;
-          }
-          .test-stars {
-            font-size: 12px;
-            margin-bottom: 8px;
-            letter-spacing: 0;
-          }
-          .test-text {
-            font-size: 12px;
-            line-height: 1.65;
-            margin-bottom: 12px;
-          }
-          .test-divider {
-            width: 24px;
-            height: 1.5px;
-            margin-bottom: 10px;
-          }
-          .test-author-row {
-            gap: 6px;
-          }
-          .test-avatar {
-            width: 32px !important;
-            height: 32px !important;
-            min-width: 32px;
-            min-height: 32px;
-            font-size: 12px !important;
-            border-width: 1px;
-          }
-          .test-author-name {
-            font-size: 11px;
-          }
-          .test-author-plan {
-            font-size: 9.5px;
-          }
-          .test-author-time {
-            font-size: 9.5px;
-          }
-          .test-dots {
-            margin-top: 18px;
-            gap: 4px;
-          }
-          .test-dot {
-            height: 6px;
-          }
-          .test-dot-active {
-            width: 20px;
-          }
-          .test-dot-inactive {
-            width: 6px;
-          }
-          .swipe-hint {
-            margin-top: 10px;
-            font-size: 9.5px;
-          }
+        @media (max-width: 340px) {
+          .tst-container { padding: 16px 14px 32px; }
+          .tst-title { font-size: 19px; }
+          .tst-card { padding: 20px 16px; border-radius: 14px; }
+          .tst-quote { font-size: 20px; }
+          .tst-stars { font-size: 12px; margin-bottom: 8px; }
+          .tst-text { font-size: 13px; line-height: 1.7; margin-bottom: 14px; }
+          .tst-divider { width: 26px; margin-bottom: 12px; }
+          .tst-avatar { width: 34px; height: 34px; font-size: 13px; border-width: 1.5px; }
+          .tst-author-name { font-size: 12px; }
+        .tst-author-plan { font-size: 10px; }
+        .tst-author-time { font-size: 10px; }
+          .tst-dots { gap: 5px; margin-bottom: 18px; }
+          .tst-dot { height: 6px; }
+          .tst-dot--active { width: 20px; }
+          .tst-dot--idle { width: 6px; }
+          .tst-btn { padding: 11px 20px; font-size: 12.5px; }
+          .tst-microtrust { font-size: 10.5px; }
+          .tst-rating { padding: 4px 10px; gap: 5px; }
+        .tst-rating-stars { font-size: 11px; }
+          .tst-rating-score { font-size: 13px; }
+          .tst-rating-volume { font-size: 10px; }
         }
       `}</style>
 
-      {/* Onda amarilla arriba */}
-      <div className="absolute top-0 left-0 w-full pointer-events-none" style={{ zIndex: 30 }}>
-        <svg
-          viewBox="0 0 1440 120"
-          className="w-full block"
-          preserveAspectRatio="none"
-          style={{ height: 'clamp(35px, 5vw, 65px)', transform: 'rotate(180deg)' }}
-        >
-          <path
-            d="M0,40 Q180,0 360,25 Q540,50 720,20 Q900,0 1080,30 Q1260,55 1440,15 L1440,120 L0,120 Z"
-            fill="#F9DDA3"
-          />
+      <div className="tst-wave">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: 'rotate(180deg)' }}>
+          <path d="M0,40 Q180,0 360,25 Q540,50 720,20 Q900,0 1080,30 Q1260,55 1440,15 L1440,120 L0,120 Z" fill="#F9DDA3" />
         </svg>
       </div>
 
-      {/* Decoraciones */}
+      {/* Floating deco */}
       <div
-        className={`absolute pointer-events-none test-icon-wrapper test-deco-item ${hasAnimated ? 'animate-test-deco-1' : ''}`}
-        style={{ left: '4vw', top: '18%', width: 'clamp(30px, 3.5vw, 55px)', height: 'clamp(30px, 3.5vw, 55px)', zIndex: 5 }}
+        className={`tst-deco ${a ? 'tst-a-pop' : ''}`}
+        style={{ left: '4vw', top: '18%', width: 'clamp(28px, 3.2vw, 50px)', height: 'clamp(28px, 3.2vw, 50px)', animationDelay: '0.6s' }}
       >
-        <img src="/corazonderecha.png" alt="" className={`object-contain w-full h-full ${mounted ? 'test-deco-1' : ''}`} />
+        <img src="/corazonderecha.png" alt="" className={mounted ? 'tst-fl-1' : ''} />
       </div>
       <div
-        className={`absolute pointer-events-none test-icon-wrapper test-deco-item ${hasAnimated ? 'animate-test-deco-2' : ''}`}
-        style={{ right: '5vw', top: '15%', width: 'clamp(20px, 2.2vw, 35px)', height: 'clamp(20px, 2.2vw, 35px)', zIndex: 5 }}
+        className={`tst-deco ${a ? 'tst-a-pop' : ''}`}
+        style={{ right: '5vw', top: '15%', width: 'clamp(18px, 2vw, 32px)', height: 'clamp(18px, 2vw, 32px)', animationDelay: '0.75s' }}
       >
-        <img src="/carta.png" alt="" className={`object-contain w-full h-full ${mounted ? 'test-deco-2' : ''}`} />
+        <img src="/carta.png" alt="" className={mounted ? 'tst-fl-2' : ''} />
       </div>
       <div
-        className={`absolute pointer-events-none test-icon-wrapper test-deco-item ${hasAnimated ? 'animate-test-deco-3' : ''}`}
-        style={{ left: '3.5vw', bottom: '12%', width: 'clamp(28px, 3.2vw, 50px)', height: 'clamp(28px, 3.2vw, 50px)', zIndex: 5 }}
+        className={`tst-deco ${a ? 'tst-a-pop' : ''}`}
+        style={{ left: '3.5vw', bottom: '14%', width: 'clamp(24px, 2.8vw, 44px)', height: 'clamp(24px, 2.8vw, 44px)', animationDelay: '0.9s' }}
       >
-        <img src="/carta.png" alt="" className={`object-contain w-full h-full ${mounted ? 'test-deco-3' : ''}`} />
+        <img src="/carta.png" alt="" className={mounted ? 'tst-fl-3' : ''} />
       </div>
       <div
-        className={`absolute pointer-events-none test-icon-wrapper test-deco-item ${hasAnimated ? 'animate-test-deco-4' : ''}`}
-        style={{ right: '4.5vw', bottom: '14%', width: 'clamp(22px, 2.5vw, 40px)', height: 'clamp(22px, 2.5vw, 40px)', zIndex: 5 }}
+        className={`tst-deco ${a ? 'tst-a-pop' : ''}`}
+        style={{ right: '4.5vw', bottom: '16%', width: 'clamp(20px, 2.3vw, 36px)', height: 'clamp(20px, 2.3vw, 36px)', animationDelay: '1.05s' }}
       >
-        <img src="/corazonizquierda.png" alt="" className={`object-contain w-full h-full ${mounted ? 'test-deco-4' : ''}`} />
+        <img src="/corazonizquierda.png" alt="" className={mounted ? 'tst-fl-4' : ''} />
       </div>
 
-      {/* Contenido */}
-      <div className="relative z-10 flex flex-col items-center w-full">
-        {/* Header */}
-        <div className="flex flex-col items-center test-header">
-          <span className={`test-badge entrance-test-badge ${hasAnimated ? 'animate' : ''}`}>
-            <span className="test-badge-emoji">💬</span>
-            Historias reales
+      <div className="tst-container">
+        <div className="tst-header">
+          <div className={`tst-accent ${a ? 'tst-a-down' : ''}`} style={{ animationDelay: '0.1s' }} />
+          <span className={`tst-label ${a ? 'tst-a-down' : ''}`} style={{ animationDelay: '0.2s' }}>
+            TESTIMONIOS
           </span>
-          <h2 className={`test-title entrance-test-title ${hasAnimated ? 'animate' : ''}`}>
-            Lo que dicen quienes ya{' '}
-            <span style={{ fontWeight: 600 }}>lo viven</span>
+          <h2 className={`tst-title ${a ? 'tst-a-down' : ''}`} style={{ animationDelay: '0.3s' }}>
+            Lo que dicen quienes ya
+            <br />
+            <span className="tst-title-light">lo viven</span>
           </h2>
+          <div className={`tst-rating ${a ? 'tst-a-up' : ''}`} style={{ animationDelay: '0.45s' }}>
+            <span className="tst-rating-stars">⭐⭐⭐⭐⭐</span>
+            <span className="tst-rating-score">4.9</span>
+            <span className="tst-rating-divider" />
+            <span className="tst-rating-volume">+50 experiencias</span>
+          </div>
         </div>
 
-        {/* Testimonial row */}
-        <div className="test-content-row">
-          {/* Flecha izquierda */}
+        <div className="tst-carousel-row">
           <button
-            type="button"
-            className={`testimonial-nav entrance-test-nav-left ${hasAnimated ? 'animate' : ''}`}
+            className={`tst-nav ${a ? 'tst-a-nav' : ''}`}
+            style={{ animationDelay: '0.6s' }}
             onClick={() => handleNav('prev')}
             aria-label="Anterior"
           >
-            <svg className="test-nav-icon" fill="none" stroke="#5A3E2B" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="tst-nav-icon" fill="none" stroke="#5A3E2B" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
-          {/* Card wrapper */}
-          <div className={`testimonial-card-wrapper entrance-test-card ${hasAnimated ? 'animate' : ''}`}>
+          <div className={`tst-card-wrap ${a ? 'tst-a-scale' : ''}`} style={{ animationDelay: '0.5s' }}>
             <div
-              className={`testimonial-card ${
-                slideDirection === 'left' ? 'slide-left' : slideDirection === 'right' ? 'slide-right' : ''
+              className={`tst-card ${
+                slideDirection === 'left' ? 'tst-card--slide-left'
+                : slideDirection === 'right' ? 'tst-card--slide-right'
+                : ''
               }`}
               style={{
                 transform: swipeOffset !== 0 ? `translateX(${swipeOffset}px)` : undefined,
@@ -1004,57 +824,69 @@ const TestimonialsScreen = () => {
               onTouchMove={handleTouchMove}
               onTouchEnd={handleTouchEnd}
             >
-              <div className="test-quote-mark">"</div>
-              <div className="test-stars">⭐⭐⭐⭐⭐</div>
-              <p className="test-text">{current.text}</p>
-              <div className="test-divider" />
-              <div className="test-author-row">
-                <div className="test-avatar">{current.name.charAt(0)}</div>
-                <div className="test-author-info">
-                  <span className="test-author-name">
+              <div className="tst-quote">"</div>
+              <div className="tst-stars">⭐⭐⭐⭐⭐</div>
+              <p className="tst-text">{current.text}</p>
+              <div className="tst-divider" />
+              <div className="tst-author">
+                <div className="tst-avatar">{current.name.charAt(0)}</div>
+                <div className="tst-author-info">
+                  <span className="tst-author-name">
                     {current.name}, {current.age} años
                   </span>
-                  <div className="test-author-meta">
-                    <span className="test-author-plan" style={{ color: current.planColor }}>
+                  <div className="tst-author-meta">
+                    <span className="tst-author-plan" style={{ color: current.planColor }}>
                       {current.plan}
                     </span>
-                    <span className="test-author-time">· {current.time}</span>
+                    <span className="tst-author-time">· {current.time}</span>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Flecha derecha */}
           <button
-            type="button"
-            className={`testimonial-nav entrance-test-nav-right ${hasAnimated ? 'animate' : ''}`}
+            className={`tst-nav ${a ? 'tst-a-nav' : ''}`}
+            style={{ animationDelay: '0.65s' }}
             onClick={() => handleNav('next')}
             aria-label="Siguiente"
           >
-            <svg className="test-nav-icon" fill="none" stroke="#5A3E2B" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="tst-nav-icon" fill="none" stroke="#5A3E2B" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
             </svg>
           </button>
         </div>
 
-        {/* Swipe hint - solo mobile */}
-        <div className="swipe-hint">
-          <span className="swipe-hint-icon">👆</span>
+        <div className="tst-swipe">
+          <span className="tst-swipe-icon">👆</span>
           Deslizá para ver más
         </div>
 
-        {/* Dots */}
-        <div className={`flex items-center justify-center test-dots entrance-test-dots ${hasAnimated ? 'animate' : ''}`}>
-          {testimonials.map((_, index) => (
+        <div className={`tst-dots ${a ? 'tst-a-up' : ''}`} style={{ animationDelay: '0.75s' }}>
+          {TESTIMONIALS.map((_, i) => (
             <button
-              key={index}
-              type="button"
-              onClick={() => setActiveIndex(index)}
-              className={`test-dot ${index === activeIndex ? 'test-dot-active' : 'test-dot-inactive'}`}
-              aria-label={`Testimonio ${index + 1}`}
+              key={i}
+              className={`tst-dot ${i === activeIndex ? 'tst-dot--active' : 'tst-dot--idle'}`}
+              onClick={() => setActiveIndex(i)}
+              aria-label={`Testimonio ${i + 1}`}
             />
           ))}
+        </div>
+
+        <div className="tst-cta-area">
+          <button
+            className={`tst-btn ${a ? 'tst-a-up' : ''}`}
+            style={{ animationDelay: '0.9s' }}
+            onClick={() => scrollTo('contacto')}
+          >
+            Quiero mi experiencia
+            <svg className="tst-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
+          <span className={`tst-microtrust ${a ? 'tst-a-up' : ''}`} style={{ animationDelay: '1.05s' }}>
+            Sin compromiso · Empezá cuando quieras
+          </span>
         </div>
       </div>
     </section>

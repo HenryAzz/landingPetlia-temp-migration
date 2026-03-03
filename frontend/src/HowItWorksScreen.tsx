@@ -1,536 +1,733 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
+
+const STEPS = [
+  {
+    number: '01',
+    emoji: '💛',
+    title: 'Elegí tu vínculo',
+    description: 'Explorá los 3 tipos de compañía y elegí el que mejor se adapte a lo que necesitás.',
+    color: '#F9DDA3',
+  },
+  {
+    number: '02',
+    emoji: '📝',
+    title: 'Completá el formulario',
+    description: 'Contanos un poco sobre vos para personalizar tu experiencia desde el primer momento.',
+    color: '#F69E82',
+  },
+  {
+    number: '03',
+    emoji: '💬',
+    title: 'Te contactamos',
+    description: 'El equipo de Camil se comunica con vos para coordinar todo y empezar cuanto antes.',
+    color: '#E8C878',
+  },
+  {
+    number: '04',
+    emoji: '✨',
+    title: '¡Empezá a disfrutar!',
+    description: 'Recibí tu primera carta, mensaje o llamada y viví la experiencia Camil.',
+    color: '#F4B896',
+  },
+];
 
 const HowItWorksScreen = () => {
   const [mounted, setMounted] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const rafs = useRef<(number | null)[]>([null, null, null, null]);
+  const hovers = useRef<boolean[]>([false, false, false, false]);
+  const currents = useRef(STEPS.map(() => ({ rx: 0, ry: 0 })));
+  const targets = useRef(STEPS.map(() => ({ rx: 0, ry: 0 })));
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (hasAnimated) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
+        if (entry.isIntersecting) {
           setHasAnimated(true);
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.12 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, [hasAnimated]);
 
-  const steps = [
-    {
-      number: '01',
-      emoji: '💛',
-      title: 'Elegí tu vínculo',
-      description: 'Explorá los 3 tipos de compañía y elegí el que mejor se adapte a lo que necesitás.',
-      accentColor: '#F9DDA3',
-      accentBg: 'rgba(249,221,163,0.15)',
-    },
-    {
-      number: '02',
-      emoji: '📝',
-      title: 'Completá el formulario',
-      description: 'Contanos un poco sobre vos para que podamos conocerte y personalizar tu experiencia.',
-      accentColor: '#F69E82',
-      accentBg: 'rgba(246,158,130,0.15)',
-    },
-    {
-      number: '03',
-      emoji: '💬',
-      title: 'Te contactamos',
-      description: 'En menos de 24 hs el equipo de Camil se comunica con vos para coordinar todo.',
-      accentColor: '#E8C878',
-      accentBg: 'rgba(232,200,120,0.15)',
-    },
-    {
-      number: '04',
-      emoji: '✨',
-      title: '¡Comenzá a disfrutar!',
-      description: 'Recibí tu primera carta, mensaje o llamada y empezá a vivir la experiencia Camil.',
-      accentColor: '#F4B896',
-      accentBg: 'rgba(244,184,150,0.15)',
-    },
-  ];
+  useEffect(() => {
+    return () => {
+      rafs.current.forEach(r => { if (r) cancelAnimationFrame(r); });
+    };
+  }, []);
+
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+  const animate = useCallback((i: number) => {
+    const c = currents.current[i];
+    const t = targets.current[i];
+    const f = 0.08;
+
+    c.rx = lerp(c.rx, t.rx, f);
+    c.ry = lerp(c.ry, t.ry, f);
+
+    const el = cardRefs.current[i];
+    if (el) {
+      if (Math.abs(c.rx) > 0.01 || Math.abs(c.ry) > 0.01) {
+        el.style.transform = `perspective(800px) rotateX(${c.rx}deg) rotateY(${c.ry}deg) translateY(${hovers.current[i] ? '-8px' : '0'})`;
+      } else {
+        el.style.transform = hovers.current[i] ? 'translateY(-8px)' : '';
+      }
+    }
+
+    const d = Math.abs(c.rx - t.rx) + Math.abs(c.ry - t.ry);
+    if (d > 0.01 || hovers.current[i]) {
+      rafs.current[i] = requestAnimationFrame(() => animate(i));
+    } else {
+      if (el) el.style.transform = '';
+      rafs.current[i] = null;
+    }
+  }, []);
+
+  const kick = useCallback((i: number) => {
+    if (!rafs.current[i]) rafs.current[i] = requestAnimationFrame(() => animate(i));
+  }, [animate]);
+
+  const onMove = useCallback((e: React.MouseEvent<HTMLDivElement>, i: number) => {
+    const el = cardRefs.current[i];
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = e.clientX - r.left;
+    const y = e.clientY - r.top;
+    const cx = r.width / 2;
+    const cy = r.height / 2;
+    const max = 6;
+
+    targets.current[i].rx = ((y - cy) / cy) * -max;
+    targets.current[i].ry = ((x - cx) / cx) * max;
+    kick(i);
+  }, [kick]);
+
+  const onEnter = useCallback((i: number) => {
+    hovers.current[i] = true;
+    kick(i);
+  }, [kick]);
+
+  const onLeave = useCallback((i: number) => {
+    hovers.current[i] = false;
+    targets.current[i] = { rx: 0, ry: 0 };
+    kick(i);
+  }, [kick]);
+
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const a = hasAnimated;
 
   return (
-    <section
-      ref={sectionRef}
-      id="como-funciona"
-      className="relative w-full overflow-hidden flex flex-col"
-      style={{ minHeight: '85vh' }}
-    >
+    <section ref={sectionRef} id="como-funciona" className="hiw-section">
       <style>{`
-        /* ── Step number glow ── */
-        .step-number {
+        .hiw-section {
           position: relative;
-        }
-        .step-number::after {
-          content: '';
-          position: absolute;
-          inset: -4px;
-          border-radius: 50%;
-          opacity: 0;
-          transition: opacity 0.4s ease;
+          width: 100%;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          min-height: 85vh;
         }
 
-        /* ── Card styles ── */
-        .step-card-modern {
-          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-          position: relative;
+        .hiw-bg {
+          position: absolute;
+          inset: 0;
+          z-index: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .step-card-modern::before {
+        .hiw-bg img {
+          width: 140%;
+          height: 140%;
+          min-width: 140%;
+          min-height: 140%;
+          object-fit: cover;
+        }
+
+        .hiw-wave {
+          position: relative;
+          width: 100%;
+          pointer-events: none;
+          z-index: 2;
+          line-height: 0;
+          flex-shrink: 0;
+          margin-bottom: -1px;
+        }
+        .hiw-wave svg {
+          width: 100%;
+          height: clamp(45px, 5.5vw, 75px);
+          display: block;
+        }
+
+        .hiw-container {
+          position: relative;
+          z-index: 5;
+          width: 100%;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: clamp(32px, 5vw, 72px) clamp(20px, 5vw, 80px) clamp(56px, 8vw, 110px);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .hiw-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          margin-bottom: clamp(40px, 5.5vw, 72px);
+        }
+
+        .hiw-accent {
+          width: 40px;
+          height: 3px;
+          border-radius: 2px;
+          background: linear-gradient(90deg, rgba(249,221,163,0.9), rgba(249,221,163,0.15));
+          margin-bottom: 16px;
+          opacity: 0;
+        }
+
+        .hiw-label {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: clamp(13px, 1.1vw, 15px);
+          letter-spacing: 0.2em;
+          color: rgba(249,221,163,0.85);
+          text-transform: uppercase;
+          margin-bottom: 20px;
+          opacity: 0;
+        }
+
+        .hiw-title {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: clamp(38px, 4.5vw, 60px);
+          line-height: 1.25;
+          color: #FFFFFF;
+          letter-spacing: -0.025em;
+          margin: 0 0 18px;
+          text-shadow: 0 2px 20px rgba(0,0,0,0.25);
+          opacity: 0;
+        }
+
+        .hiw-title-light {
+          font-weight: 400;
+          color: rgba(255,255,255,0.88);
+        }
+
+        .hiw-subtitle {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: clamp(17px, 1.35vw, 20px);
+          color: rgba(255,255,255,0.7);
+          margin: 0;
+          max-width: 520px;
+          line-height: 1.75;
+          letter-spacing: 0.015em;
+          opacity: 0;
+        }
+
+        .hiw-steps-wrap {
+          width: 100%;
+          position: relative;
+          margin-bottom: clamp(40px, 5.5vw, 64px);
+        }
+
+        .hiw-connector {
+          position: absolute;
+          top: clamp(42px, 3.2vw, 52px);
+          left: calc(12.5% + clamp(19px, 1.4vw, 24px));
+          right: calc(12.5% + clamp(19px, 1.4vw, 24px));
+          height: 2px;
+          z-index: 0;
+          pointer-events: none;
+          opacity: 0;
+        }
+
+        .hiw-connector-line {
+          width: 100%;
+          height: 100%;
+          background: repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,0.12) 0px,
+            rgba(255,255,255,0.12) 6px,
+            transparent 6px,
+            transparent 14px
+          );
+          border-radius: 1px;
+        }
+
+        .hiw-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: clamp(14px, 1.4vw, 20px);
+          width: 100%;
+          position: relative;
+          z-index: 1;
+        }
+
+        .hiw-card {
+          position: relative;
+          padding: clamp(26px, 2.6vw, 36px) clamp(24px, 2.2vw, 32px);
+          border-radius: clamp(18px, 1.5vw, 24px);
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(32px);
+          -webkit-backdrop-filter: blur(32px);
+          box-shadow:
+            0 8px 32px rgba(0,0,0,0.15),
+            0 1px 0 rgba(255,255,255,0.05) inset;
+          display: flex;
+          flex-direction: column;
+          gap: clamp(16px, 1.5vw, 22px);
+          transition: box-shadow 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                      border-color 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+                      background 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+          cursor: default;
+          overflow: hidden;
+          opacity: 0;
+          will-change: transform;
+        }
+
+        .hiw-card::before {
           content: '';
           position: absolute;
           inset: 0;
           border-radius: inherit;
+          background: linear-gradient(
+            160deg,
+            rgba(255,255,255,0.07) 0%,
+            transparent 40%,
+            transparent 100%
+          );
           opacity: 0;
           transition: opacity 0.4s ease;
-          background: linear-gradient(
-            135deg,
-            rgba(255,255,255,0.08) 0%,
-            transparent 50%,
-            rgba(255,255,255,0.04) 100%
-          );
         }
-        .step-card-modern:hover {
-          transform: translateY(-8px);
+
+        .hiw-card:hover {
           box-shadow:
-            0 25px 60px rgba(0,0,0,0.3),
-            inset 0 1px 0 rgba(255,255,255,0.2);
-        }
-        .step-card-modern:hover::before {
-          opacity: 1;
-        }
-        .step-card-modern:hover .step-number::after {
-          opacity: 0.3;
+            0 24px 64px rgba(0,0,0,0.3),
+            0 1px 0 rgba(255,255,255,0.1) inset;
+          border-color: rgba(255,255,255,0.15);
+          background: rgba(255,255,255,0.08);
         }
 
-        /* ── Connector line (desktop) ── */
-        .connector-line {
-          position: relative;
-        }
-        .connector-line::before {
-          content: '';
-          position: absolute;
-          top: 50%;
-          left: 0;
-          right: 0;
-          height: 2px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(249,221,163,0.3),
-            transparent
-          );
-          transform: translateY(-50%);
-        }
+        .hiw-card:hover::before { opacity: 1; }
 
-        /* ── Mobile connector (vertical) ── */
-        .mobile-connector {
-          width: 2px;
-          height: 32px;
-          background: linear-gradient(180deg, transparent, rgba(249,221,163,0.4), transparent);
-          margin: 0 auto;
-        }
-
-        /* ── Pulse dot on connector ── */
-        @keyframes connectorPulse {
-          0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
-          50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.5); }
-        }
-        .connector-dot {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 6px;
-          height: 6px;
+        .hiw-card-number {
+          width: clamp(50px, 3.5vw, 58px);
+          height: clamp(50px, 3.5vw, 58px);
           border-radius: 50%;
-          background: #F9DDA3;
-          animation: connectorPulse 2.5s ease-in-out infinite;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: clamp(16px, 1.15vw, 19px);
+          letter-spacing: 0.05em;
+          position: relative;
+          z-index: 1;
+          transition: all 0.4s ease;
+          flex-shrink: 0;
         }
 
-        /* ── Floating decorations ── */
-        @keyframes hiwDeco1 {
-          0%, 100% { transform: translateY(0px) rotate(-8deg); }
-          25% { transform: translateY(-6px) rotate(-5deg); }
-          50% { transform: translateY(-3px) rotate(-10deg); }
-          75% { transform: translateY(-7px) rotate(-6deg); }
+        .hiw-card:hover .hiw-card-number {
+          box-shadow: 0 0 24px var(--step-glow);
+          transform: scale(1.08);
         }
-        @keyframes hiwDeco2 {
-          0%, 100% { transform: translateY(0px) rotate(10deg); }
-          30% { transform: translateY(-5px) rotate(13deg); }
-          60% { transform: translateY(-8px) rotate(8deg); }
-          85% { transform: translateY(-3px) rotate(11deg); }
-        }
-        @keyframes hiwDeco3 {
-          0%, 100% { transform: translateY(0px) rotate(5deg); }
-          25% { transform: translateY(-7px) rotate(8deg); }
-          50% { transform: translateY(-4px) rotate(3deg); }
-          75% { transform: translateY(-6px) rotate(7deg); }
-        }
-        @keyframes hiwDeco4 {
-          0%, 100% { transform: translateY(0px) rotate(-12deg); }
-          30% { transform: translateY(-4px) rotate(-9deg); }
-          60% { transform: translateY(-7px) rotate(-14deg); }
-          85% { transform: translateY(-2px) rotate(-10deg); }
-        }
-        .hiw-deco-1 { animation: hiwDeco1 4.2s ease-in-out infinite; }
-        .hiw-deco-2 { animation: hiwDeco2 4.6s ease-in-out infinite; animation-delay: 0.5s; }
-        .hiw-deco-3 { animation: hiwDeco3 3.9s ease-in-out infinite; animation-delay: 1s; }
-        .hiw-deco-4 { animation: hiwDeco4 4.4s ease-in-out infinite; animation-delay: 0.8s; }
 
-        /* ── Entrance animations ── */
-        @keyframes fadeSlideDown {
-          0%   { opacity: 0; transform: translateY(-35px); }
+        .hiw-card-emoji {
+          display: inline-flex;
+          align-items: center;
+          gap: 0;
+          font-size: clamp(26px, 2vw, 32px);
+          margin-top: 2px;
+        }
+
+        .hiw-card-title {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          color: #FFFFFF;
+          font-size: clamp(18px, 1.45vw, 23px);
+          line-height: 1.35;
+          margin: 0;
+          text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+
+        .hiw-card-desc {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          color: rgba(255,255,255,0.72);
+          font-size: clamp(14.5px, 1.15vw, 17px);
+          line-height: 1.75;
+          margin: 0;
+          letter-spacing: 0.015em;
+        }
+
+        .hiw-card-accent {
+          margin-top: auto;
+          padding-top: clamp(12px, 1.2vw, 18px);
+        }
+
+        .hiw-card-accent-bar {
+          width: clamp(36px, 3.5vw, 56px);
+          height: 2.5px;
+          border-radius: 2px;
+          opacity: 0.4;
+          transition: all 0.4s ease;
+        }
+
+        .hiw-card:hover .hiw-card-accent-bar {
+          opacity: 0.7;
+          width: clamp(48px, 5vw, 76px);
+        }
+
+        .hiw-cta-area {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .hiw-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 11px;
+          padding: 17px 40px;
+          border-radius: 50px;
+          background: linear-gradient(135deg, #F9DDA3 0%, #e6c57a 100%);
+          color: #2a1f0e;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: clamp(16px, 1.2vw, 18px);
+          letter-spacing: 0.04em;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 4px 24px rgba(249,221,163,0.2), 0 1px 3px rgba(0,0,0,0.1);
+          transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+          position: relative;
+          overflow: hidden;
+          opacity: 0;
+        }
+
+        .hiw-btn::before {
+          content: '';
+          position: absolute; inset: 0;
+          border-radius: 50px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, transparent 50%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+
+        .hiw-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 36px rgba(249,221,163,0.35), 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .hiw-btn:hover::before { opacity: 1; }
+        .hiw-btn:active {
+          transform: translateY(0);
+          box-shadow: 0 2px 12px rgba(249,221,163,0.2);
+        }
+
+        .hiw-btn-arrow {
+          width: 18px; height: 18px;
+          transition: transform 0.3s ease;
+        }
+        .hiw-btn:hover .hiw-btn-arrow { transform: translateX(3px); }
+
+        .hiw-microtrust {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: clamp(13.5px, 1.05vw, 15px);
+          color: rgba(255,255,255,0.45);
+          letter-spacing: 0.03em;
+          text-align: center;
+          line-height: 1.6;
+          opacity: 0;
+        }
+
+        .hiw-deco {
+          position: absolute;
+          pointer-events: none;
+          z-index: 3;
+          opacity: 0;
+        }
+        .hiw-deco img { width: 100%; height: 100%; object-fit: contain; }
+
+        @keyframes hiwF1 {
+          0%, 100% { transform: translateY(0) rotate(-8deg); }
+          50% { transform: translateY(-7px) rotate(-4deg); }
+        }
+        @keyframes hiwF2 {
+          0%, 100% { transform: translateY(0) rotate(10deg); }
+          50% { transform: translateY(-6px) rotate(14deg); }
+        }
+        @keyframes hiwF3 {
+          0%, 100% { transform: translateY(0) rotate(5deg); }
+          50% { transform: translateY(-8px) rotate(9deg); }
+        }
+        @keyframes hiwF4 {
+          0%, 100% { transform: translateY(0) rotate(-12deg); }
+          50% { transform: translateY(-5px) rotate(-8deg); }
+        }
+
+        .hiw-f1 { animation: hiwF1 4.2s ease-in-out infinite; }
+        .hiw-f2 { animation: hiwF2 4.6s ease-in-out infinite 0.5s; }
+        .hiw-f3 { animation: hiwF3 3.9s ease-in-out infinite 1s; }
+        .hiw-f4 { animation: hiwF4 4.4s ease-in-out infinite 0.8s; }
+
+        @keyframes hiwUp {
+          0% { opacity: 0; transform: translateY(28px); }
           100% { opacity: 1; transform: translateY(0); }
         }
-        @keyframes cardReveal {
-          0%   { opacity: 0; transform: translateY(50px) scale(0.92); }
+        @keyframes hiwDown {
+          0% { opacity: 0; transform: translateY(-24px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes hiwCardIn {
+          0% { opacity: 0; transform: translateY(36px) scale(0.95); }
           100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        @keyframes iconFadeIn {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
+        @keyframes hiwPop {
+          0% { opacity: 0; transform: scale(0) rotate(-10deg); }
+          60% { opacity: 1; transform: scale(1.08) rotate(3deg); }
+          100% { opacity: 1; transform: scale(1) rotate(0deg); }
         }
-        @keyframes connectorGrow {
-          0%   { opacity: 0; transform: scaleX(0); }
+        @keyframes hiwLineIn {
+          0% { opacity: 0; transform: scaleX(0); }
           100% { opacity: 1; transform: scaleX(1); }
         }
 
-        .entrance-hiw-title { opacity: 0; }
-        .entrance-hiw-title.animate {
-          animation: fadeSlideDown 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.1s;
-        }
-        .entrance-hiw-subtitle { opacity: 0; }
-        .entrance-hiw-subtitle.animate {
-          animation: fadeSlideDown 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-          animation-delay: 0.3s;
-        }
-        .entrance-hiw-card { opacity: 0; }
-        .entrance-hiw-card.animate {
-          animation: cardReveal 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .entrance-hiw-card.animate.card-0 { animation-delay: 0.5s; }
-        .entrance-hiw-card.animate.card-1 { animation-delay: 0.65s; }
-        .entrance-hiw-card.animate.card-2 { animation-delay: 0.8s; }
-        .entrance-hiw-card.animate.card-3 { animation-delay: 0.95s; }
+        .hiw-a-up { animation: hiwUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+        .hiw-a-down { animation: hiwDown 0.85s cubic-bezier(0.22,1,0.36,1) both; }
+        .hiw-a-card { animation: hiwCardIn 0.75s cubic-bezier(0.22,1,0.36,1) both; }
+        .hiw-a-pop { animation: hiwPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .hiw-a-line { animation: hiwLineIn 1s cubic-bezier(0.22,1,0.36,1) both; transform-origin: left center; }
 
-        .entrance-hiw-connector { opacity: 0; }
-        .entrance-hiw-connector.animate {
-          animation: connectorGrow 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .entrance-hiw-connector.animate.conn-0 { animation-delay: 0.7s; }
-        .entrance-hiw-connector.animate.conn-1 { animation-delay: 0.85s; }
-        .entrance-hiw-connector.animate.conn-2 { animation-delay: 1s; }
-
-        .hiw-icon-wrapper { opacity: 0; }
-        .hiw-icon-wrapper.animate-deco-1 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.6s; }
-        .hiw-icon-wrapper.animate-deco-2 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.75s; }
-        .hiw-icon-wrapper.animate-deco-3 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.9s; }
-        .hiw-icon-wrapper.animate-deco-4 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 1.05s; }
-
-        /* ── Responsive ── */
         @media (max-width: 1024px) {
-          .hiw-steps-grid {
-            flex-direction: column !important;
-            max-width: 500px !important;
-            margin: 0 auto;
-            gap: 0 !important;
+          .hiw-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            max-width: 620px;
           }
-          .hiw-step-wrapper {
-            flex-direction: column !important;
-            gap: 0 !important;
+          .hiw-connector { display: none; }
+          .hiw-deco { display: none; }
+          .hiw-title { font-size: clamp(34px, 5vw, 46px); }
+          .hiw-subtitle { font-size: clamp(16px, 2vw, 19px); }
+        }
+
+        @media (max-width: 768px) {
+          .hiw-container {
+            padding: clamp(24px, 4vw, 44px) 24px clamp(48px, 7vw, 70px);
           }
-          .step-card-modern {
-            width: 100% !important;
+          .hiw-header { margin-bottom: clamp(34px, 5vw, 50px); }
+          .hiw-title { font-size: clamp(30px, 6.5vw, 40px); }
+          .hiw-subtitle { font-size: 16px; }
+          .hiw-grid { gap: 16px; }
+          .hiw-card { padding: 24px 22px; gap: 14px; }
+          .hiw-card-number { width: 46px; height: 46px; font-size: 15px; }
+          .hiw-card-emoji { font-size: 24px; }
+          .hiw-card-title { font-size: 17px; }
+          .hiw-card-desc { font-size: 14.5px; }
+          .hiw-btn { padding: 15px 34px; font-size: 16px; }
+        }
+
+        @media (max-width: 540px) {
+          .hiw-grid {
+            grid-template-columns: 1fr;
+            max-width: 420px;
           }
-          .desktop-connector {
-            display: none !important;
+          .hiw-title { font-size: clamp(27px, 6vw, 34px); }
+          .hiw-label { font-size: 12px; }
+          .hiw-subtitle { font-size: 15.5px; }
+          .hiw-card {
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 0;
+            padding: 22px;
           }
-          .mobile-connector-wrapper {
-            display: flex !important;
+          .hiw-card-number {
+            width: 44px; height: 44px;
+            margin-right: 16px;
+            margin-bottom: 14px;
           }
-          .hiw-deco-desktop {
-            display: none !important;
+          .hiw-card-header-text {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding-top: 4px;
+          }
+          .hiw-card-desc {
+            width: 100%;
+            padding-left: 60px;
+            margin-top: 4px;
+            font-size: 14px;
+          }
+          .hiw-card-accent {
+            width: 100%;
+            padding-left: 60px;
+            padding-top: 12px;
           }
         }
-        @media (min-width: 1025px) {
-          .mobile-connector-wrapper {
-            display: none !important;
-          }
+
+        @media (max-width: 400px) {
+          .hiw-container { padding: 20px 18px 44px; }
+          .hiw-header { margin-bottom: 28px; }
+          .hiw-accent { width: 34px; }
+          .hiw-label { font-size: 11.5px; margin-bottom: 16px; }
+          .hiw-title { font-size: 25px; margin-bottom: 14px; }
+          .hiw-subtitle { font-size: 15px; }
+          .hiw-grid { gap: 14px; }
+          .hiw-card { padding: 20px; border-radius: 16px; }
+          .hiw-card-number { width: 40px; height: 40px; font-size: 14px; margin-right: 14px; }
+          .hiw-card-emoji { font-size: 22px; }
+          .hiw-card-title { font-size: 16px; }
+          .hiw-card-desc { font-size: 13.5px; padding-left: 54px; }
+          .hiw-card-accent { padding-left: 54px; }
+          .hiw-btn { padding: 14px 28px; font-size: 15px; gap: 10px; }
+          .hiw-btn-arrow { width: 16px; height: 16px; }
+          .hiw-microtrust { font-size: 13px; }
         }
-        @media (max-width: 640px) {
-          .hiw-steps-grid {
-            max-width: 100% !important;
-            padding: 0 20px !important;
-          }
+
+        @media (max-width: 340px) {
+          .hiw-container { padding: 18px 14px 38px; }
+          .hiw-title { font-size: 23px; }
+          .hiw-subtitle { font-size: 14.5px; }
+          .hiw-card { padding: 18px; }
+          .hiw-card-number { width: 36px; height: 36px; font-size: 13px; margin-right: 12px; }
+          .hiw-card-emoji { font-size: 20px; }
+          .hiw-card-title { font-size: 15px; }
+          .hiw-card-desc { font-size: 13px; padding-left: 48px; }
+          .hiw-card-accent { padding-left: 48px; }
+          .hiw-btn { padding: 13px 24px; font-size: 14.5px; }
         }
       `}</style>
 
-      {/* Fondo */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center">
-        <img
-          src="/fondoliso.jpeg"
-          alt=""
-          className="object-cover"
-          style={{ width: '140%', height: '140%', minWidth: '140%', minHeight: '140%' }}
-        />
+      <div className="hiw-bg">
+        <img src="/fondoliso.jpeg" alt="" />
       </div>
 
-      {/* Onda amarilla */}
-      <div className="absolute top-0 left-0 w-full pointer-events-none" style={{ zIndex: 30 }}>
-        <svg viewBox="0 0 1440 120" className="w-full block" preserveAspectRatio="none" style={{ height: 'clamp(35px, 5vw, 65px)', transform: 'rotate(180deg)' }}>
+      <div className="hiw-wave">
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: 'rotate(180deg)' }}>
           <path d="M0,40 Q180,0 360,25 Q540,50 720,20 Q900,0 1080,30 Q1260,55 1440,15 L1440,120 L0,120 Z" fill="#F9DDA3" />
         </svg>
       </div>
 
-      {/* Decoraciones — desktop only */}
       <div
-        className={`absolute pointer-events-none hiw-icon-wrapper hiw-deco-desktop ${hasAnimated ? 'animate-deco-1' : ''}`}
-        style={{ left: '4vw', top: '14%', width: 'clamp(28px, 3.5vw, 55px)', height: 'clamp(28px, 3.5vw, 55px)', zIndex: 5 }}
+        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+        style={{ left: '4vw', top: '15%', width: 'clamp(28px, 3.5vw, 55px)', height: 'clamp(28px, 3.5vw, 55px)', animationDelay: '0.7s' }}
       >
-        <img src="/carta.png" alt="" className={`object-contain w-full h-full ${mounted ? 'hiw-deco-1' : ''}`} />
+        <img src="/carta.png" alt="" className={mounted ? 'hiw-f1' : ''} />
       </div>
       <div
-        className={`absolute pointer-events-none hiw-icon-wrapper hiw-deco-desktop ${hasAnimated ? 'animate-deco-2' : ''}`}
-        style={{ right: '5vw', top: '12%', width: 'clamp(18px, 2.2vw, 35px)', height: 'clamp(18px, 2.2vw, 35px)', zIndex: 5 }}
+        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+        style={{ right: '5vw', top: '13%', width: 'clamp(18px, 2.2vw, 35px)', height: 'clamp(18px, 2.2vw, 35px)', animationDelay: '0.85s' }}
       >
-        <img src="/corazonizquierda.png" alt="" className={`object-contain w-full h-full ${mounted ? 'hiw-deco-2' : ''}`} />
+        <img src="/corazonizquierda.png" alt="" className={mounted ? 'hiw-f2' : ''} />
       </div>
       <div
-        className={`absolute pointer-events-none hiw-icon-wrapper hiw-deco-desktop ${hasAnimated ? 'animate-deco-3' : ''}`}
-        style={{ left: '3.5vw', bottom: '10%', width: 'clamp(24px, 3vw, 48px)', height: 'clamp(24px, 3vw, 48px)', zIndex: 5 }}
+        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+        style={{ left: '3.5vw', bottom: '12%', width: 'clamp(24px, 3vw, 48px)', height: 'clamp(24px, 3vw, 48px)', animationDelay: '1s' }}
       >
-        <img src="/corazonderecha.png" alt="" className={`object-contain w-full h-full ${mounted ? 'hiw-deco-3' : ''}`} />
+        <img src="/corazonderecha.png" alt="" className={mounted ? 'hiw-f3' : ''} />
       </div>
       <div
-        className={`absolute pointer-events-none hiw-icon-wrapper hiw-deco-desktop ${hasAnimated ? 'animate-deco-4' : ''}`}
-        style={{ right: '4.5vw', bottom: '12%', width: 'clamp(16px, 2vw, 30px)', height: 'clamp(16px, 2vw, 30px)', zIndex: 5 }}
+        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+        style={{ right: '4.5vw', bottom: '14%', width: 'clamp(16px, 2vw, 30px)', height: 'clamp(16px, 2vw, 30px)', animationDelay: '1.15s' }}
       >
-        <img src="/carta.png" alt="" className={`object-contain w-full h-full ${mounted ? 'hiw-deco-4' : ''}`} />
+        <img src="/carta.png" alt="" className={mounted ? 'hiw-f4' : ''} />
       </div>
 
-      {/* Contenido */}
-      <div
-        className="relative z-10 flex flex-col items-center w-full"
-        style={{ padding: 'clamp(60px, 8vw, 130px) clamp(20px, 5vw, 80px) clamp(50px, 7vw, 110px)' }}
-      >
-        {/* Header */}
-        <div className="flex flex-col items-center" style={{ marginBottom: 'clamp(32px, 4.5vw, 70px)' }}>
-          {/* Badge */}
-          <div
-            className={`entrance-hiw-subtitle ${hasAnimated ? 'animate' : ''}`}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: 'clamp(4px, 0.4vw, 8px) clamp(12px, 1.1vw, 18px)',
-              borderRadius: '50px',
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              border: '1px solid rgba(255,255,255,0.2)',
-              backdropFilter: 'blur(8px)',
-              marginBottom: 'clamp(12px, 1.2vw, 20px)',
-            }}
-          >
-            <span style={{ fontSize: 'clamp(12px, 0.9vw, 16px)' }}>🚀</span>
-            <span
-              style={{
-                fontFamily: "'Poppins', sans-serif",
-                fontWeight: 500,
-                color: 'rgba(255,255,255,0.8)',
-                fontSize: 'clamp(11px, 0.8vw, 14px)',
-                letterSpacing: '0.08em',
-              }}
-            >
-              SIMPLE Y RÁPIDO
-            </span>
-          </div>
-
-          <h2
-            className={`entrance-hiw-title ${hasAnimated ? 'animate' : ''}`}
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 300,
-              fontStyle: 'italic',
-              color: '#FFFFFF',
-              fontSize: 'clamp(32px, 4.8vw, 80px)',
-              lineHeight: 1.2,
-              letterSpacing: '0.03em',
-              margin: 0,
-              textAlign: 'center',
-              textShadow: '0 2px 12px rgba(0,0,0,0.2)',
-            }}
-          >
-            ¿Cómo <span style={{ fontWeight: 500 }}>funciona</span>?
+      <div className="hiw-container">
+        <div className="hiw-header">
+          <div className={`hiw-accent ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.1s' }} />
+          <span className={`hiw-label ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.2s' }}>
+            CÓMO FUNCIONA
+          </span>
+          <h2 className={`hiw-title ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.3s' }}>
+            4 pasos simples
+            <br />
+            <span className="hiw-title-light">para empezar con la experiencia</span>
           </h2>
-          <p
-            className={`entrance-hiw-subtitle ${hasAnimated ? 'animate' : ''}`}
-            style={{
-              fontFamily: "'Poppins', sans-serif",
-              fontWeight: 400,
-              color: 'rgba(255,255,255,0.75)',
-              fontSize: 'clamp(13px, 1.15vw, 20px)',
-              lineHeight: 1.6,
-              margin: 0,
-              marginTop: 'clamp(8px, 1vw, 16px)',
-              textAlign: 'center',
-              maxWidth: '500px',
-            }}
-          >
-            En 4 pasos simples empezás a vivir la experiencia Camil
+          <p className={`hiw-subtitle ${a ? 'hiw-a-up' : ''}`} style={{ animationDelay: '0.45s' }}>
+            Sin complicaciones, sin esperas largas. Elegí, completá y empezá a vivir la experiencia Camil.
           </p>
         </div>
 
-        {/* Steps grid */}
-        <div
-          className="hiw-steps-grid flex items-stretch justify-center"
-          style={{ gap: '0', width: '100%', maxWidth: '85vw' }}
-        >
-          {steps.map((step, i) => (
-            <div
-              key={i}
-              className="hiw-step-wrapper flex items-stretch"
-              style={{ flex: 1 }}
-            >
-              {/* Card */}
+        <div className="hiw-steps-wrap">
+          <div className={`hiw-connector ${a ? 'hiw-a-line' : ''}`} style={{ animationDelay: '0.9s' }}>
+            <div className="hiw-connector-line" />
+          </div>
+
+          <div className="hiw-grid">
+            {STEPS.map((step, i) => (
               <div
-                className={`step-card-modern entrance-hiw-card card-${i} ${hasAnimated ? 'animate' : ''}`}
+                key={i}
+                ref={el => { cardRefs.current[i] = el; }}
+                className={`hiw-card ${a ? 'hiw-a-card' : ''}`}
                 style={{
-                  width: '100%',
-                  padding: 'clamp(20px, 2vw, 32px)',
-                  borderRadius: 'clamp(16px, 1.4vw, 22px)',
-                  backgroundColor: 'rgba(0,0,0,0.2)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  backdropFilter: 'blur(24px)',
-                  WebkitBackdropFilter: 'blur(24px)',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  overflow: 'hidden',
+                  animationDelay: `${0.55 + i * 0.13}s`,
+                  ['--step-glow' as string]: `${step.color}50`,
                 }}
+                onMouseMove={e => onMove(e, i)}
+                onMouseEnter={() => onEnter(i)}
+                onMouseLeave={() => onLeave(i)}
               >
-                <div className="flex flex-col" style={{ gap: 'clamp(10px, 0.9vw, 16px)', flex: 1 }}>
-                  {/* Header row */}
-                  <div className="flex items-center justify-between">
-                    {/* Step number circle */}
-                    <div
-                      className="step-number"
-                      style={{
-                        width: 'clamp(36px, 2.8vw, 46px)',
-                        height: 'clamp(36px, 2.8vw, 46px)',
-                        borderRadius: '50%',
-                        background: `linear-gradient(135deg, ${step.accentBg}, rgba(255,255,255,0.05))`,
-                        border: `2px solid ${step.accentColor}40`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontFamily: "'Poppins', sans-serif",
-                        fontWeight: 700,
-                        color: step.accentColor,
-                        fontSize: 'clamp(12px, 0.85vw, 15px)',
-                        letterSpacing: '0.05em',
-                        boxShadow: `0 4px 15px ${step.accentColor}20`,
-                      }}
-                    >
-                      {step.number}
-                    </div>
-
-                    {/* Emoji box */}
-                    <div
-                      style={{
-                        width: 'clamp(36px, 2.8vw, 46px)',
-                        height: 'clamp(36px, 2.8vw, 46px)',
-                        borderRadius: 'clamp(10px, 0.8vw, 14px)',
-                        backgroundColor: step.accentBg,
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: 'clamp(16px, 1.3vw, 22px)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {step.emoji}
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h3
-                    style={{
-                      fontFamily: "'Poppins', sans-serif",
-                      fontWeight: 600,
-                      color: '#FFFFFF',
-                      fontSize: 'clamp(15px, 1.2vw, 21px)',
-                      lineHeight: 1.3,
-                      margin: 0,
-                      textShadow: '0 1px 3px rgba(0,0,0,0.15)',
-                    }}
-                  >
-                    {step.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p
-                    style={{
-                      fontFamily: "'Poppins', sans-serif",
-                      fontWeight: 400,
-                      color: 'rgba(255,255,255,0.7)',
-                      fontSize: 'clamp(12px, 0.88vw, 16px)',
-                      lineHeight: 1.7,
-                      margin: 0,
-                    }}
-                  >
-                    {step.description}
-                  </p>
+                <div
+                  className="hiw-card-number"
+                  style={{
+                    background: `linear-gradient(135deg, ${step.color}20, ${step.color}08)`,
+                    border: `2px solid ${step.color}40`,
+                    color: step.color,
+                  }}
+                >
+                  {step.number}
                 </div>
 
-                {/* Bottom accent line */}
-                <div style={{ marginTop: 'auto', paddingTop: 'clamp(12px, 1.5vw, 24px)', flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span className="hiw-card-emoji">{step.emoji}</span>
+                  <h3 className="hiw-card-title">{step.title}</h3>
+                </div>
+
+                <p className="hiw-card-desc">{step.description}</p>
+
+                <div className="hiw-card-accent">
                   <div
-                    style={{
-                      width: 'clamp(24px, 3vw, 48px)',
-                      height: '2px',
-                      borderRadius: '2px',
-                      background: `linear-gradient(90deg, ${step.accentColor}, transparent)`,
-                      opacity: 0.6,
-                    }}
+                    className="hiw-card-accent-bar"
+                    style={{ background: `linear-gradient(90deg, ${step.color}, transparent)` }}
                   />
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
 
-              {/* Desktop connector */}
-              {i < steps.length - 1 && (
-                <div
-                  className={`desktop-connector connector-line entrance-hiw-connector conn-${i} ${hasAnimated ? 'animate' : ''}`}
-                  style={{
-                    width: 'clamp(20px, 2.5vw, 40px)',
-                    alignSelf: 'center',
-                    flexShrink: 0,
-                    position: 'relative',
-                    height: '20px',
-                  }}
-                >
-                  <div className="connector-dot" />
-                </div>
-              )}
-
-              {/* Mobile connector */}
-              {i < steps.length - 1 && (
-                <div className="mobile-connector-wrapper justify-center" style={{ display: 'none' }}>
-                  <div className="mobile-connector" />
-                </div>
-              )}
-            </div>
-          ))}
+        <div className="hiw-cta-area">
+          <button className={`hiw-btn ${a ? 'hiw-a-up' : ''}`} style={{ animationDelay: '1.15s' }} onClick={() => scrollTo('contacto')}>
+            Empezar ahora
+            <svg className="hiw-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
+          <span className={`hiw-microtrust ${a ? 'hiw-a-up' : ''}`} style={{ animationDelay: '1.3s' }}>
+            Completá el formulario y te contactamos a la brevedad
+          </span>
         </div>
       </div>
     </section>

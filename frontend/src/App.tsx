@@ -16,6 +16,12 @@ import Footer from "./Footer";
 import BlueSectionDivider from './BlueSectionDivider';
 import WhiteSectionDivider from './WhiteSectionDivider';
 import Loader from './Loader';
+import ForWhomScreen from './ForWhomScreen';
+import GiftCamilSection from './GiftCamilSection';
+import RiskReversalStrip from './RiskReversalStrip';
+import WhatsAppFloat from './WhatsAppFloat';
+import SocialProofToast from './SocialProofToast';
+import ExitIntentModal from './ExitIntentModal';
 
 function App() {
   const [preSelectedPlan, setPreSelectedPlan] = useState('');
@@ -70,17 +76,21 @@ function App() {
 
       <WelcomeScreen loaderFinished={loaderFinished} />
       <TalkToSomeoneScreen />
+      <ForWhomScreen />
       <EverythingGoodScreen />
+   
       <WaveDivider />
 
       <HowItWorksScreen />
       <BlueSectionDivider text="Ahora elegí lo que más te represente" />
       <ChooseYourBondScreen />
+      <GiftCamilSection />
       <BlueSectionDivider text="Y hay mucho más por descubrir" />
       <ExperiencesScreen />
       <WaveDivider />
       <TestimonialsScreen />
-      <WhiteSectionDivider />
+      <RiskReversalStrip />
+  
       <PricingScreen onSelectPlan={setPreSelectedPlan} />
       <WhiteSectionDivider />
       <FAQScreen />
@@ -93,6 +103,10 @@ function App() {
       <WaveDivider />
 
       <Footer />
+       {/* Floating globals */}
+  <ExitIntentModal />           
+  <SocialProofToast />          
+  <WhatsAppFloat />             
     </div>
   );
 }

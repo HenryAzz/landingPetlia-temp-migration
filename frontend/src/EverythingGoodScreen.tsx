@@ -1,33 +1,54 @@
 import { useEffect, useState, useRef } from 'react';
 
+const BENEFITS = [
+  { emoji: '💛', title: 'Contención emocional', desc: 'Alguien que te escucha de verdad, sin juzgar' },
+  { emoji: '😄', title: 'Humor y compañía', desc: 'Risas, juegos y conversaciones que alegran el día' },
+  { emoji: '🎁', title: 'Detalles que importan', desc: 'Recuerda tus gustos, fechas y momentos especiales' },
+  { emoji: '🕊️', title: 'Sin presiones', desc: 'A tu ritmo, sin compromisos ni explicaciones' },
+];
+
+const HEART_PATH = 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z';
+
+const RISING_HEARTS = [
+  { size: 16, right: '16%', bottom: '34%', delay: 0,    dur: 5.5,  drift: 18,  color: '#F69E82' },
+  { size: 11, right: '22%', bottom: '38%', delay: 0.7,  dur: 4.8,  drift: -14, color: '#F4B896' },
+  { size: 19, right: '10%', bottom: '32%', delay: 1.3,  dur: 6.2,  drift: 22,  color: '#E8856A' },
+  { size: 13, right: '26%', bottom: '36%', delay: 2.0,  dur: 5.0,  drift: -16, color: '#F9DDA3' },
+  { size: 15, right: '14%', bottom: '40%', delay: 2.8,  dur: 5.8,  drift: 14,  color: '#F69E82' },
+  { size: 10, right: '20%', bottom: '33%', delay: 3.5,  dur: 4.5,  drift: -10, color: '#F4B896' },
+  { size: 17, right: '8%',  bottom: '37%', delay: 4.2,  dur: 6.0,  drift: 20,  color: '#E8856A' },
+  { size: 12, right: '24%', bottom: '35%', delay: 4.9,  dur: 5.2,  drift: -18, color: '#F9DDA3' },
+  { size: 14, right: '18%', bottom: '31%', delay: 5.6,  dur: 5.4,  drift: 12,  color: '#F69E82' },
+  { size: 9,  right: '12%', bottom: '39%', delay: 6.3,  dur: 4.6,  drift: -8,  color: '#E8856A' },
+];
+
 const EverythingGoodScreen = () => {
   const [mounted, setMounted] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (hasAnimated) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
+        if (entry.isIntersecting) {
           setHasAnimated(true);
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.12 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, [hasAnimated]);
 
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  const a = hasAnimated;
 
   return (
     <section ref={sectionRef} className="eg-section">
@@ -36,209 +57,43 @@ const EverythingGoodScreen = () => {
           position: relative;
           width: 100%;
           overflow: hidden;
+          background: linear-gradient(180deg, #F9F9F9 0%, #FEFEFE 50%, #F9F9F9 100%);
+        }
+
+        .eg-row {
           display: flex;
-          flex-direction: column;
-          background-color: #F3F3F3;
+          align-items: stretch;
+          width: 100%;
+          max-width: 1440px;
+          margin: 0 auto;
         }
 
-        @keyframes gentleSwing1 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          25% { transform: translateY(-3px) rotate(2deg); }
-          50% { transform: translateY(-1px) rotate(-1.5deg); }
-          75% { transform: translateY(-4px) rotate(1deg); }
-        }
-        @keyframes gentleSwing2 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          30% { transform: translateY(-2px) rotate(-2deg); }
-          60% { transform: translateY(-4px) rotate(1.5deg); }
-          85% { transform: translateY(-1px) rotate(-0.5deg); }
-        }
-        @keyframes gentleSwing3 {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          20% { transform: translateY(-3px) rotate(1.5deg); }
-          55% { transform: translateY(-2px) rotate(-2deg); }
-          80% { transform: translateY(-4px) rotate(0.8deg); }
-        }
-        .gentle-swing-1 { animation: gentleSwing1 5s ease-in-out infinite; }
-        .gentle-swing-2 { animation: gentleSwing2 5.5s ease-in-out infinite; animation-delay: 0.8s; }
-        .gentle-swing-3 { animation: gentleSwing3 4.8s ease-in-out infinite; animation-delay: 1.5s; }
-
-        .eg-pill {
-          display: inline-flex;
-          align-items: center;
-          border-radius: 50px;
-          background-color: #FFFFFF;
-          border: 1.5px solid rgba(246,158,130,0.25);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-          color: #7A5C4F;
-          font-family: 'Poppins', sans-serif;
-          font-weight: 500;
-          letter-spacing: 0.04em;
-          white-space: nowrap;
-          cursor: default;
-          transition: all 0.3s ease;
-        }
-        .eg-pill:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-
-        .eg-cta {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50px;
-          background: linear-gradient(135deg, rgba(246,158,130,0.75), rgba(246,158,130,0.55));
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255,255,255,0.45);
-          color: #FFFFFF;
-          font-family: 'Poppins', sans-serif;
-          font-weight: 500;
-          letter-spacing: 0.06em;
-          cursor: pointer;
-          box-shadow: 0 4px 15px rgba(246,158,130,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
-          transition: all 0.35s ease;
+        /* ═══ IMAGE COLUMN ═══ */
+        .eg-col-img {
+          flex: 0 0 45%;
           position: relative;
           overflow: hidden;
-          -webkit-tap-highlight-color: transparent;
+          min-height: clamp(500px, 70vh, 800px);
         }
-        .eg-cta::before {
-          content: '';
+
+        .eg-img-glow {
           position: absolute;
-          top: 0; left: -100%;
-          width: 100%; height: 100%;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-          transition: left 0.5s ease;
-        }
-        .eg-cta:hover::before { left: 100%; }
-        .eg-cta:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(246,158,130,0.3), 0 0 0 1px rgba(255,255,255,0.5) inset;
-        }
-        .eg-cta:active { transform: scale(0.97); }
-
-        .eg-title {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: #F69E82;
-          line-height: 1.3;
-          letter-spacing: 0.02em;
-          margin: 0;
-        }
-        .eg-title span { font-weight: 600; }
-
-        .eg-body {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: #5A5A5A;
-          line-height: 1.8;
-          letter-spacing: 0.02em;
-        }
-        .eg-body p { margin: 0; }
-
-        .eg-limits-card {
-          background-color: #FFFFFF;
-          border: 1.5px solid rgba(246,158,130,0.2);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-          display: flex;
-          align-items: flex-start;
-        }
-        .eg-limits-title {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 500;
-          color: #7A5C4F;
-          margin: 0;
-        }
-        .eg-limits-text {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: #7A7A7A;
-          line-height: 1.6;
-          margin: 0;
+          bottom: 8%;
+          left: 15%;
+          width: 70%;
+          aspect-ratio: 1;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(246,158,130,0.05) 0%,
+            rgba(249,221,163,0.025) 40%,
+            transparent 65%
+          );
+          pointer-events: none;
+          z-index: 0;
         }
 
-        /* ── Entrance ── */
-        @keyframes fadeSlideUp {
-          0% { opacity: 0; transform: translateY(40px); }
-          100% { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeSlideRight {
-          0% { opacity: 0; transform: translateX(-60px); }
-          100% { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes pillPop {
-          0% { opacity: 0; transform: scale(0.7) translateY(10px); }
-          60% { opacity: 1; transform: scale(1.05) translateY(-2px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes cardSlideUp {
-          0% { opacity: 0; transform: translateY(30px) scale(0.97); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-        @keyframes iconFadeIn {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
-        }
-        @keyframes fadeScaleUp {
-          0% { opacity: 0; transform: scale(0.95) translateY(20px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .entrance-eg-image { opacity: 0; }
-        .entrance-eg-image.animate { animation: fadeSlideRight 1s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 0.15s; }
-        .entrance-eg-title { opacity: 0; }
-        .entrance-eg-title.animate { animation: fadeSlideUp 0.8s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 0.1s; }
-        .entrance-eg-pills { opacity: 0; }
-        .entrance-eg-pills.animate { animation: fadeSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 0.35s; }
-        .entrance-eg-pill { opacity: 0; }
-        .entrance-eg-pill.animate { animation: pillPop 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
-        .entrance-eg-pill.animate:nth-child(1) { animation-delay: 0.45s; }
-        .entrance-eg-pill.animate:nth-child(2) { animation-delay: 0.55s; }
-        .entrance-eg-pill.animate:nth-child(3) { animation-delay: 0.65s; }
-        .entrance-eg-text1 { opacity: 0; }
-        .entrance-eg-text1.animate { animation: fadeSlideUp 0.8s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 0.55s; }
-        .entrance-eg-text2 { opacity: 0; }
-        .entrance-eg-text2.animate { animation: fadeSlideUp 0.8s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 0.7s; }
-        .entrance-eg-card { opacity: 0; }
-        .entrance-eg-card.animate { animation: cardSlideUp 0.8s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 0.85s; }
-        .entrance-eg-cta { opacity: 0; }
-        .entrance-eg-cta.animate { animation: fadeSlideUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 1s; }
-
-        .eg-icon-wrapper { opacity: 0; }
-        .eg-icon-wrapper.animate-eg-icon-1 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.7s; }
-        .eg-icon-wrapper.animate-eg-icon-2 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 0.9s; }
-        .eg-icon-wrapper.animate-eg-icon-3 { animation: iconFadeIn 0.6s ease forwards; animation-delay: 1.1s; }
-
-        .entrance-eg-image-mobile { opacity: 0; }
-        .entrance-eg-image-mobile.animate { animation: fadeScaleUp 0.8s cubic-bezier(0.22,1,0.36,1) forwards; animation-delay: 0.6s; }
-
-        /* ══════════════════════════════
-           DESKTOP (> 1024px)
-           Exactly like original: 45% / 55%
-        ══════════════════════════════ */
-        .eg-section {
-          height: 100vh;
-          min-height: 100vh;
-        }
-
-        .eg-layout {
-          position: relative;
-          z-index: 10;
-          flex: 1;
-          display: flex;
-          min-height: 0;
-          width: 100%;
-        }
-
-        /* Desktop left — original layout */
-        .eg-left {
-          width: 45%;
-          height: 100%;
-          flex-shrink: 0;
-          position: relative;
-        }
-        .eg-left-image {
+        .eg-img-desktop {
           position: absolute;
           bottom: 0;
           left: 0;
@@ -246,301 +101,628 @@ const EverythingGoodScreen = () => {
           max-height: 100%;
           object-fit: contain;
           object-position: left bottom;
+          z-index: 1;
+          opacity: 0;
         }
 
-        /* Mobile image — hidden on desktop */
-        .eg-image-mobile { display: none; }
+        /* ═══ RISING HEARTS ═══ */
+        .eg-hearts-container {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          pointer-events: none;
+          overflow: hidden;
+        }
 
-        /* Desktop right — original layout */
-        .eg-right {
-          width: 55%;
-          height: 100%;
-          flex-shrink: 0;
-          position: relative;
+        .eg-rising-heart {
+          position: absolute;
+          opacity: 0;
+          will-change: transform, opacity;
+        }
+
+        .eg-rising-heart svg {
+          display: block;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        @keyframes egHeartRise1 {
+          0% {
+            opacity: 0;
+            transform: translateY(0) translateX(0) scale(0.3) rotate(0deg);
+          }
+          6% {
+            opacity: 0.85;
+            transform: translateY(-20px) translateX(var(--drift-half)) scale(0.7) rotate(5deg);
+          }
+          25% {
+            opacity: 0.75;
+            transform: translateY(-120px) translateX(calc(var(--drift) * -0.3)) scale(0.9) rotate(-8deg);
+          }
+          50% {
+            opacity: 0.5;
+            transform: translateY(-280px) translateX(var(--drift-half)) scale(1) rotate(5deg);
+          }
+          75% {
+            opacity: 0.25;
+            transform: translateY(-440px) translateX(calc(var(--drift) * -0.5)) scale(0.95) rotate(-4deg);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-580px) translateX(var(--drift)) scale(0.8) rotate(3deg);
+          }
+        }
+
+        @keyframes egHeartRise2 {
+          0% {
+            opacity: 0;
+            transform: translateY(0) translateX(0) scale(0.35) rotate(0deg);
+          }
+          8% {
+            opacity: 0.8;
+            transform: translateY(-25px) translateX(calc(var(--drift) * 0.3)) scale(0.65) rotate(-4deg);
+          }
+          30% {
+            opacity: 0.65;
+            transform: translateY(-150px) translateX(var(--drift-half)) scale(0.85) rotate(6deg);
+          }
+          55% {
+            opacity: 0.45;
+            transform: translateY(-310px) translateX(calc(var(--drift) * -0.4)) scale(0.95) rotate(-6deg);
+          }
+          80% {
+            opacity: 0.2;
+            transform: translateY(-460px) translateX(var(--drift-half)) scale(1) rotate(4deg);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-560px) translateX(var(--drift)) scale(0.75) rotate(-3deg);
+          }
+        }
+
+        @keyframes egHeartRise3 {
+          0% {
+            opacity: 0;
+            transform: translateY(0) translateX(0) scale(0.4) rotate(5deg);
+          }
+          7% {
+            opacity: 0.8;
+            transform: translateY(-18px) translateX(calc(var(--drift) * -0.4)) scale(0.6) rotate(-3deg);
+          }
+          28% {
+            opacity: 0.7;
+            transform: translateY(-130px) translateX(var(--drift-half)) scale(0.88) rotate(8deg);
+          }
+          52% {
+            opacity: 0.5;
+            transform: translateY(-300px) translateX(calc(var(--drift) * 0.6)) scale(0.95) rotate(-5deg);
+          }
+          78% {
+            opacity: 0.2;
+            transform: translateY(-470px) translateX(calc(var(--drift) * -0.3)) scale(1) rotate(3deg);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-600px) translateX(var(--drift)) scale(0.7) rotate(-4deg);
+          }
+        }
+
+        .eg-hr-anim1 { animation-name: egHeartRise1; }
+        .eg-hr-anim2 { animation-name: egHeartRise2; }
+        .eg-hr-anim3 { animation-name: egHeartRise3; }
+
+        .eg-hr-active {
+          animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          animation-iteration-count: infinite;
+        }
+
+        /* ═══ MOBILE IMAGE ═══ */
+        .eg-img-mobile {
+          display: none;
+          width: 100%;
+          overflow: hidden;
+        }
+        .eg-img-mobile img {
+          width: 100%;
+          height: auto;
+          object-fit: contain;
+          object-position: left bottom;
+          display: block;
+          opacity: 0;
+        }
+
+        /* ═══ CONTENT COLUMN ═══ */
+        .eg-col-content {
+          flex: 1;
           display: flex;
           align-items: center;
+          padding: clamp(48px, 7vw, 100px) clamp(24px, 5vw, 80px) clamp(64px, 9vw, 120px) clamp(30px, 4vw, 60px);
+          position: relative;
         }
-        .eg-right-inner {
+
+        .eg-inner {
+          width: 100%;
+          max-width: 540px;
           display: flex;
           flex-direction: column;
+        }
+
+        /* ═══ FLOATING DECO ═══ */
+        .eg-deco {
+          position: absolute;
+          z-index: 3;
+          pointer-events: none;
+          opacity: 0;
+        }
+        .eg-deco img { width: 100%; height: 100%; object-fit: contain; }
+
+        .eg-dk-1 {
+          right: clamp(16px, 3vw, 40px); top: 14%;
+          width: clamp(36px, 4.2vw, 68px); height: clamp(36px, 4.2vw, 68px);
+        }
+        .eg-dk-2 {
+          right: clamp(10px, 2.5vw, 32px); top: 50%; transform: translateY(-50%);
+          width: clamp(30px, 3.5vw, 56px); height: clamp(30px, 3.5vw, 56px);
+        }
+        .eg-dk-3 {
+          right: clamp(14px, 2.8vw, 36px); bottom: 14%;
+          width: clamp(34px, 4vw, 62px); height: clamp(34px, 4vw, 62px);
+        }
+
+        @keyframes egSwing1 {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          25% { transform: translateY(-4px) rotate(2deg); }
+          75% { transform: translateY(-5px) rotate(-1.5deg); }
+        }
+        @keyframes egSwing2 {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          30% { transform: translateY(-3px) rotate(-2.5deg); }
+          70% { transform: translateY(-5px) rotate(1.5deg); }
+        }
+        @keyframes egSwing3 {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          35% { transform: translateY(-4px) rotate(1.8deg); }
+          65% { transform: translateY(-3px) rotate(-2deg); }
+        }
+        .eg-fl-1 { animation: egSwing1 5s ease-in-out infinite; }
+        .eg-fl-2 { animation: egSwing2 5.5s ease-in-out infinite 0.8s; }
+        .eg-fl-3 { animation: egSwing3 4.8s ease-in-out infinite 1.5s; }
+
+        .eg-accent {
+          width: 40px;
+          height: 3px;
+          border-radius: 2px;
+          background: linear-gradient(90deg, #F69E82, rgba(246,158,130,0.18));
+          margin-bottom: 16px;
+          opacity: 0;
+        }
+
+        .eg-label {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: clamp(12px, 1vw, 13px);
+          letter-spacing: 0.2em;
+          color: #E8856A;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+          opacity: 0;
+        }
+
+        .eg-title {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 700;
+          font-size: clamp(28px, 3.2vw, 44px);
+          line-height: 1.25;
+          color: #1C1C1E;
+          letter-spacing: -0.02em;
+          margin: 0 0 20px;
+          opacity: 0;
+        }
+        .eg-title-light { font-weight: 400; color: #4A4A4A; }
+
+        .eg-sub {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: clamp(15px, 1.15vw, 17px);
+          line-height: 1.75;
+          color: #666;
+          margin: 0 0 28px;
+          letter-spacing: 0.015em;
+          opacity: 0;
+        }
+
+        .eg-benefits {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-bottom: 28px;
+        }
+
+        .eg-benefit {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          padding: 18px;
+          border-radius: 14px;
+          background: rgba(0,0,0,0.015);
+          border: 1px solid rgba(0,0,0,0.04);
+          transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+          cursor: default;
+          opacity: 0;
+        }
+
+        .eg-benefit:hover {
+          background: rgba(246,158,130,0.04);
+          border-color: rgba(246,158,130,0.12);
+          transform: translateX(6px);
+          box-shadow: 0 4px 18px rgba(246,158,130,0.06);
+        }
+
+        .eg-benefit-icon {
+          width: 42px;
+          height: 42px;
+          border-radius: 12px;
+          background: linear-gradient(135deg, rgba(246,158,130,0.08), rgba(249,221,163,0.08));
+          display: flex;
+          align-items: center;
           justify-content: center;
+          font-size: 19px;
+          flex-shrink: 0;
+        }
+
+        .eg-benefit-text {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 0;
+        }
+
+        .eg-benefit-name {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: clamp(14.5px, 1.1vw, 15.5px);
+          color: #2A2A2A;
+          letter-spacing: 0.01em;
+          line-height: 1.3;
+        }
+
+        .eg-benefit-desc {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: clamp(13px, 1vw, 14px);
+          color: #717171;
+          line-height: 1.55;
+          letter-spacing: 0.015em;
+        }
+
+        .eg-trust {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+          padding: 22px 24px;
+          border-radius: 16px;
+          background: linear-gradient(135deg, rgba(246,158,130,0.06) 0%, rgba(249,221,163,0.04) 100%);
+          border: 1.5px solid rgba(246,158,130,0.15);
+          margin-bottom: 32px;
+          opacity: 0;
+        }
+
+        .eg-trust-badge {
+          width: 44px; height: 44px; border-radius: 12px;
+          background: linear-gradient(135deg, #F69E82, #e8856a);
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0;
+        }
+        .eg-trust-badge svg { width: 21px; height: 21px; color: white; }
+
+        .eg-trust-content { display: flex; flex-direction: column; gap: 5px; }
+
+        .eg-trust-title {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: clamp(14px, 1.05vw, 15px);
+          color: #3A3A3A;
+          margin: 0;
+          line-height: 1.35;
+        }
+
+        .eg-trust-desc {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: clamp(13px, 1vw, 14px);
+          color: #717171;
+          line-height: 1.6;
+          margin: 0;
+          letter-spacing: 0.015em;
+        }
+
+        .eg-action {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 14px;
+        }
+
+        .eg-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 16px 36px;
+          border-radius: 50px;
+          background: linear-gradient(135deg, #F69E82 0%, #e8856a 100%);
+          color: #FFFFFF;
+          font-family: 'Poppins', sans-serif;
+          font-weight: 600;
+          font-size: clamp(15px, 1.1vw, 16px);
+          letter-spacing: 0.03em;
+          border: none;
+          cursor: pointer;
+          box-shadow: 0 4px 20px rgba(246,158,130,0.25), 0 1px 3px rgba(0,0,0,0.06);
+          transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
           position: relative;
-          width: 100%;
-          max-width: 45vw;
-          padding-left: 3vw;
-          padding-right: 6vw;
-          gap: 1.8vw;
+          overflow: hidden;
+          opacity: 0;
+        }
+        .eg-btn::before {
+          content: '';
+          position: absolute; inset: 0;
+          border-radius: 50px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.28) 0%, transparent 50%);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+        }
+        .eg-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 32px rgba(246,158,130,0.35), 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .eg-btn:hover::before { opacity: 1; }
+        .eg-btn:active { transform: translateY(0); box-shadow: 0 2px 12px rgba(246,158,130,0.2); }
+        .eg-btn-arrow { width: 17px; height: 17px; transition: transform 0.3s ease; }
+        .eg-btn:hover .eg-btn-arrow { transform: translateX(3px); }
+
+        .eg-microtrust {
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: clamp(12.5px, 0.95vw, 13.5px);
+          color: #999;
+          letter-spacing: 0.03em;
+          line-height: 1.5;
+          opacity: 0;
         }
 
-        /* Desktop sizes */
-        .eg-title { font-size: 3.2vw; white-space: nowrap; }
-        .eg-pills-row { gap: 0.6vw; }
-        .eg-pill { gap: 0.4vw; padding: 0.45vw 1.15vw; font-size: 0.88vw; }
-        .eg-pill-emoji { font-size: 0.9vw; }
-        .eg-body { font-size: 1.15vw; }
-        .eg-body-gap { margin-bottom: 1.2vw; }
-        .eg-limits-card { padding: 1vw 1.4vw; border-radius: 14px; gap: 0.8vw; }
-        .eg-limits-emoji { font-size: 1.1vw; flex-shrink: 0; margin-top: 0.1vw; }
-        .eg-limits-title { font-size: 0.85vw; margin-bottom: 0.3vw; }
-        .eg-limits-text { font-size: 0.78vw; }
-        .eg-cta { gap: 0.5vw; padding: 0.7vw 2.2vw; font-size: 0.95vw; align-self: flex-start; }
-        .eg-cta-icon { width: 1.1vw; height: 1.1vw; }
+        /* ═══ ANIMATIONS ═══ */
+        @keyframes egUp {
+          0% { opacity: 0; transform: translateY(28px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes egSlideR {
+          0% { opacity: 0; transform: translateX(-50px); }
+          100% { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes egScale {
+          0% { opacity: 0; transform: scale(0.9) translateY(14px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes egPop {
+          0% { opacity: 0; transform: scale(0) rotate(-10deg); }
+          60% { opacity: 1; transform: scale(1.08) rotate(3deg); }
+          100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes egCardIn {
+          0% { opacity: 0; transform: translateX(-14px) scale(0.97); }
+          100% { opacity: 1; transform: translateX(0) scale(1); }
+        }
 
-        .eg-deco { position: absolute; pointer-events: none; }
-        .eg-deco-1 { right: -4vw; top: -3vw; width: clamp(35px,4.5vw,75px); height: clamp(35px,4.5vw,75px); }
-        .eg-deco-2 { right: -4vw; top: 50%; width: clamp(35px,4.5vw,75px); height: clamp(35px,4.5vw,75px); }
-        .eg-deco-3 { right: -4vw; bottom: -3vw; width: clamp(35px,4.5vw,75px); height: clamp(35px,4.5vw,75px); }
+        .eg-a-up { animation: egUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
+        .eg-a-slide { animation: egSlideR 0.9s cubic-bezier(0.22,1,0.36,1) both; }
+        .eg-a-scale { animation: egScale 0.85s cubic-bezier(0.22,1,0.36,1) both; }
+        .eg-a-pop { animation: egPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .eg-a-card { animation: egCardIn 0.65s cubic-bezier(0.22,1,0.36,1) both; }
 
-        /* ══════════════════════════════
-           TABLET (769px – 1024px)
-           Text on top, image below full-width
-        ══════════════════════════════ */
+        /* ═══ TABLET ≤ 1024px ═══ */
         @media (max-width: 1024px) {
-          .eg-section {
-            height: auto;
-            min-height: auto;
-            padding-top: 70px;
-            padding-bottom: 0;
-          }
-
-          .eg-layout {
-            flex-direction: column;
-            align-items: center;
-            gap: 40px;
-          }
-
-          /* Hide desktop image */
-          .eg-left { display: none; }
-
-          /* Show mobile image — full width, flush left, margin-right only */
-          .eg-image-mobile {
-            display: block;
-            width: 100%;
-            order: 2;
-            padding-right: 2vw;
-            padding-left: 0;
-          }
-          .eg-image-mobile img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            object-position: left bottom;
-            display: block;
-          }
-
-          .eg-right {
-            width: 100%;
-            height: auto;
-            order: 1;
-          }
-          .eg-right-inner {
-            align-items: center;
-            text-align: center;
-            max-width: 100%;
-            padding: 0 40px;
-            gap: 20px;
-          }
-
-          .eg-title { font-size: 32px; white-space: normal; }
-          .eg-pills-row { gap: 8px; flex-wrap: wrap; justify-content: center; }
-          .eg-pill { gap: 6px; padding: 8px 18px; font-size: 13px; }
-          .eg-pill-emoji { font-size: 14px; }
-          .eg-body { font-size: 15px; max-width: 520px; }
-          .eg-body-gap { margin-bottom: 14px; }
-          .eg-limits-card { padding: 16px 20px; border-radius: 14px; gap: 12px; text-align: left; max-width: 520px; }
-          .eg-limits-emoji { font-size: 16px; }
-          .eg-limits-title { font-size: 13.5px; margin-bottom: 4px; }
-          .eg-limits-text { font-size: 12.5px; }
-          .eg-cta { gap: 7px; padding: 13px 30px; font-size: 14.5px; align-self: center; }
-          .eg-cta-icon { width: 15px; height: 15px; }
-
-          .eg-deco-1 { right: 20px; top: -10px; width: 42px; height: 42px; }
-          .eg-deco-2 { right: 16px; top: 50%; width: 38px; height: 38px; }
-          .eg-deco-3 { right: 20px; bottom: -10px; width: 36px; height: 36px; }
+          .eg-row { flex-direction: column; }
+          .eg-col-img { display: none; }
+          .eg-img-mobile { display: block; order: 2; padding-right: 2vw; }
+          .eg-col-content { order: 1; padding: clamp(48px, 7vw, 80px) 40px 40px; }
+          .eg-inner { max-width: 100%; align-items: center; text-align: center; }
+          .eg-benefits { max-width: 500px; width: 100%; }
+          .eg-benefit { text-align: left; }
+          .eg-trust { max-width: 500px; text-align: left; }
+          .eg-action { align-items: center; }
+          .eg-dk-1, .eg-dk-2, .eg-dk-3 { display: none; }
         }
 
-        /* ══════════════════════════════
-           MOBILE (≤ 768px)
-        ══════════════════════════════ */
         @media (max-width: 768px) {
-          .eg-section { padding-top: 56px; }
-          .eg-layout { gap: 32px; }
-
-          .eg-right-inner { padding: 0 24px; gap: 16px; }
-
-          .eg-image-mobile {
-            padding-right: 2vw;
-          }
-
-          .eg-title { font-size: 26px; }
-          .eg-pills-row { gap: 7px; }
-          .eg-pill { gap: 5px; padding: 7px 14px; font-size: 12.5px; }
-          .eg-pill-emoji { font-size: 13px; }
-          .eg-body { font-size: 14px; max-width: 400px; }
-          .eg-body-gap { margin-bottom: 12px; }
-          .eg-limits-card { padding: 14px 16px; border-radius: 12px; gap: 10px; max-width: 400px; }
-          .eg-limits-emoji { font-size: 15px; }
-          .eg-limits-title { font-size: 13px; }
-          .eg-limits-text { font-size: 12px; }
-          .eg-cta { gap: 6px; padding: 12px 26px; font-size: 13.5px; }
-          .eg-cta-icon { width: 14px; height: 14px; }
-
-          .eg-deco-1 { right: 14px; top: -6px; width: 36px; height: 36px; }
-          .eg-deco-2 { right: 10px; width: 32px; height: 32px; }
-          .eg-deco-3 { right: 14px; bottom: -6px; width: 30px; height: 30px; }
+          .eg-col-content { padding: clamp(36px, 5vw, 56px) 24px 32px; }
+          .eg-title { font-size: clamp(25px, 5.8vw, 32px); margin-bottom: 16px; }
+          .eg-sub { font-size: 15px; margin-bottom: 22px; }
+          .eg-benefits { gap: 10px; margin-bottom: 22px; }
+          .eg-benefit { padding: 16px; gap: 12px; }
+          .eg-benefit-icon { width: 38px; height: 38px; font-size: 17px; border-radius: 10px; }
+          .eg-benefit-name { font-size: 14.5px; }
+          .eg-benefit-desc { font-size: 13px; }
+          .eg-trust { padding: 18px 20px; gap: 14px; margin-bottom: 26px; }
+          .eg-trust-badge { width: 40px; height: 40px; border-radius: 10px; }
+          .eg-trust-badge svg { width: 19px; height: 19px; }
+          .eg-trust-title { font-size: 14px; }
+          .eg-trust-desc { font-size: 13px; }
+          .eg-btn { padding: 14px 30px; font-size: 15px; }
         }
 
-        /* ══════════════════════════════
-           SMALL MOBILE (≤ 480px)
-        ══════════════════════════════ */
-        @media (max-width: 480px) {
-          .eg-section { padding-top: 48px; }
-          .eg-layout { gap: 28px; }
-
-          .eg-right-inner { padding: 0 18px; gap: 14px; }
-
-          .eg-image-mobile {
-            padding-right: 2vw;
-          }
-
-          .eg-title { font-size: 22px; }
-          .eg-pill { gap: 4px; padding: 6px 12px; font-size: 11.5px; }
-          .eg-pill-emoji { font-size: 12px; }
-          .eg-body { font-size: 13px; max-width: 340px; }
-          .eg-body-gap { margin-bottom: 10px; }
-          .eg-limits-card { padding: 12px 14px; border-radius: 11px; gap: 8px; max-width: 340px; }
-          .eg-limits-emoji { font-size: 14px; }
-          .eg-limits-title { font-size: 12.5px; }
-          .eg-limits-text { font-size: 11.5px; }
-          .eg-cta { gap: 5px; padding: 11px 22px; font-size: 13px; }
-          .eg-cta-icon { width: 13px; height: 13px; }
-
-          .eg-deco-1 { right: 10px; width: 30px; height: 30px; }
-          .eg-deco-2 { right: 8px; width: 26px; height: 26px; }
-          .eg-deco-3 { right: 10px; width: 24px; height: 24px; }
+        @media (max-width: 540px) {
+          .eg-col-content { padding: 36px 20px 28px; }
+          .eg-title { font-size: clamp(23px, 5.2vw, 27px); }
+        .eg-label { font-size: 11px; }
+          .eg-benefit { padding: 14px; gap: 11px; border-radius: 12px; }
+          .eg-benefit-icon { width: 34px; height: 34px; font-size: 15px; }
+          .eg-trust { padding: 16px 18px; border-radius: 14px; }
         }
 
-        /* ══════════════════════════════
-           VERY SMALL (≤ 380px)
-        ══════════════════════════════ */
-        @media (max-width: 380px) {
-          .eg-section { padding-top: 42px; }
-          .eg-layout { gap: 24px; }
-          .eg-right-inner { padding: 0 14px; gap: 12px; }
+        @media (max-width: 400px) {
+          .eg-col-content { padding: 28px 18px 24px; }
+          .eg-accent { width: 32px; margin-bottom: 12px; }
+          .eg-label { margin-bottom: 12px; font-size: 10.5px; }
+          .eg-title { font-size: 22px; margin-bottom: 14px; }
+          .eg-sub { font-size: 13.5px; margin-bottom: 18px; }
+          .eg-benefits { gap: 8px; margin-bottom: 18px; }
+          .eg-benefit { padding: 12px; gap: 10px; }
+          .eg-benefit-icon { width: 32px; height: 32px; font-size: 14px; border-radius: 9px; }
+          .eg-benefit-name { font-size: 13.5px; }
+          .eg-benefit-desc { font-size: 12.5px; }
+          .eg-trust { padding: 14px 16px; gap: 12px; margin-bottom: 22px; border-radius: 12px; }
+          .eg-trust-badge { width: 36px; height: 36px; border-radius: 9px; }
+          .eg-trust-badge svg { width: 17px; height: 17px; }
+          .eg-trust-title { font-size: 13.5px; }
+          .eg-trust-desc { font-size: 12px; }
+          .eg-btn { padding: 13px 26px; font-size: 14px; gap: 9px; }
+          .eg-btn-arrow { width: 15px; height: 15px; }
+          .eg-microtrust { font-size: 12px; }
+        }
 
+        @media (max-width: 340px) {
+          .eg-col-content { padding: 24px 14px 20px; }
           .eg-title { font-size: 20px; }
-          .eg-pill { padding: 5px 10px; font-size: 11px; }
-          .eg-body { font-size: 12.5px; max-width: 300px; }
-          .eg-limits-card { padding: 10px 12px; border-radius: 10px; max-width: 300px; }
-          .eg-limits-title { font-size: 12px; }
-          .eg-limits-text { font-size: 11px; }
-          .eg-cta { padding: 10px 20px; font-size: 12.5px; }
-
-          .eg-deco-1 { width: 26px; height: 26px; }
-          .eg-deco-2 { width: 22px; height: 22px; }
-          .eg-deco-3 { width: 20px; height: 20px; }
-        }
-
-        /* ══════════════════════════════
-           MINIMUM (≤ 320px)
-        ══════════════════════════════ */
-        @media (max-width: 320px) {
-          .eg-section { padding-top: 36px; }
-          .eg-layout { gap: 20px; }
-          .eg-right-inner { padding: 0 12px; gap: 10px; }
-
-          .eg-title { font-size: 18px; }
-          .eg-pill { padding: 4px 9px; font-size: 10.5px; }
-          .eg-body { font-size: 12px; max-width: 270px; }
-          .eg-limits-card { padding: 9px 10px; max-width: 270px; }
-          .eg-limits-title { font-size: 11.5px; }
-          .eg-limits-text { font-size: 10.5px; }
-          .eg-cta { padding: 9px 18px; font-size: 12px; }
-
-          .eg-deco-1, .eg-deco-2, .eg-deco-3 { display: none; }
+          .eg-sub { font-size: 13px; }
+          .eg-benefit { padding: 10px; }
+          .eg-benefit-icon { width: 28px; height: 28px; font-size: 13px; }
+          .eg-benefit-name { font-size: 13px; }
+          .eg-benefit-desc { font-size: 11.5px; }
+          .eg-trust { padding: 12px 14px; }
+          .eg-trust-title { font-size: 13px; }
+          .eg-trust-desc { font-size: 11.5px; }
+          .eg-btn { padding: 12px 22px; font-size: 13.5px; }
         }
       `}</style>
 
-      <div className="eg-layout">
-        {/* ── LEFT: Image (desktop only) — exactly like original ── */}
-        <div className="eg-left">
+      <div className="eg-row">
+
+        <div className="eg-col-img">
+          <div className="eg-img-glow" />
           <img
             src="/beso.png"
-            alt="Beso"
-            className={`eg-left-image entrance-eg-image ${hasAnimated ? 'animate' : ''}`}
+            alt="Camil"
+            className={`eg-img-desktop ${a ? 'eg-a-slide' : ''}`}
+            style={{ animationDelay: '0.15s' }}
           />
+
+          {/* ── RISING HEARTS ── */}
+          {a && (
+            <div className="eg-hearts-container">
+              {RISING_HEARTS.map((h, i) => {
+                const animClass = `eg-hr-anim${(i % 3) + 1}`;
+                return (
+                  <div
+                    key={i}
+                    className={`eg-rising-heart ${animClass} eg-hr-active`}
+                    style={{
+                      right: h.right,
+                      bottom: h.bottom,
+                      animationDuration: `${h.dur}s`,
+                      animationDelay: `${h.delay}s`,
+                      ['--drift' as string]: `${h.drift}px`,
+                      ['--drift-half' as string]: `${h.drift * 0.5}px`,
+                    }}
+                  >
+                    <svg
+                      width={h.size}
+                      height={h.size}
+                      viewBox="0 0 24 24"
+                      fill={h.color}
+                      style={{ opacity: 0.85 }}
+                    >
+                      <path d={HEART_PATH} />
+                    </svg>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* ── RIGHT: Text content ── */}
-        <div className="eg-right">
-          <div className="eg-right-inner">
-            <div className={`eg-deco eg-deco-1 eg-icon-wrapper ${hasAnimated ? 'animate-eg-icon-1' : ''}`}>
-              <img src="/corazonderecha.png" alt="" className={`object-contain w-full h-full ${mounted ? 'gentle-swing-1' : ''}`} />
+        <div className="eg-col-content">
+          <div className="eg-inner">
+
+            <div className={`eg-deco eg-dk-1 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '0.8s' }}>
+              <img src="/corazonderecha.png" alt="" className={mounted ? 'eg-fl-1' : ''} />
+            </div>
+            <div className={`eg-deco eg-dk-2 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '0.95s' }}>
+              <img src="/carta.png" alt="" className={mounted ? 'eg-fl-2' : ''} />
+            </div>
+            <div className={`eg-deco eg-dk-3 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '1.1s' }}>
+              <img src="/corazonizquierda.png" alt="" className={mounted ? 'eg-fl-3' : ''} />
             </div>
 
-            <h2 className={`eg-title entrance-eg-title ${hasAnimated ? 'animate' : ''}`}>
-              Todo lo que te hace <span>bien</span>,
+            <div className={`eg-accent ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.15s' }} />
+            <span className={`eg-label ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.25s' }}>
+              LA EXPERIENCIA
+            </span>
+            <h2 className={`eg-title ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.35s' }}>
+              Todo lo que te hace bien,
               <br />
-              sin todo lo que incomoda.
+              <span className="eg-title-light">sin lo que te incomoda</span>
             </h2>
+            <p className={`eg-sub ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.5s' }}>
+              Un espacio donde podés ser vos, sin presiones ni explicaciones.
+              Compañía genuina que se adapta a lo que necesitás.
+            </p>
 
-            <div className={`flex items-center eg-pills-row entrance-eg-pills ${hasAnimated ? 'animate' : ''}`}>
-              {[
-                { emoji: '🤗', label: 'Sin presiones' },
-                { emoji: '🌸', label: 'A tu ritmo' },
-                { emoji: '🔒', label: 'Sin compromisos' },
-              ].map((item, i) => (
-                <span key={i} className={`eg-pill entrance-eg-pill ${hasAnimated ? 'animate' : ''}`}>
-                  <span className="eg-pill-emoji">{item.emoji}</span>
-                  {item.label}
-                </span>
+            <div className="eg-benefits">
+              {BENEFITS.map((b, i) => (
+                <div
+                  key={i}
+                  className={`eg-benefit ${a ? 'eg-a-card' : ''}`}
+                  style={{ animationDelay: `${0.6 + i * 0.1}s` }}
+                >
+                  <div className="eg-benefit-icon"><span>{b.emoji}</span></div>
+                  <div className="eg-benefit-text">
+                    <span className="eg-benefit-name">{b.title}</span>
+                    <span className="eg-benefit-desc">{b.desc}</span>
+                  </div>
+                </div>
               ))}
             </div>
 
-            <div className={`eg-deco eg-deco-2 eg-icon-wrapper ${hasAnimated ? 'animate-eg-icon-2' : ''}`}>
-              <img src="/carta.png" alt="" className={`object-contain w-full h-full ${mounted ? 'gentle-swing-2' : ''}`} />
-            </div>
-
-            <div className="eg-body">
-              <p className={`eg-body-gap entrance-eg-text1 ${hasAnimated ? 'animate' : ''}`}>
-                Con un gran sentido del humor, dulce y elocuente, Camil crea un espacio donde podés ser vos sin explicaciones.
-              </p>
-              <p className={`entrance-eg-text2 ${hasAnimated ? 'animate' : ''}`}>
-                Atenta a tus gustos y momentos especiales, te acompaña marcando un antes y un después en tu vida.
-              </p>
-            </div>
-
-            <div className={`eg-limits-card entrance-eg-card ${hasAnimated ? 'animate' : ''}`}>
-              <span className="eg-limits-emoji">🤍</span>
-              <div>
-                <p className="eg-limits-title">Compañía genuina, con límites claros</p>
-                <p className="eg-limits-text">
-                  Camil ofrece contención emocional, conversación y entretenimiento en un marco de respeto mutuo. No es un servicio de citas ni de contenido para adultos.
+            <div className={`eg-trust ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '1.05s' }}>
+              <div className="eg-trust-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+              </div>
+              <div className="eg-trust-content">
+                <p className="eg-trust-title">Compañía genuina, con límites claros</p>
+                <p className="eg-trust-desc">
+                  Contención emocional y entretenimiento en un marco de respeto mutuo.
+                  No es un servicio de citas ni de contenido para adultos.
                 </p>
               </div>
             </div>
 
-            <button
-              type="button"
-              className={`eg-cta entrance-eg-cta ${hasAnimated ? 'animate' : ''}`}
-              onClick={() => scrollToSection('vinculos')}
-            >
-              Conocé los vínculos
-              <svg className="eg-cta-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
-            </button>
-
-            <div className={`eg-deco eg-deco-3 eg-icon-wrapper ${hasAnimated ? 'animate-eg-icon-3' : ''}`}>
-              <img src="/corazonizquierda.png" alt="" className={`object-contain w-full h-full ${mounted ? 'gentle-swing-3' : ''}`} />
+            <div className="eg-action">
+              <button
+                className={`eg-btn ${a ? 'eg-a-up' : ''}`}
+                style={{ animationDelay: '1.2s' }}
+                onClick={() => scrollTo('contacto')}
+              >
+                Quiero probar Camil
+                <svg className="eg-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+              <span className={`eg-microtrust ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '1.35s' }}>
+                Sin permanencia · Cancelá cuando quieras
+              </span>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* ── IMAGE: Mobile/Tablet — full width, flush left, 2vw margin right ── */}
-        <div className={`eg-image-mobile entrance-eg-image-mobile ${hasAnimated ? 'animate' : ''}`}>
-          <img src="/beso.png" alt="Beso" />
-        </div>
+      <div className="eg-img-mobile">
+        <img
+          src="/beso.png"
+          alt="Camil"
+          className={a ? 'eg-a-scale' : ''}
+          style={{ animationDelay: '0.6s' }}
+        />
       </div>
     </section>
   );
