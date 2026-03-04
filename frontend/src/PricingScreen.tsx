@@ -16,10 +16,10 @@ const PLANS = [
     icon: '/carta.png',
     iconFloat: 'prc-float-1',
     features: [
-      'Intercambio de 4 cartas semanales',
+      'Intercambio de 4 cartas semanales c/u.',
       'Una cita virtual de 3 hs al mes',
-      'Respuestas personalizadas y cálidas',
       'Atención a tus momentos especiales',
+      'Sorpresas con cariño',
     ],
     ctaBg: 'rgba(14,116,144,0.15)',
     ctaBorder: 'rgba(14,116,144,0.3)',
@@ -42,7 +42,7 @@ const PLANS = [
       'Conversaciones fluidas y seguidas',
       'Hasta 4 llamadas de 30 min al mes',
       'Una cita virtual de 3 hs al mes',
-      'Atención a tus momentos especiales',
+      'Sorpresas especiales',
     ],
     ctaBg: 'rgba(244,63,94,0.85)',
     ctaBorder: 'rgba(244,63,94,0.4)',
@@ -550,54 +550,67 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         }
 
         /* ═══ PRIVACY BLOCK ═══ */
+        .prc-privacy-wrapper {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+          padding: 0 clamp(20px, 5vw, 100px);
+          margin-top: clamp(36px, 4vw, 64px);
+          box-sizing: border-box;
+        }
+
         .prc-privacy {
           display: flex;
           align-items: flex-start;
-          margin: clamp(30px, 3.5vw, 56px) auto 0;
-          max-width: clamp(320px, 55vw, 780px);
-          padding: clamp(16px, 1.4vw, 24px) clamp(18px, 2vw, 32px);
-          border-radius: clamp(12px, 1.2vw, 16px);
-          background: linear-gradient(135deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+          width: 100%;
+          max-width: 780px;
+          padding: 28px 32px;
+          border-radius: 18px;
+          background: linear-gradient(135deg, rgba(255,255,255,0.65), rgba(255,255,255,0.35));
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
           border: 1px solid rgba(246,158,130,0.2);
-          box-shadow: 0 2px 12px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.7);
-          gap: clamp(10px, 1.2vw, 20px);
+          box-shadow: 0 2px 16px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.7);
+          gap: 18px;
           opacity: 0;
+          box-sizing: border-box;
         }
 
         .prc-privacy-icon {
-          width: clamp(32px, 2.5vw, 42px);
-          height: clamp(32px, 2.5vw, 42px);
+          width: 44px;
+          height: 44px;
+          min-width: 44px;
           border-radius: 50%;
-          background: linear-gradient(135deg, rgba(246,158,130,0.2), rgba(249,221,163,0.15));
-          border: 1px solid rgba(246,158,130,0.3);
+          background: linear-gradient(135deg, rgba(246,158,130,0.18), rgba(249,221,163,0.12));
+          border: 1px solid rgba(246,158,130,0.25);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          font-size: clamp(14px, 1.2vw, 20px);
+          font-size: 20px;
         }
 
         .prc-privacy-content {
           display: flex;
           flex-direction: column;
-          gap: clamp(3px, 0.4vw, 6px);
+          gap: 6px;
+          min-width: 0;
         }
 
         .prc-privacy-title {
           font-family: 'Poppins', sans-serif;
-          font-weight: 500;
+          font-weight: 600;
           color: #F69E82;
-          font-size: clamp(12px, 0.95vw, 16px);
+          font-size: 15px;
           margin: 0;
+          line-height: 1.3;
         }
 
         .prc-privacy-text {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          color: #5A5A5A;
-          font-size: clamp(11px, 0.85vw, 14px);
+          color: #666;
+          font-size: 14px;
           line-height: 1.7;
           margin: 0;
         }
@@ -799,7 +812,11 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-card-tb .prc-cta { padding: 15px 0; font-size: 15px; margin-top: 24px; }
           .prc-card-tb .prc-card-trust { font-size: 11px; margin-top: 10px; }
 
-          .prc-privacy { max-width: 500px; margin-top: 38px; }
+          .prc-privacy-wrapper { padding: 0 32px; margin-top: 40px; }
+          .prc-privacy { max-width: 500px; padding: 24px 28px; }
+          .prc-privacy-icon { width: 40px; height: 40px; min-width: 40px; font-size: 18px; }
+          .prc-privacy-title { font-size: 14px; }
+          .prc-privacy-text { font-size: 13px; }
 
           .prc-a-down { animation-name: prcUp; }
         }
@@ -859,15 +876,16 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
 
           .prc-title { font-size: clamp(24px, 5.5vw, 30px); }
 
+          .prc-privacy-wrapper { padding: 0 24px; margin-top: 34px; }
           .prc-privacy {
-            max-width: calc(100% - 48px);
-            margin-top: 34px;
-            padding: 20px 22px;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 12px;
+            max-width: 400px;
+            padding: 22px 24px;
+            border-radius: 16px;
+            gap: 16px;
           }
+          .prc-privacy-icon { width: 38px; height: 38px; min-width: 38px; font-size: 17px; }
+          .prc-privacy-title { font-size: 14px; }
+          .prc-privacy-text { font-size: 13px; line-height: 1.65; }
         }
 
         /* ═══ RESPONSIVE: SMALL ≤ 540px ═══ */
@@ -888,6 +906,17 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-card-mb .prc-feat-check { font-size: 14px; }
           .prc-card-mb .prc-cta { padding: 15px 0; font-size: 14.5px; margin-top: 24px; }
           .prc-card-mb .prc-card-trust { font-size: 10px; }
+
+          .prc-privacy-wrapper { padding: 0 20px; margin-top: 30px; }
+          .prc-privacy {
+            max-width: 380px;
+            padding: 20px 22px;
+            border-radius: 14px;
+            gap: 14px;
+          }
+          .prc-privacy-icon { width: 36px; height: 36px; min-width: 36px; font-size: 16px; }
+          .prc-privacy-title { font-size: 13px; }
+          .prc-privacy-text { font-size: 12.5px; }
         }
 
         /* ═══ RESPONSIVE: XS ≤ 400px ═══ */
@@ -927,16 +956,15 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-dot--idle { width: 7px; }
           .prc-swipe { margin-top: 10px; font-size: 10px; }
 
+          .prc-privacy-wrapper { padding: 0 18px; margin-top: 26px; }
           .prc-privacy {
-            max-width: calc(100% - 36px);
-            margin-top: 26px;
-            padding: 14px 16px;
-            border-radius: 12px;
+            padding: 18px 20px;
+            border-radius: 14px;
+            gap: 12px;
           }
-
-          .prc-privacy-icon { width: 30px; height: 30px; font-size: 14px; }
-          .prc-privacy-title { font-size: 12px; }
-          .prc-privacy-text { font-size: 11px; line-height: 1.65; }
+          .prc-privacy-icon { width: 34px; height: 34px; min-width: 34px; font-size: 15px; }
+          .prc-privacy-title { font-size: 12.5px; }
+          .prc-privacy-text { font-size: 11.5px; line-height: 1.6; }
         }
 
         /* ═══ RESPONSIVE: XXS ≤ 340px ═══ */
@@ -963,15 +991,14 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-dot--active { width: 20px; }
           .prc-dot--idle { width: 6px; }
 
+          .prc-privacy-wrapper { padding: 0 14px; margin-top: 22px; }
           .prc-privacy {
-            max-width: calc(100% - 28px);
-            margin-top: 22px;
-            padding: 12px 14px;
-            border-radius: 11px;
+            padding: 16px 16px;
+            border-radius: 12px;
+            gap: 10px;
           }
-
-          .prc-privacy-icon { width: 28px; height: 28px; font-size: 13px; }
-          .prc-privacy-title { font-size: 11px; }
+          .prc-privacy-icon { width: 30px; height: 30px; min-width: 30px; font-size: 14px; }
+          .prc-privacy-title { font-size: 11.5px; }
           .prc-privacy-text { font-size: 10.5px; }
         }
       `}</style>
@@ -1051,17 +1078,19 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
       </div>
 
       {/* ═══ PRIVACY ═══ */}
-      <div
-        className={`prc-privacy ${a ? 'prc-a-up' : ''}`}
-        style={{ animationDelay: '0.9s' }}
-      >
-        <div className="prc-privacy-icon">🔒</div>
-        <div className="prc-privacy-content">
-          <h4 className="prc-privacy-title">Privacidad y seguridad garantizada</h4>
-          <p className="prc-privacy-text">
-            Todas las interacciones se realizan en un marco de respeto, confianza y discreción absoluta.
-            Podés cancelar cuando quieras, sin permanencia mínima.
-          </p>
+      <div className="prc-privacy-wrapper">
+        <div
+          className={`prc-privacy ${a ? 'prc-a-up' : ''}`}
+          style={{ animationDelay: '0.9s' }}
+        >
+          <div className="prc-privacy-icon">🔒</div>
+          <div className="prc-privacy-content">
+            <h4 className="prc-privacy-title">Privacidad y seguridad garantizada</h4>
+            <p className="prc-privacy-text">
+              Todas las interacciones se realizan en un marco de respeto, confianza y discreción absoluta.
+              Podés cancelar cuando quieras, sin permanencia mínima.
+            </p>
+          </div>
         </div>
       </div>
     </section>

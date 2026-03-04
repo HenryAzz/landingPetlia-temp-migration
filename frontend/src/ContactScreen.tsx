@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import emailjs from '@emailjs/browser';
 
 interface ContactScreenProps {
   preSelectedPlan?: string;
@@ -47,12 +48,52 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
     return () => observer.disconnect();
   }, [hasAnimated]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsSubmitting(false);
-    setSubmitted(true);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    // Obtener el texto completo del plan seleccionado
+    const planTexto = PLANS.find(p => p.id === selectedPlan)?.label || selectedPlan || 'No especificado';
+
+    // Agregar fecha y hora
+    const ahora = new Date();
+    const fecha = ahora.toLocaleDateString('es-AR', { 
+      day: '2-digit', 
+      month: 'long', 
+      year: 'numeric' 
+    });
+    const hora = ahora.toLocaleTimeString('es-AR', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+
+    try {
+      await emailjs.send(
+        'service_xq4kynq',      // Tu Service ID
+        'template_ltem9eo',     // Tu Template ID
+        {
+          nombre: formData.get('nombre'),
+          contacto: formData.get('contacto'),
+          plan: planTexto,
+          mensaje: formData.get('mensaje') || 'No dejó mensaje adicional',
+          fecha: fecha,
+          hora: hora
+        },
+        'DyVuk6RLny9SZJDPT'     // Tu Public Key
+      );
+
+      setSubmitted(true);
+      form.reset();
+      setSelectedPlan('');
+    } catch (error) {
+      console.error('Error al enviar:', error);
+      alert('Hubo un error al enviar el formulario. Por favor intentá de nuevo.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
@@ -824,7 +865,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-right-inner { padding: 0 20px; }
 
           .cnt-title { font-size: clamp(24px, 5.5vw, 28px); }
-        .cnt-label { font-size: 10px; }
+          .cnt-label { font-size: 10px; }
           .cnt-desc { font-size: 13px; max-width: 340px; }
 
           .cnt-form-card { padding: 22px 18px; border-radius: 18px; }
@@ -859,7 +900,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           }
 
           .cnt-trust-card-title { font-size: 12.5px; }
-        .cnt-trust-card-desc { font-size: 11px; }
+          .cnt-trust-card-desc { font-size: 11px; }
 
           .cnt-form-card { padding: 20px 16px; gap: 14px; border-radius: 16px; }
           .cnt-form-title { font-size: 16px; }
@@ -867,7 +908,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-submit { padding: 12px 0; font-size: 13px; }
           .cnt-submit-trust-item { font-size: 9.5px; }
 
-        .cnt-join { padding: 9px 14px; font-size: 11px; }
+          .cnt-join { padding: 9px 14px; font-size: 11px; }
 
           .cnt-success { padding: 32px 18px; border-radius: 16px; }
         }

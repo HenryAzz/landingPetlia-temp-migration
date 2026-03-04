@@ -356,7 +356,7 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
               letterSpacing: '0.1em',
             }}
           >
-            Descubrí más
+            Mirá cómo funciona
           </span>
           <svg
             style={{ width: '0.9vw', height: '0.9vw' }}

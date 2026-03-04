@@ -15,7 +15,7 @@ const plans = [
     icon: '/carta.png',
     iconClass: 'pricing-icon-1',
     features: [
-      'Intercambio de 4 cartas semanales',
+      'Intercambio de 4 cartas semanales c/u',
       'Una cita virtual de 3 hs al mes',
       'Respuestas personalizadas y cálidas',
       'Atención a tus momentos especiales',

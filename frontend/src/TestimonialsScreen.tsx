@@ -138,7 +138,7 @@ const TestimonialsScreen = () => {
   const a = hasAnimated;
 
   return (
-    <section ref={sectionRef} id="testimonios" className="tst-section">
+    <section ref={sectionRef} id="experiencias" className="tst-section">
       <style>{`
         .tst-section {
           position: relative;

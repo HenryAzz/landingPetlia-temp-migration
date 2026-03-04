@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 
 const FEATURES = [
   { emoji: '💬', title: 'Mensajes diarios', desc: 'Atención genuina pensada solo para vos' },
-  { emoji: '✉️', title: 'Cartas personalizadas', desc: 'Escritas con dedicación y cariño real' },
+  { emoji: '✉️', title: 'Cartas personalizadas', desc: 'Escritas con dedicación y mucho cariño' },
   { emoji: '📞', title: 'Llamadas', desc: 'Una voz cálida cuando más lo necesitás' },
   { emoji: '🎥', title: 'Citas virtuales', desc: 'Encuentros amenos, desde donde estés' },
 ];

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 
 const SCENES = [
   {
+    id: 'lecturas',
     left: '/leer1.png',
     right: '/leer2.png',
     emoji: '📖',
@@ -10,14 +11,16 @@ const SCENES = [
     chip: '💛 Conexión genuina',
   },
   {
+    id: 'cocinando',
     left: '/compras1.png',
     right: '/compras2.png',
-    emoji: '👩‍🍳',
+    emoji: '🥦',
     title: 'Cocinando juntos',
     desc: 'Los mismos ingredientes, la misma receta. Transformando lo cotidiano en un plan inolvidable.',
     chip: '✨ Momentos únicos',
   },
   {
+    id: 'peliculas',
     left: '/cama1.png',
     right: '/cama2.png',
     emoji: '🍿',
@@ -158,7 +161,6 @@ const ExperiencesScreen = () => {
           position: relative;
         }
 
-        /* ═══ ACCENT ═══ */
         .exp-accent {
           width: 42px;
           height: 2.5px;
@@ -168,7 +170,6 @@ const ExperiencesScreen = () => {
           opacity: 0;
         }
 
-        /* ═══ LABEL ═══ */
         .exp-label {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
@@ -180,7 +181,6 @@ const ExperiencesScreen = () => {
           opacity: 0;
         }
 
-        /* ═══ TITLE — matches ChooseYourBond on desktop ═══ */
         .exp-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
@@ -198,7 +198,6 @@ const ExperiencesScreen = () => {
           color: rgba(255,255,255,0.85);
         }
 
-        /* ═══ SCENE ═══ */
         .exp-scene {
           display: flex;
           flex-direction: column;
@@ -257,7 +256,6 @@ const ExperiencesScreen = () => {
           max-width: 440px;
         }
 
-        /* ═══ CONTROLS ═══ */
         .exp-controls {
           display: flex;
           flex-direction: column;
@@ -320,7 +318,6 @@ const ExperiencesScreen = () => {
           transition: width 50ms linear;
         }
 
-        /* ═══ CTA ═══ */
         .exp-cta-area {
           display: flex;
           flex-direction: column;
@@ -410,6 +407,7 @@ const ExperiencesScreen = () => {
           border: 2.5px solid rgba(255,255,255,0.14);
           transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.45s ease;
           position: relative;
+          background: rgba(0,0,0,0.15);
         }
         .exp-photo-card--left { transform: rotate(-3.5deg); }
         .exp-photo-card--right { transform: rotate(3.5deg); }
@@ -424,7 +422,33 @@ const ExperiencesScreen = () => {
           background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.08) 100%);
           pointer-events: none;
         }
-        .exp-photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+        /* ═══ IMAGE FIT — DEFAULT ═══ */
+        .exp-photo-card img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        /* ═══ Scene 1: Lecturas — both images smaller & centered ═══ */
+        .exp-photo-card--scene-lecturas-left img {
+          object-fit: contain;
+          padding: 8%;
+        }
+        .exp-photo-card--scene-lecturas-right img {
+          object-fit: contain;
+          padding: 6%;
+        }
+
+        /* ═══ Scene 2: Cocinando — both images smaller ═══ */
+        .exp-photo-card--scene-cocinando-left img,
+        .exp-photo-card--scene-cocinando-right img {
+          object-fit: contain;
+          padding: 6%;
+        }
+
+        /* ═══ Scene 3: Películas — keep as cover (default) ═══ */
 
         .exp-pop { transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
         .exp-pop--in { opacity: 1; transform: scale(1); }
@@ -485,9 +509,6 @@ const ExperiencesScreen = () => {
         .exp-a-slide { animation: expSlide 0.85s cubic-bezier(0.22,1,0.36,1) both; }
         .exp-a-pop { animation: expPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-        /* ═══════════════════════════════
-           TABLET ≤ 1024
-        ═══════════════════════════════ */
         @media (max-width: 1024px) {
           .exp-layout {
             flex-direction: column;
@@ -527,9 +548,6 @@ const ExperiencesScreen = () => {
           .exp-a-slide { animation-name: expUp; }
         }
 
-        /* ═══════════════════════════════
-           MOBILE ≤ 768
-        ═══════════════════════════════ */
         @media (max-width: 768px) {
           .exp-layout { padding: 60px 0 52px; }
           .exp-left { padding: 0 28px; }
@@ -570,9 +588,6 @@ const ExperiencesScreen = () => {
           .exp-emoji-sizer { width: 52px; height: 52px; }
         }
 
-        /* ═══════════════════════════════
-           SMALL ≤ 540
-        ═══════════════════════════════ */
         @media (max-width: 540px) {
           .exp-layout { padding: 52px 0 46px; }
           .exp-left { padding: 0 24px; }
@@ -613,9 +628,6 @@ const ExperiencesScreen = () => {
           .exp-photo-card { border-radius: 16px; border-width: 2px; }
         }
 
-        /* ═══════════════════════════════
-           XS ≤ 400
-        ═══════════════════════════════ */
         @media (max-width: 400px) {
           .exp-layout { padding: 46px 0 40px; }
           .exp-left { padding: 0 20px; }
@@ -664,9 +676,6 @@ const ExperiencesScreen = () => {
           .exp-photo-card--right:hover { transform: rotate(3deg) scale(1.03); }
         }
 
-        /* ═══════════════════════════════
-           XXS ≤ 340
-        ═══════════════════════════════ */
         @media (max-width: 340px) {
           .exp-layout { padding: 40px 0 36px; }
           .exp-left { padding: 0 16px; }
@@ -763,12 +772,12 @@ const ExperiencesScreen = () => {
           <div className="exp-photos-wrap">
             <div className="exp-glow" />
             <div className={`exp-photo-slot exp-photo-slot--left exp-pop ${photoPop ? 'exp-pop--in exp-pop-d1' : 'exp-pop--out exp-pop-out-d1'}`}>
-              <div className="exp-photo-card exp-photo-card--left">
+              <div className={`exp-photo-card exp-photo-card--left exp-photo-card--scene-${scene.id}-left`}>
                 <img src={scene.left} alt="Camil" />
               </div>
             </div>
             <div className={`exp-photo-slot exp-photo-slot--right exp-pop ${photoPop ? 'exp-pop--in exp-pop-d2' : 'exp-pop--out exp-pop-out-d2'}`}>
-              <div className="exp-photo-card exp-photo-card--right">
+              <div className={`exp-photo-card exp-photo-card--right exp-photo-card--scene-${scene.id}-right`}>
                 <img src={scene.right} alt="Persona" />
               </div>
             </div>

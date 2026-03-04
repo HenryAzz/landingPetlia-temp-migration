@@ -663,10 +663,10 @@ const HowItWorksScreen = () => {
           <h2 className={`hiw-title ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.3s' }}>
             4 pasos simples
             <br />
-            <span className="hiw-title-light">para empezar con la experiencia</span>
+            <span className="hiw-title-light">para sentirte acompañado</span>
           </h2>
           <p className={`hiw-subtitle ${a ? 'hiw-a-up' : ''}`} style={{ animationDelay: '0.45s' }}>
-            Sin complicaciones, sin esperas largas. Elegí, completá y empezá a vivir la experiencia Camil.
+            Sin complicaciones, sin esperas largas. Elegí, completá y empezá a sentirte diferente.
           </p>
         </div>
 

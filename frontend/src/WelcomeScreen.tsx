@@ -357,7 +357,7 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
 
               {/* CTA — estático */}
               <button
-                onClick={() => scrollTo('que-es')}
+                 onClick={() => scrollTo('contacto')}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 10,
                   padding: '14px 30px', borderRadius: 50,
@@ -370,7 +370,7 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
                   ...(entered ? { animation: 'dkHI 0.8s ease-out 1.25s both' } : {}),
                 }}
               >
-                Conocé a Camil
+                Quiero mi compañia
                 <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

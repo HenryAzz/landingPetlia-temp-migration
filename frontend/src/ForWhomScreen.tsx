@@ -414,7 +414,7 @@ const ForWhomScreen = () => {
                 style={{ animationDelay: '0.6s' }}
                 onClick={() => scrollTo('contacto')}
               >
-                Quiero mi Camil
+                Quiero mi compañia
                 <svg className="fw-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

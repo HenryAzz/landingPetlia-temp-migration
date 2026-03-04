@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import emailjs from '@emailjs/browser';
 
 const ExitIntentModal = () => {
   const [visible, setVisible] = useState(false);
@@ -14,12 +15,10 @@ const ExitIntentModal = () => {
   useEffect(() => {
     if (dismissed) return;
 
-    // Exit intent (desktop)
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 5) show();
     };
 
-    // Scroll depth fallback (mobile + desktop)
     let triggered = false;
     const handleScroll = () => {
       if (triggered) return;
@@ -38,13 +37,47 @@ const ExitIntentModal = () => {
 
   const handleClose = () => { setVisible(false); setDismissed(true); };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsSubmitting(false);
-    setSubmitted(true);
-    setTimeout(() => { setVisible(false); setDismissed(true); }, 2500);
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const ahora = new Date();
+    const fecha = ahora.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
+    const hora = ahora.toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    try {
+      await emailjs.send(
+        'service_xq4kynq',
+        'template_ltem9eo',
+        {
+          nombre: formData.get('nombre'),
+          contacto: formData.get('whatsapp'),
+          plan: '⚡ Solicitud rápida (pop-up de salida)',
+          mensaje: 'El usuario completó el formulario rápido del pop-up. Solo dejó nombre y WhatsApp.',
+          fecha: fecha,
+          hora: hora
+        },
+        'DyVuk6RLny9SZJDPT'
+      );
+
+      setSubmitted(true);
+      setTimeout(() => { setVisible(false); setDismissed(true); }, 2500);
+    } catch (error) {
+      console.error('Error al enviar:', error);
+      alert('Hubo un error al enviar. Intentá de nuevo.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!visible) return null;
@@ -174,8 +207,20 @@ const ExitIntentModal = () => {
             </p>
 
             <form className="ei-form" onSubmit={handleSubmit}>
-              <input className="ei-input" type="text" placeholder="Tu nombre" required />
-              <input className="ei-input" type="tel" placeholder="Tu WhatsApp (ej: +54 11...)" required />
+              <input
+                className="ei-input"
+                type="text"
+                name="nombre"
+                placeholder="Tu nombre"
+                required
+              />
+              <input
+                className="ei-input"
+                type="tel"
+                name="whatsapp"
+                placeholder="Tu WhatsApp (ej: +54 11...)"
+                required
+              />
               <button className="ei-submit" type="submit" disabled={isSubmitting}>
                 {isSubmitting ? <><div className="ei-spinner" /> Enviando...</> : 'Quiero que me contacten 💛'}
               </button>
