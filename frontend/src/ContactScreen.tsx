@@ -1173,12 +1173,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                   )}
                 </button>
 
-                {/* Trust seals */}
-                <div className="cnt-submit-trust">
-                  <span className="cnt-submit-trust-item">🔒 Datos protegidos</span>
-                  <span className="cnt-submit-trust-item">✓ Sin permanencia</span>
-                  <span className="cnt-submit-trust-item">💳 Pago seguro</span>
-                </div>
+              
               </form>
             ) : (
               <div className="cnt-success">

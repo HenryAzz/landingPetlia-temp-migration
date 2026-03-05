@@ -116,7 +116,7 @@ const GiftCamilSection = () => {
         }
         .gc-accent { width: 38px; height: 2.5px; border-radius: 2px; background: linear-gradient(90deg, #F9DDA3, rgba(249,221,163,0.2)); margin-bottom: 14px; opacity: 0; }
         .gc-label { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.22em; color: rgba(255,255,255,0.55); text-transform: uppercase; margin-bottom: 14px; opacity: 0; }
-        .gc-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(28px, 3.2vw, 44px); line-height: 1.25; color: #FFFFFF; letter-spacing: -0.02em; margin: 0 0 clamp(14px, 1.4vw, 20px); text-shadow: 0 2px 16px rgba(0,0,0,0.15); opacity: 0; }
+        .gc-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(28px, 3.2vw, 55px); line-height: 1.25; color: #FFFFFF; letter-spacing: -0.02em; margin: 0 0 clamp(14px, 1.4vw, 20px); text-shadow: 0 2px 16px rgba(0,0,0,0.15); opacity: 0; }
         .gc-title-light { font-weight: 400; font-style: italic; color: rgba(255,255,255,0.88); }
         .gc-title-gold { color: #F9DDA3; }
         .gc-sub { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(15px, 1.15vw, 17px); color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 clamp(14px, 1.4vw, 20px); max-width: 440px; letter-spacing: 0.015em; opacity: 0; }

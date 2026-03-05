@@ -120,17 +120,18 @@ const EverythingGoodScreen = () => {
         }
 
         .eg-img-desktop {
-          position: absolute;
-          top: 0;
-          bottom: -10px;
-          left: 0;
-          width: 60%;
-          object-fit: contain;
-          object-position: left bottom;
-          z-index: 1;
-          opacity: 0;
-          margin-left: min(20vh, 200px);
-        }
+  position: absolute;
+  top: 0;
+  bottom: -10px;
+  left: 0;
+  height: 120%;
+  width: auto;
+  object-fit: contain;
+  object-position: left bottom;
+  z-index: 1;
+  opacity: 0;
+  margin-left: clamp(60px, 12%, 200px);
+}
 
         .eg-hearts-container {
           position: absolute;

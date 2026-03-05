@@ -43,7 +43,6 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
   };
 
   const navLinks = [
-    { label: 'Inicio', id: 'inicio' },
     { label: 'Cómo funciona', id: 'como-funciona' },
     { label: 'Vínculos', id: 'vinculos' },
     { label: 'Experiencias', id: 'experiencias' },
@@ -72,7 +71,7 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
           display: flex;
           align-items: center;
           justify-content: space-between;
-          max-width: 1400px;
+          max-width: 1380px;
           margin: 0 auto;
         }
 
@@ -289,10 +288,10 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
         /* ══════════════════════════════
            DESKTOP (> 1024px)
         ══════════════════════════════ */
-        .nav-inner { padding: 0.3vw 4vw; }
+        .nav-inner { padding: 0.3vw 40px; }
         .nav-logo-img { height: 3.6vw; }
         .nav-bar.scrolled .nav-logo-img { height: 3.2vw; }
-        .nav-bar.scrolled .nav-inner { padding: 0.2vw 4vw; }
+        .nav-bar.scrolled .nav-inner { padding: 0.2vw 40px; }
         .nav-desktop { gap: 2.2vw; }
         .nav-link { font-size: 0.85vw; }
         .nav-btn-outline { padding: 0.4vw 1.3vw; font-size: 0.82vw; }
@@ -313,10 +312,10 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
             height: 2px;
             background: rgba(255,255,255,0.85);
           }
-          .nav-inner { padding: 10px 24px; }
+          .nav-inner { padding: 10px 40px; }
           .nav-logo-img { height: 40px !important; }
           .nav-bar.scrolled .nav-logo-img { height: 34px !important; }
-          .nav-bar.scrolled .nav-inner { padding: 8px 24px; }
+          .nav-bar.scrolled .nav-inner { padding: 8px 40px; }
         }
 
         /* ══════════════════════════════
@@ -324,11 +323,11 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
            → Transparent bg, compact
         ══════════════════════════════ */
         @media (max-width: 768px) {
-          .nav-inner { padding: 6px 16px; }
+          .nav-inner { padding: 6px 24px; }
           .nav-logo-img { height: 32px !important; }
 
           .nav-bar.scrolled .nav-logo-img { height: 28px !important; }
-          .nav-bar.scrolled .nav-inner { padding: 5px 16px; }
+          .nav-bar.scrolled .nav-inner { padding: 5px 24px; }
 
           .hamburger-line {
             width: 20px;
@@ -356,11 +355,11 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
            SMALL MOBILE (≤ 480px)
         ══════════════════════════════ */
         @media (max-width: 480px) {
-          .nav-inner { padding: 5px 14px; }
+          .nav-inner { padding: 5px 24px; }
           .nav-logo-img { height: 28px !important; }
 
           .nav-bar.scrolled .nav-logo-img { height: 24px !important; }
-          .nav-bar.scrolled .nav-inner { padding: 4px 14px; }
+          .nav-bar.scrolled .nav-inner { padding: 4px 24px; }
 
           .hamburger-line {
             width: 18px;
@@ -376,13 +375,21 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
         }
 
         /* ══════════════════════════════
+           XS MOBILE (≤ 400px)
+        ══════════════════════════════ */
+        @media (max-width: 400px) {
+          .nav-inner { padding: 5px 18px; }
+          .nav-bar.scrolled .nav-inner { padding: 4px 18px; }
+        }
+
+        /* ══════════════════════════════
            VERY SMALL (≤ 340px)
         ══════════════════════════════ */
         @media (max-width: 340px) {
-          .nav-inner { padding: 4px 10px; }
+          .nav-inner { padding: 4px 14px; }
           .nav-logo-img { height: 24px !important; }
           .nav-bar.scrolled .nav-logo-img { height: 22px !important; }
-          .nav-bar.scrolled .nav-inner { padding: 3px 10px; }
+          .nav-bar.scrolled .nav-inner { padding: 3px 14px; }
 
           .hamburger-line { width: 16px; height: 1.5px; }
           .hamburger-line + .hamburger-line { margin-top: 3px; }

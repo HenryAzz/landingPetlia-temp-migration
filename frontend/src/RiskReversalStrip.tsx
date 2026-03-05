@@ -35,8 +35,8 @@ const RiskReversalStrip = () => {
         }
 
         .rr-container {
-          max-width: 1100px; margin: 0 auto;
-          padding: 0 clamp(24px, 5vw, 80px);
+          max-width: 1380px; margin: 0 auto;
+          padding: 0 40px;
           display: flex; flex-direction: column; align-items: center;
           gap: clamp(24px, 2.5vw, 36px);
         }
@@ -117,6 +117,7 @@ const RiskReversalStrip = () => {
         .rr-a-card { animation: rrCardIn 0.7s cubic-bezier(0.22,1,0.36,1) both; }
 
         @media (max-width: 768px) {
+          .rr-container { padding: 0 24px; }
           .rr-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
           .rr-card { padding: 18px; gap: 14px; }
           .rr-card-icon { font-size: 26px; }
@@ -125,7 +126,7 @@ const RiskReversalStrip = () => {
         }
         @media (max-width: 400px) {
           .rr-section { padding: 28px 0; }
-          .rr-container { gap: 18px; }
+          .rr-container { gap: 18px; padding: 0 18px; }
           .rr-badge { font-size: 10.5px; padding: 5px 14px; }
           .rr-card { padding: 14px; gap: 12px; border-radius: 12px; }
           .rr-card-icon { font-size: 24px; }
@@ -133,6 +134,7 @@ const RiskReversalStrip = () => {
           .rr-card-desc { font-size: 12.5px; color: #555; }
         }
         @media (max-width: 340px) {
+          .rr-container { padding: 0 14px; }
           .rr-card { padding: 12px; gap: 10px; }
           .rr-card-icon { font-size: 22px; }
           .rr-card-title { font-size: 13px; }

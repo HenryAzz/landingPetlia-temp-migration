@@ -105,8 +105,10 @@ const FAQScreen = () => {
           z-index: 10;
           display: flex;
           width: 100%;
-          padding-left: 6vw;
-          padding-right: 6vw;
+          max-width: 1380px;
+          margin: 0 auto;
+          padding-left: 40px;
+          padding-right: 40px;
           gap: 4vw;
         }
 
