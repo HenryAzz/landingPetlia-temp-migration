@@ -73,9 +73,6 @@ const EverythingGoodScreen = () => {
           height: 100%;
         }
 
-        /* ═══════════════════════════════
-           LEFT COLUMN
-        ═══════════════════════════════ */
         .eg-col-left {
           flex: 0 0 50%;
           display: flex;
@@ -86,19 +83,12 @@ const EverythingGoodScreen = () => {
 
         .eg-left-text {
           padding-top: clamp(40px, 6vh, 80px);
-          padding-bottom: clamp(16px, 2vh, 28px);
+          padding-bottom: 0;
           padding-right: clamp(24px, 3vw, 48px);
-                    margin-left: clamp(24px, 3vw, 50px);
-
+          margin-left: clamp(24px, 3vw, 50px);
           flex-shrink: 0;
           position: relative;
           z-index: 3;
-          /*
-            Match reference: max-width 1300px centered + padding clamp(24px,5vw,80px)
-            Text left edge from viewport = max((100vw - 1300px)/2, 0px) + clamp(24px,5vw,80px)
-            Since this column starts at viewport left edge (full-width row),
-            padding-left = that same value.
-          */
           padding-left: max(
             clamp(24px, 5vw, 80px),
             calc((100vw - 1300px) / 2 + clamp(24px, 5vw, 80px))
@@ -110,6 +100,7 @@ const EverythingGoodScreen = () => {
           position: relative;
           overflow: hidden;
           min-height: 0;
+          z-index: 2;
         }
 
         .eg-img-glow {
@@ -131,17 +122,17 @@ const EverythingGoodScreen = () => {
 
         .eg-img-desktop {
           position: absolute;
-          bottom: 0;
+          top: 0;
+          bottom: -10px;
           left: 0;
-          width: 100%;
-          max-height: 100%;
+          width: 60%;
           object-fit: contain;
           object-position: left bottom;
           z-index: 1;
           opacity: 0;
+          margin-left: 20vh;
         }
 
-        /* ═══ RISING HEARTS ═══ */
         .eg-hearts-container {
           position: absolute;
           inset: 0;
@@ -197,9 +188,6 @@ const EverythingGoodScreen = () => {
           animation-iteration-count: infinite;
         }
 
-        /* ═══════════════════════════════
-           RIGHT COLUMN
-        ═══════════════════════════════ */
         .eg-col-right {
           flex: 1;
           display: flex;
@@ -217,12 +205,10 @@ const EverythingGoodScreen = () => {
           flex-direction: column;
         }
 
-        /* ═══ MOBILE HEADER ═══ */
         .eg-mobile-header {
           display: none;
         }
 
-        /* ═══ FLOATING DECO ═══ */
         .eg-deco {
           position: absolute;
           z-index: 3;
@@ -263,9 +249,6 @@ const EverythingGoodScreen = () => {
         .eg-fl-2 { animation: egSwing2 5.5s ease-in-out infinite 0.8s; }
         .eg-fl-3 { animation: egSwing3 4.8s ease-in-out infinite 1.5s; }
 
-        /* ═══════════════════════════════
-           TYPOGRAPHY — matches reference
-        ═══════════════════════════════ */
         .eg-accent {
           width: 38px;
           height: 2.5px;
@@ -287,7 +270,6 @@ const EverythingGoodScreen = () => {
         }
 
         .eg-title {
-
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
           font-size: clamp(28px, 3.2vw, 44px);
@@ -296,14 +278,11 @@ const EverythingGoodScreen = () => {
           letter-spacing: -0.02em;
           margin: 0 0 20px;
           opacity: 0;
-       
-
-         
         }
-        .eg-title-light { 
+        .eg-title-light {
           font-weight: 400;
           color: #4A4A4A;
-        } 
+        }
 
         .eg-sub {
           font-family: 'Poppins', sans-serif;
@@ -317,9 +296,6 @@ const EverythingGoodScreen = () => {
           opacity: 0;
         }
 
-        /* ═══════════════════════════════
-           BENEFITS — single column stack
-        ═══════════════════════════════ */
         .eg-benefits {
           display: flex;
           flex-direction: column;
@@ -384,7 +360,6 @@ const EverythingGoodScreen = () => {
           letter-spacing: 0.01em;
         }
 
-        /* ═══ TRUST ═══ */
         .eg-trust {
           display: flex;
           align-items: flex-start;
@@ -434,7 +409,6 @@ const EverythingGoodScreen = () => {
           letter-spacing: 0.015em;
         }
 
-        /* ═══ ACTION ═══ */
         .eg-action {
           display: flex;
           flex-direction: column;
@@ -489,7 +463,6 @@ const EverythingGoodScreen = () => {
           opacity: 0;
         }
 
-        /* ═══ MOBILE IMAGE ═══ */
         .eg-img-mobile {
           display: none;
           width: 100%;
@@ -504,7 +477,6 @@ const EverythingGoodScreen = () => {
           opacity: 0;
         }
 
-        /* ═══ ANIMATIONS ═══ */
         @keyframes egUp {
           0%   { opacity: 0; transform: translateY(28px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -533,11 +505,6 @@ const EverythingGoodScreen = () => {
         .eg-a-pop   { animation: egPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
         .eg-a-card  { animation: egCardIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
 
-        /* ═══════════════════════════════
-           RESPONSIVE
-        ═══════════════════════════════ */
-
-        /* TABLET ≤ 1024px */
         @media (max-width: 1024px) {
           .eg-row { flex-direction: column; }
           .eg-col-left { display: none; }
@@ -555,17 +522,13 @@ const EverythingGoodScreen = () => {
             margin-bottom: 28px;
           }
           .eg-mobile-header .eg-sub { margin-bottom: 0; }
-          .eg-benefits {
-            max-width: 480px;
-            width: 100%;
-          }
+          .eg-benefits { max-width: 480px; width: 100%; }
           .eg-benefit { text-align: left; }
           .eg-trust { max-width: 480px; text-align: left; }
           .eg-action { align-items: center; }
           .eg-dk-1, .eg-dk-2, .eg-dk-3 { display: none; }
         }
 
-        /* MOBILE ≤ 768px */
         @media (max-width: 768px) {
           .eg-col-right { padding: clamp(36px, 5vw, 56px) 24px 32px; }
           .eg-title { font-size: clamp(24px, 5.5vw, 30px); margin-bottom: 14px; }
@@ -583,7 +546,6 @@ const EverythingGoodScreen = () => {
           .eg-btn { padding: 13px 28px; font-size: 14px; }
         }
 
-        /* SMALL ≤ 540px */
         @media (max-width: 540px) {
           .eg-col-right { padding: 36px 20px 28px; }
           .eg-title { font-size: clamp(22px, 5vw, 26px); }
@@ -593,7 +555,6 @@ const EverythingGoodScreen = () => {
           .eg-trust { padding: 14px 16px; border-radius: 14px; }
         }
 
-        /* XS ≤ 400px */
         @media (max-width: 400px) {
           .eg-col-right { padding: 28px 18px 24px; }
           .eg-accent { width: 30px; margin-bottom: 10px; }
@@ -616,7 +577,6 @@ const EverythingGoodScreen = () => {
           .eg-microtrust { font-size: 11px; }
         }
 
-        /* XXS ≤ 340px */
         @media (max-width: 340px) {
           .eg-col-right { padding: 24px 14px 20px; }
           .eg-title { font-size: 19px; }
@@ -633,8 +593,6 @@ const EverythingGoodScreen = () => {
       `}</style>
 
       <div className="eg-row">
-
-        {/* ═══ LEFT COLUMN — Title + Image (Desktop) ═══ */}
         <div className="eg-col-left">
           <div className="eg-left-text">
             <div className={`eg-accent ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.15s' }} />
@@ -687,11 +645,8 @@ const EverythingGoodScreen = () => {
           </div>
         </div>
 
-        {/* ═══ RIGHT COLUMN — Benefits + Trust + CTA ═══ */}
         <div className="eg-col-right">
           <div className="eg-inner">
-
-            {/* Mobile-only header */}
             <div className="eg-mobile-header">
               <div className={`eg-accent ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.15s' }} />
               <span className={`eg-label ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.25s' }}>
@@ -706,7 +661,6 @@ const EverythingGoodScreen = () => {
               </p>
             </div>
 
-            {/* Floating deco */}
             <div className={`eg-deco eg-dk-1 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '0.8s' }}>
               <img src="/corazonderecha.png" alt="" className={mounted ? 'eg-fl-1' : ''} />
             </div>
@@ -717,7 +671,6 @@ const EverythingGoodScreen = () => {
               <img src="/corazonizquierda.png" alt="" className={mounted ? 'eg-fl-3' : ''} />
             </div>
 
-            {/* Benefits — single column */}
             <div className="eg-benefits">
               {BENEFITS.map((b, i) => (
                 <div
@@ -734,7 +687,6 @@ const EverythingGoodScreen = () => {
               ))}
             </div>
 
-            {/* Trust block */}
             <div className={`eg-trust ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.95s' }}>
               <div className="eg-trust-badge">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -750,7 +702,6 @@ const EverythingGoodScreen = () => {
               </div>
             </div>
 
-            {/* CTA */}
             <div className="eg-action">
               <button
                 className={`eg-btn ${a ? 'eg-a-up' : ''}`}
@@ -770,7 +721,6 @@ const EverythingGoodScreen = () => {
         </div>
       </div>
 
-      {/* Mobile image */}
       <div className="eg-img-mobile">
         <img
           src="/beso.png"
