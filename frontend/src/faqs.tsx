@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 const FAQS = [
   {
     question: '¿Camil es una persona real?',
-    answer: 'Sí, absolutamente. Camil es una persona real, con sentimientos, humor y dedicación genuina. No es un bot, no es inteligencia artificial. Cada mensaje, cada carta y cada llamada es auténtica.',
+    answer: 'Sí, absolutamente. Camil es una persona real. No es un bot, no es inteligencia artificial. Cada mensaje, cada carta y cada llamada es auténtica.',
   },
   {
     question: '¿Qué tipo de servicio es este exactamente?',

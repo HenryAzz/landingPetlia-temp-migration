@@ -412,11 +412,26 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           margin: 0 0 clamp(2px, 0.3vw, 6px);
         }
 
-        /* ═══ TWO-COL ROW ═══ */
+        /* ═══ TWO-COL ROW — CHANGED: subgrid for alignment ═══ */
         .cnt-row-2 {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: clamp(10px, 0.8vw, 16px);
+          column-gap: clamp(10px, 0.8vw, 16px);
+          row-gap: clamp(4px, 0.35vw, 6px);
+        }
+
+        .cnt-row-2 > .cnt-field {
+          display: grid;
+          grid-row: span 2;
+          grid-template-rows: subgrid;
+        }
+
+        /* ═══ Label row wrapper (ensures same height in both columns) ═══ */
+        .cnt-label-row {
+          display: flex;
+          align-items: center;
+          gap: clamp(6px, 0.5vw, 10px);
+          min-height: 0;
         }
 
         /* ═══ FORM FIELDS ═══ */
@@ -490,7 +505,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-methods {
           display: flex;
           gap: clamp(6px, 0.5vw, 10px);
-          margin-bottom: clamp(2px, 0.3vw, 5px);
         }
 
         .cnt-method {
@@ -830,7 +844,17 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-title { font-size: clamp(26px, 6vw, 34px); }
           .cnt-desc { font-size: 14px; max-width: 380px; }
 
-          .cnt-row-2 { grid-template-columns: 1fr; }
+          /* CHANGED: reset subgrid for single column */
+          .cnt-row-2 {
+            grid-template-columns: 1fr;
+            gap: clamp(10px, 0.8vw, 16px);
+          }
+          .cnt-row-2 > .cnt-field {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(4px, 0.35vw, 6px);
+            grid-row: auto;
+          }
 
           .cnt-form-card { max-width: 100%; padding: 26px; border-radius: 20px; }
           .cnt-success { max-width: 100%; padding: 40px 24px; border-radius: 20px; }
@@ -1011,7 +1035,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
               ))}
             </div>
 
-            {/* Join team — now on the left */}
             <button
               className={`cnt-join ${a ? 'cnt-a-up' : ''}`}
               style={{ animationDelay: '0.8s' }}
@@ -1036,10 +1059,13 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
               >
                 <h3 className="cnt-form-title">Solicitar vínculo</h3>
 
-                {/* Name + Contact in 2 cols */}
+                {/* CHANGED: Name + Contact with subgrid alignment */}
                 <div className="cnt-row-2">
                   <div className="cnt-field">
-                    <label className="cnt-field-label">Nombre *</label>
+                    {/* Wrapper div so both label rows share the same subgrid row height */}
+                    <div className="cnt-label-row">
+                      <label className="cnt-field-label" style={{ margin: 0 }}>Nombre *</label>
+                    </div>
                     <input
                       type="text"
                       name="nombre"
@@ -1050,34 +1076,34 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                   </div>
 
                   <div className="cnt-field">
-  <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(6px, 0.5vw, 10px)' }}>
-    <label className="cnt-field-label" style={{ margin: 0 }}>Contacto *</label>
-    <div className="cnt-methods" style={{ marginBottom: 0 }}>
-      {(['telefono', 'correo'] as const).map((m) => (
-        <button
-          key={m}
-          type="button"
-          className="cnt-method"
-          onClick={() => setContactMethod(m)}
-          style={{
-            border: `1px solid ${contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.2)'}`,
-            backgroundColor: contactMethod === m ? 'rgba(249,221,163,0.15)' : 'transparent',
-            color: contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.5)',
-          }}
-        >
-          {m === 'telefono' ? '📞' : '✉️'}
-        </button>
-      ))}
-    </div>
-  </div>
-  <input
-    type={contactMethod === 'telefono' ? 'tel' : 'email'}
-    name="contacto"
-    className="cnt-input"
-    placeholder={contactMethod === 'telefono' ? '+54 11 1234-5678' : 'Tu correo electrónico'}
-    required
-  />
-</div>
+                    <div className="cnt-label-row">
+                      <label className="cnt-field-label" style={{ margin: 0 }}>Contacto *</label>
+                      <div className="cnt-methods">
+                        {(['telefono', 'correo'] as const).map((m) => (
+                          <button
+                            key={m}
+                            type="button"
+                            className="cnt-method"
+                            onClick={() => setContactMethod(m)}
+                            style={{
+                              border: `1px solid ${contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.2)'}`,
+                              backgroundColor: contactMethod === m ? 'rgba(249,221,163,0.15)' : 'transparent',
+                              color: contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.5)',
+                            }}
+                          >
+                            {m === 'telefono' ? '📞' : '✉️'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <input
+                      type={contactMethod === 'telefono' ? 'tel' : 'email'}
+                      name="contacto"
+                      className="cnt-input"
+                      placeholder={contactMethod === 'telefono' ? '+54 11 1234-5678' : 'Tu correo electrónico'}
+                      required
+                    />
+                  </div>
                 </div>
 
                 {/* Plan */}

@@ -1,46 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 
 const BONDS = [
-  {
-    id: 'correspondencia',
-    title: 'Correspondencia especial',
-    subtitle: 'Para quien busca un toque dulce',
-    description: 'Dale chispa a tu semana con un toque encantador y un espacio al mes para compartir tiempo juntos.',
-    highlights: ['Cartas semanales', '1 cita virtual / mes', 'Sorpresas'],
-    bg: 'rgba(14, 116, 144, 0.5)',
-    accent: '#67D4E8',
-    accentGlow: 'rgba(103,212,232,0.15)',
-    icon: '/carta.png',
-    iconFloat: 'cyb-fl-1',
-    stagger: 'right',
-  },
-  {
-    id: 'casual',
-    title: 'Casualmente cotidiano',
-    subtitle: 'La compañía que te cambia el día',
-    description: 'Mantené una conversación para compartir más que el día a día y juntarse de vez en cuando.',
-    highlights: ['Mensajes diarios', '1 cita virtual / mes', 'Audios y llamadas limitadas', 'Sorpresas'],
-    bg: 'rgba(244, 63, 94, 0.6)',
-    accent: '#FF8FA3',
-    accentGlow: 'rgba(255,143,163,0.15)',
-    icon: '/celular.png',
-    iconFloat: 'cyb-fl-2',
-    stagger: 'left',
-    popular: true,
-  },
-  {
-    id: 'diaria',
-    title: 'Compañía diaria',
-    subtitle: 'Tu cómplice de cada momento',
-    description: 'Transformá lo cotidiano en pura magia y alegría como tu fiel compañera.',
-    highlights: ['Conversación continua', '1 cita virtual / mes', 'audios + llamadas + sorpresas'],
-    bg: 'rgba(234, 179, 8, 0.6)',
-    accent: '#F9DDA3',
-    accentGlow: 'rgba(249,221,163,0.15)',
-    icon: '/billete.png',
-    iconFloat: 'cyb-fl-3',
-    stagger: 'right',
-  },
+  { id: 'correspondencia', title: 'Correspondencia especial', subtitle: 'Para quien busca un toque dulce', description: 'Dale chispa a tu semana con un toque encantador y un espacio al mes para compartir tiempo juntos.', highlights: ['Cartas semanales', '1 cita virtual / mes', 'Sorpresas'], bg: 'rgba(14, 116, 144, 0.5)', accent: '#67D4E8', accentGlow: 'rgba(103,212,232,0.15)', icon: '/carta.png', iconFloat: 'cyb-fl-1', stagger: 'right' },
+  { id: 'casual', title: 'Casualmente cotidiano', subtitle: 'La compañía que te cambia el día', description: 'Mantené una conversación para compartir más que el día a día y juntarse de vez en cuando.', highlights: ['Mensajes diarios', '1 cita virtual / mes', 'Audios y llamadas limitadas', 'Sorpresas'], bg: 'rgba(244, 63, 94, 0.6)', accent: '#FF8FA3', accentGlow: 'rgba(255,143,163,0.15)', icon: '/celular.png', iconFloat: 'cyb-fl-2', stagger: 'left', popular: true },
+  { id: 'diaria', title: 'Compañía diaria', subtitle: 'Tu cómplice de cada momento', description: 'Transformá lo cotidiano en pura magia y alegría como tu fiel compañera.', highlights: ['Conversación continua', '1 cita virtual / mes', 'audios + llamadas + sorpresas'], bg: 'rgba(234, 179, 8, 0.6)', accent: '#F9DDA3', accentGlow: 'rgba(249,221,163,0.15)', icon: '/billete.png', iconFloat: 'cyb-fl-3', stagger: 'right' },
 ];
 
 const ChooseYourBondScreen = () => {
@@ -53,22 +16,14 @@ const ChooseYourBondScreen = () => {
   useEffect(() => {
     if (hasAnimated) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setHasAnimated(true);
-          observer.disconnect();
-        }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setHasAnimated(true); observer.disconnect(); } },
       { threshold: 0.12 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
     return () => observer.disconnect();
   }, [hasAnimated]);
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-  };
-
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   const a = hasAnimated;
 
   return (
@@ -79,7 +34,6 @@ const ChooseYourBondScreen = () => {
           width: 100%;
           overflow: hidden;
         }
-
         .cyb-bg {
           position: absolute;
           inset: 0;
@@ -96,15 +50,16 @@ const ChooseYourBondScreen = () => {
           object-fit: cover;
           transform: translateY(-8%);
         }
-
         .cyb-layout {
           position: relative;
           z-index: 5;
           display: flex;
           min-height: 95vh;
+          max-width: 1380px;
+          margin: 0 auto;
         }
         .cyb-left {
-          width: 40%;
+          width: 38%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -116,12 +71,12 @@ const ChooseYourBondScreen = () => {
           align-items: flex-start;
           justify-content: center;
           width: 100%;
-          padding-left: 7vw;
+          padding-left: 40px;
           padding-right: 3vw;
           gap: clamp(14px, 1.3vw, 20px);
         }
         .cyb-right {
-          width: 60%;
+          width: 62%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -129,18 +84,16 @@ const ChooseYourBondScreen = () => {
           padding: clamp(30px, 3vw, 50px) 0;
         }
 
-        /* ═══ CARDS CONTAINER — wider, tighter gap ═══ */
+        /* ★ Cards container — wider, less vertical space */
         .cyb-cards {
           display: flex;
           flex-direction: column;
           width: 100%;
-          max-width: 46vw;
-          gap: clamp(10px, 0.85vw, 14px);
-                    margin: 0 35px 0 0;
-
+          max-width: 680px;
+          gap: clamp(8px, 0.65vw, 12px);
+          margin: 0 40px 0 0;
         }
 
-        /* ═══ TYPOGRAPHY — matching reference sizing ═══ */
         .cyb-accent {
           width: 38px;
           height: 2.5px;
@@ -168,29 +121,19 @@ const ChooseYourBondScreen = () => {
           text-shadow: 0 2px 16px rgba(0,0,0,0.2);
           opacity: 0;
         }
-        .cyb-title-light {
-          font-weight: 400;
-          font-style: italic;
-          color: rgba(255,255,255,0.9);
-        }
+        .cyb-title-light { font-weight: 400; font-style: italic; color: rgba(255,255,255,0.9); }
         .cyb-sub {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           font-size: clamp(15px, 1.15vw, 17px);
           line-height: 1.75;
           color: rgba(255,255,255,0.75);
-          margin: 10px 0 30px 0 ;
+          margin: 10px 0 30px 0;
           max-width: 440px;
           letter-spacing: 0.015em;
           opacity: 0;
         }
-
-        .cyb-cta-wrap {
-          display: flex;
-          flex-direction: column;
-          align-items: inherit;
-          gap: 14px;
-        }
+        .cyb-cta-wrap { display: flex; flex-direction: column; align-items: inherit; gap: 14px; }
         .cyb-btn {
           display: inline-flex;
           align-items: center;
@@ -211,175 +154,55 @@ const ChooseYourBondScreen = () => {
           overflow: hidden;
           opacity: 0;
         }
-        .cyb-btn::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          border-radius: 50px;
-          background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, transparent 50%);
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-        .cyb-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 32px rgba(249,221,163,0.35), 0 2px 8px rgba(0,0,0,0.1);
-        }
+        .cyb-btn::before { content: ''; position: absolute; inset: 0; border-radius: 50px; background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, transparent 50%); opacity: 0; transition: opacity 0.3s ease; }
+        .cyb-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(249,221,163,0.35), 0 2px 8px rgba(0,0,0,0.1); }
         .cyb-btn:hover::before { opacity: 1; }
         .cyb-btn:active { transform: translateY(0); }
-        .cyb-btn-arrow {
-          width: 17px;
-          height: 17px;
-          transition: transform 0.3s ease;
-        }
+        .cyb-btn-arrow { width: 17px; height: 17px; transition: transform 0.3s ease; }
         .cyb-btn:hover .cyb-btn-arrow { transform: translateX(3px); }
-        .cyb-microtrust {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          font-size: clamp(13px, 1vw, 14px);
-          color: rgba(255,255,255,0.45);
-          letter-spacing: 0.03em;
-          opacity: 0;
-          margin-top: 30px;
-        }
+        .cyb-microtrust { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(13px, 1vw, 14px); color: rgba(255,255,255,0.45); letter-spacing: 0.03em; opacity: 0; margin-top: 30px; }
 
-        /* ═══ CARD — compact, wider proportions ═══ */
+        /* ★ CARD — compact horizontal proportions */
         .cyb-card {
           position: relative;
-          border-radius: clamp(16px, 1.3vw, 22px);
-          padding: clamp(18px, 1.4vw, 24px) clamp(22px, 1.8vw, 30px);
+          border-radius: clamp(14px, 1.1vw, 20px);
+          padding: clamp(14px, 1.1vw, 18px) clamp(22px, 1.8vw, 30px);
           backdrop-filter: blur(28px);
           -webkit-backdrop-filter: blur(28px);
           box-shadow: 0 4px 4px rgba(0,0,0,0.2), inset 1px 4px 8px rgba(0,0,0,0.2);
           display: flex;
           flex-direction: column;
           justify-content: center;
-          gap: clamp(5px, 0.4vw, 8px);
+          gap: clamp(3px, 0.25vw, 5px);
           overflow: visible;
           cursor: pointer;
           opacity: 0;
           transition: all 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
         }
-        .cyb-card::after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: clamp(22px, 2vw, 30px);
-          right: clamp(22px, 2vw, 30px);
-          height: 2px;
-          border-radius: 0 0 2px 2px;
-          background: var(--card-accent);
-          opacity: 0.4;
-        }
-        .cyb-card::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          border-radius: inherit;
-          background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%);
-          opacity: 0;
-          transition: opacity 0.4s ease;
-          z-index: 0;
-        }
-        .cyb-card:hover {
-          transform: translateY(-5px) scale(1.015);
-          box-shadow: 0 16px 40px rgba(0,0,0,0.3), inset 1px 4px 8px rgba(0,0,0,0.2), 0 0 40px var(--card-glow);
-        }
+        .cyb-card::after { content: ''; position: absolute; top: 0; left: clamp(22px, 2vw, 30px); right: clamp(22px, 2vw, 30px); height: 2px; border-radius: 0 0 2px 2px; background: var(--card-accent); opacity: 0.4; }
+        .cyb-card::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%); opacity: 0; transition: opacity 0.4s ease; z-index: 0; }
+        .cyb-card:hover { transform: translateY(-5px) scale(1.015); box-shadow: 0 16px 40px rgba(0,0,0,0.3), inset 1px 4px 8px rgba(0,0,0,0.2), 0 0 40px var(--card-glow); }
         .cyb-card:hover::before { opacity: 1; }
         .cyb-card > * { position: relative; z-index: 1; }
         .cyb-stagger-r { margin-left: clamp(8px, 1vw, 16px); }
         .cyb-stagger-l { margin-right: clamp(8px, 1vw, 16px); }
 
-        .cyb-popular {
-          position: absolute;
-          top: clamp(-11px, -0.8vw, -7px);
-          right: clamp(16px, 1.7vw, 26px);
-          padding: clamp(5px, 0.3vw, 7px) clamp(14px, 1vw, 18px);
-          border-radius: 50px;
-          background: rgba(255,255,255,0.15);
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          border: 1px solid rgba(255,255,255,0.15);
-          color: #FFFFFF;
-          font-family: 'Poppins', sans-serif;
-          font-weight: 600;
-          font-size: clamp(10px, 0.75vw, 13px);
-          letter-spacing: 0.1em;
-          white-space: nowrap;
-          z-index: 5;
-        }
+        .cyb-popular { position: absolute; top: clamp(-11px, -0.8vw, -7px); right: clamp(16px, 1.7vw, 26px); padding: clamp(5px, 0.3vw, 7px) clamp(14px, 1vw, 18px); border-radius: 50px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15); color: #FFFFFF; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: clamp(10px, 0.75vw, 13px); letter-spacing: 0.1em; white-space: nowrap; z-index: 5; }
 
-        .cyb-card-title {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 600;
-          color: #FFFFFF;
-          font-size: clamp(18px, 1.55vw, 24px);
-          line-height: 1.3;
-          margin: 0;
-        }
-        .cyb-card-subtitle {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 500;
-          font-size: clamp(11px, 0.8vw, 13px);
-          letter-spacing: 0.05em;
-          padding: 3px 11px;
-          border-radius: 50px;
-          background: rgba(255,255,255,0.1);
-          border: 1px solid rgba(255,255,255,0.08);
-          color: rgba(255,255,255,0.8);
-          white-space: nowrap;
-          align-self: flex-start;
-        }
-        .cyb-card-desc {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 300;
-          color: rgba(255,255,255,0.8);
-          font-size: clamp(13px, 1vw, 16px);
-          line-height: 1.55;
-          margin: 0;
-          padding-right: clamp(40px, 4vw, 65px);
-        }
-        .cyb-card-features {
-          display: flex;
-          flex-wrap: wrap;
-          gap: clamp(4px, 0.3vw, 6px);
-          margin-top: clamp(2px, 0.25vw, 4px);
-        }
-        .cyb-card-feat {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          padding: 3px 10px;
-          border-radius: 50px;
-          background: rgba(255,255,255,0.07);
-          border: 1px solid rgba(255,255,255,0.06);
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          font-size: clamp(10.5px, 0.72vw, 12px);
-          color: rgba(255,255,255,0.75);
-          white-space: nowrap;
-          transition: all 0.3s ease;
-        }
-        .cyb-card:hover .cyb-card-feat {
-          background: rgba(255,255,255,0.1);
-          border-color: rgba(255,255,255,0.1);
-        }
-        .cyb-card-feat-dot {
-          width: 5px;
-          height: 5px;
-          border-radius: 50%;
-          flex-shrink: 0;
-        }
+        /* ★ Card inner text — tighter line heights */
+        .cyb-card-title { font-family: 'Poppins', sans-serif; font-weight: 600; color: #FFFFFF; font-size: clamp(16px, 1.35vw, 22px); line-height: 1.2; margin: 0; }
+        .cyb-card-subtitle { font-family: 'Poppins', sans-serif; font-weight: 500; font-size: clamp(10px, 0.72vw, 12px); letter-spacing: 0.05em; padding: 2px 10px; border-radius: 50px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); white-space: nowrap; align-self: flex-start; }
+        .cyb-card-desc { font-family: 'Poppins', sans-serif; font-weight: 300; color: rgba(255,255,255,0.8); font-size: clamp(12px, 0.88vw, 14.5px); line-height: 1.45; margin: 0; padding-right: clamp(40px, 4vw, 65px); }
+        .cyb-card-features { display: flex; flex-wrap: wrap; gap: clamp(3px, 0.25vw, 5px); margin-top: clamp(1px, 0.15vw, 3px); }
+        .cyb-card-feat { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 50px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.06); font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(10px, 0.68vw, 11.5px); color: rgba(255,255,255,0.75); white-space: nowrap; transition: all 0.3s ease; }
+        .cyb-card:hover .cyb-card-feat { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.1); }
+        .cyb-card-feat-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
 
-        .cyb-icon-wrap {
-          position: absolute;
-          pointer-events: none;
-          z-index: 10;
-          opacity: 0;
-        }
+        .cyb-icon-wrap { position: absolute; pointer-events: none; z-index: 10; opacity: 0; }
         .cyb-icon-wrap img { width: 100%; height: 100%; object-fit: contain; }
-        .cyb-icon-pos-0 { right: 0; top: 0; transform: translate(35%, -35%); width: clamp(50px, 5.5vw, 85px); height: clamp(50px, 5.5vw, 85px); }
-        .cyb-icon-pos-1 { left: -1.5vw; bottom: -1vw; transform: translate(-40%, 40%); width: clamp(100px, 10vw, 150px); height: clamp(100px, 10vw, 150px); }
-        .cyb-icon-pos-2 { right: 0; bottom: 0; transform: translate(35%, 35%); width: clamp(55px, 6vw, 90px); height: clamp(55px, 6vw, 90px); }
+        .cyb-icon-pos-0 { right: 0; top: 0; transform: translate(35%, -35%); width: clamp(45px, 5vw, 75px); height: clamp(45px, 5vw, 75px); }
+        .cyb-icon-pos-1 { left: -1.5vw; bottom: -1vw; transform: translate(-40%, 40%); width: clamp(85px, 9vw, 130px); height: clamp(85px, 9vw, 130px); }
+        .cyb-icon-pos-2 { right: 0; bottom: 0; transform: translate(35%, 35%); width: clamp(50px, 5.5vw, 80px); height: clamp(50px, 5.5vw, 80px); }
 
         @keyframes cybF1 { 0%, 100% { transform: translate(35%, -35%) rotate(-12deg) translateY(0); } 50% { transform: translate(35%, -35%) rotate(-9deg) translateY(-5px); } }
         @keyframes cybF2 { 0%, 100% { transform: translate(-40%, 40%) rotate(-25deg) translateY(0); } 50% { transform: translate(-40%, 40%) rotate(-22deg) translateY(-4px); } }
@@ -397,21 +220,10 @@ const ChooseYourBondScreen = () => {
         .cyb-a-card { animation: cybCardIn 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .cyb-a-pop { animation: cybPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-        /* ═══ TABLET ≤ 1024 ═══ */
         @media (max-width: 1024px) {
-          .cyb-layout {
-            flex-direction: column;
-            min-height: auto;
-            padding: 70px 0 60px;
-          }
+          .cyb-layout { flex-direction: column; min-height: auto; padding: 70px 0 60px; max-width: none; }
           .cyb-left { width: 100%; padding: 0 32px; }
-          .cyb-left-inner {
-            padding: 0;
-            align-items: center;
-            text-align: center;
-            gap: 16px;
-            margin-bottom: 46px;
-          }
+          .cyb-left-inner { padding: 0; align-items: center; text-align: center; gap: 16px; margin-bottom: 46px; }
           .cyb-sub { max-width: 480px; }
           .cyb-right { width: 100%; padding: 0 32px; }
           .cyb-cards { max-width: 560px; margin: 0 auto; gap: 22px; }
@@ -420,19 +232,20 @@ const ChooseYourBondScreen = () => {
           .cyb-a-card { animation-name: cybUp; }
           .cyb-a-slide { animation-name: cybUp; }
           .cyb-cta-wrap { align-items: center; }
+          .cyb-card {
+            padding: clamp(16px, 2vw, 22px) clamp(18px, 2.5vw, 26px);
+            gap: clamp(5px, 0.6vw, 8px);
+          }
         }
 
-        /* ═══ MOBILE ≤ 768 ═══ */
         @media (max-width: 768px) {
           .cyb-layout { padding: 56px 0 50px; }
           .cyb-left { padding: 0 24px; }
           .cyb-left-inner { gap: 14px; margin-bottom: 38px; }
           .cyb-right { padding: 0 24px; }
           .cyb-cards { gap: 20px; }
-
           .cyb-title { font-size: clamp(24px, 5.5vw, 30px); }
           .cyb-sub { font-size: 15px; }
-
           .cyb-card { padding: 16px 18px; gap: 6px; border-radius: 16px; }
           .cyb-card-title { font-size: 17px; }
           .cyb-card-subtitle { font-size: 11.5px; padding: 3px 10px; }
@@ -444,7 +257,6 @@ const ChooseYourBondScreen = () => {
           .cyb-icon-pos-2 { width: 50px; height: 50px; }
         }
 
-        /* ═══ SMALL ≤ 540 ═══ */
         @media (max-width: 540px) {
           .cyb-layout { padding: 50px 0 44px; }
           .cyb-left { padding: 0 20px; }
@@ -452,11 +264,9 @@ const ChooseYourBondScreen = () => {
           .cyb-right { padding: 0 20px; }
           .cyb-cards { gap: 24px; }
           .cyb-stagger-r, .cyb-stagger-l { margin-left: 0; margin-right: 0; }
-
           .cyb-title { font-size: clamp(22px, 5vw, 26px); }
           .cyb-label { font-size: 10px; }
           .cyb-sub { font-size: 14.5px; }
-
           .cyb-card { padding: 15px 16px; border-radius: 14px; gap: 5px; }
           .cyb-card-title { font-size: 16px; }
           .cyb-card-subtitle { font-size: 11px; }
@@ -467,18 +277,15 @@ const ChooseYourBondScreen = () => {
           .cyb-icon-pos-2 { width: 46px; height: 46px; }
         }
 
-        /* ═══ XS ≤ 400 ═══ */
         @media (max-width: 400px) {
           .cyb-layout { padding: 44px 0 40px; }
           .cyb-left { padding: 0 18px; }
           .cyb-left-inner { gap: 10px; margin-bottom: 28px; }
           .cyb-right { padding: 0 18px; }
-
           .cyb-accent { width: 34px; }
           .cyb-label { font-size: 9.5px; }
           .cyb-title { font-size: 21px; }
           .cyb-sub { font-size: 13.5px; }
-
           .cyb-card { padding: 14px 15px; gap: 5px; }
           .cyb-card-title { font-size: 15.5px; }
           .cyb-card-subtitle { font-size: 10.5px; }
@@ -493,7 +300,6 @@ const ChooseYourBondScreen = () => {
           .cyb-icon-pos-2 { width: 40px; height: 40px; }
         }
 
-        /* ═══ XXS ≤ 340 ═══ */
         @media (max-width: 340px) {
           .cyb-layout { padding: 38px 0 36px; }
           .cyb-left { padding: 0 14px; }
@@ -512,21 +318,15 @@ const ChooseYourBondScreen = () => {
         }
       `}</style>
 
-      <div className="cyb-bg">
-        <img src="/fondoliso.jpeg" alt="" />
-      </div>
+      <div className="cyb-bg"><img src="/fondoliso.jpeg" alt="" /></div>
 
       <div className="cyb-layout">
         <div className="cyb-left">
           <div className="cyb-left-inner">
             <div className={`cyb-accent ${a ? 'cyb-a-slide' : ''}`} style={{ animationDelay: '0.1s' }} />
-            <span className={`cyb-label ${a ? 'cyb-a-slide' : ''}`} style={{ animationDelay: '0.2s' }}>
-              ELEGÍ TU VÍNCULO
-            </span>
+            <span className={`cyb-label ${a ? 'cyb-a-slide' : ''}`} style={{ animationDelay: '0.2s' }}>ELEGÍ TU VÍNCULO</span>
             <h2 className={`cyb-title ${a ? 'cyb-a-slide' : ''}`} style={{ animationDelay: '0.3s' }}>
-              <span className="cyb-title-light">Tu tiempo,</span>
-              <br />
-              tu espacio.
+              <span className="cyb-title-light">Tu tiempo,</span><br />tu espacio.
             </h2>
             <p className={`cyb-sub ${a ? 'cyb-a-slide' : ''}`} style={{ animationDelay: '0.45s' }}>
               Elegí el vínculo que mejor se adapte a vos y date el mimo que necesitás. Cada plan está pensado para acompañarte a tu ritmo.
@@ -548,17 +348,9 @@ const ChooseYourBondScreen = () => {
         <div className="cyb-right">
           <div className="cyb-cards">
             {BONDS.map((bond, i) => (
-              <div
-                key={bond.id}
-                className={`cyb-card ${bond.stagger === 'right' ? 'cyb-stagger-r' : 'cyb-stagger-l'} ${a ? 'cyb-a-card' : ''}`}
-                style={{
-                  backgroundColor: bond.bg,
-                  animationDelay: `${0.4 + i * 0.18}s`,
-                  ['--card-accent' as string]: bond.accent,
-                  ['--card-glow' as string]: bond.accentGlow,
-                }}
-                onClick={() => scrollTo('planes')}
-              >
+              <div key={bond.id} className={`cyb-card ${bond.stagger === 'right' ? 'cyb-stagger-r' : 'cyb-stagger-l'} ${a ? 'cyb-a-card' : ''}`}
+                style={{ backgroundColor: bond.bg, animationDelay: `${0.4 + i * 0.18}s`, ['--card-accent' as string]: bond.accent, ['--card-glow' as string]: bond.accentGlow }}
+                onClick={() => scrollTo('planes')}>
                 {bond.popular && <div className="cyb-popular">⭐ MÁS ELEGIDO</div>}
                 <h3 className="cyb-card-title">{bond.title}</h3>
                 <span className="cyb-card-subtitle">{bond.subtitle}</span>
@@ -566,8 +358,7 @@ const ChooseYourBondScreen = () => {
                 <div className="cyb-card-features">
                   {bond.highlights.map((h, j) => (
                     <span key={j} className="cyb-card-feat">
-                      <span className="cyb-card-feat-dot" style={{ background: bond.accent }} />
-                      {h}
+                      <span className="cyb-card-feat-dot" style={{ background: bond.accent }} />{h}
                     </span>
                   ))}
                 </div>

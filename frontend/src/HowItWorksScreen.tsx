@@ -1,34 +1,10 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 
 const STEPS = [
-  {
-    number: '01',
-    emoji: '💛',
-    title: 'Elegí tu vínculo',
-    description: 'Explorá los 3 tipos de compañía y elegí el que mejor se adapte a lo que necesitás.',
-    color: '#F9DDA3',
-  },
-  {
-    number: '02',
-    emoji: '📝',
-    title: 'Completá el formulario',
-    description: 'Contanos un poco sobre vos para personalizar tu experiencia desde el primer momento.',
-    color: '#F69E82',
-  },
-  {
-    number: '03',
-    emoji: '💬',
-    title: 'Te contactamos',
-    description: 'El equipo de Camil se comunica con vos para coordinar todo y empezar cuanto antes.',
-    color: '#E8C878',
-  },
-  {
-    number: '04',
-    emoji: '✨',
-    title: '¡Empezá a disfrutar!',
-    description: 'Recibí tu primera carta, mensaje o llamada y viví la experiencia Camil.',
-    color: '#F4B896',
-  },
+  { number: '01', emoji: '💛', title: 'Elegí tu vínculo', description: 'Explorá los 3 tipos de compañía y elegí el que mejor se adapte a lo que necesitás.', color: '#F9DDA3' },
+  { number: '02', emoji: '📝', title: 'Completá el formulario', description: 'Contanos un poco sobre vos para personalizar tu experiencia desde el primer momento.', color: '#F69E82' },
+  { number: '03', emoji: '💬', title: 'Te contactamos', description: 'El equipo de Camil se comunica con vos para coordinar todo y empezar cuanto antes.', color: '#E8C878' },
+  { number: '04', emoji: '✨', title: '¡Empezá a disfrutar!', description: 'Recibí tu primera carta, mensaje o llamada y viví la experiencia Camil.', color: '#F4B896' },
 ];
 
 const HowItWorksScreen = () => {
@@ -46,9 +22,7 @@ const HowItWorksScreen = () => {
   useEffect(() => {
     if (hasAnimated) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) { setHasAnimated(true); observer.disconnect(); }
-      },
+      ([entry]) => { if (entry.isIntersecting) { setHasAnimated(true); observer.disconnect(); } },
       { threshold: 0.12 }
     );
     if (sectionRef.current) observer.observe(sectionRef.current);
@@ -60,16 +34,13 @@ const HowItWorksScreen = () => {
   const animateLoop = useCallback(() => {
     const f = 0.07;
     let needsUpdate = false;
-
     cardRefs.current.forEach((el, i) => {
       if (!el) return;
       const c = currentTilts.current[i];
       const rect = el.getBoundingClientRect();
       const cardCx = rect.left + rect.width / 2;
       const cardCy = rect.top + rect.height / 2;
-
       let targetRx = 0, targetRy = 0, targetScale = 1;
-
       if (isInSection.current) {
         const dx = mousePos.current.x - cardCx;
         const dy = mousePos.current.y - cardCy;
@@ -77,71 +48,34 @@ const HowItWorksScreen = () => {
         const maxDist = 600;
         const intensity = Math.max(0, 1 - dist / maxDist);
         const maxTilt = 8;
-
         targetRx = (dy / (rect.height / 2)) * -maxTilt * intensity;
         targetRy = (dx / (rect.width / 2)) * maxTilt * intensity;
         targetRx = Math.max(-maxTilt, Math.min(maxTilt, targetRx));
         targetRy = Math.max(-maxTilt, Math.min(maxTilt, targetRy));
         targetScale = 1 + 0.015 * intensity;
       }
-
       c.rx = lerp(c.rx, targetRx, f);
       c.ry = lerp(c.ry, targetRy, f);
       c.scale = lerp(c.scale, targetScale, f);
-
       el.style.transform = `perspective(800px) rotateX(${c.rx}deg) rotateY(${c.ry}deg) scale3d(${c.scale},${c.scale},1)`;
-
-      if (Math.abs(c.rx - targetRx) > 0.01 || Math.abs(c.ry - targetRy) > 0.01 || Math.abs(c.scale - targetScale) > 0.001) {
-        needsUpdate = true;
-      }
+      if (Math.abs(c.rx - targetRx) > 0.01 || Math.abs(c.ry - targetRy) > 0.01 || Math.abs(c.scale - targetScale) > 0.001) needsUpdate = true;
     });
-
-    if (needsUpdate || isInSection.current) {
-      rafRef.current = requestAnimationFrame(animateLoop);
-    } else {
-      cardRefs.current.forEach(el => {
-        if (el) el.style.transform = '';
-      });
-      rafRef.current = null;
-    }
+    if (needsUpdate || isInSection.current) { rafRef.current = requestAnimationFrame(animateLoop); }
+    else { cardRefs.current.forEach(el => { if (el) el.style.transform = ''; }); rafRef.current = null; }
   }, []);
 
-  const kick = useCallback(() => {
-    if (!rafRef.current) rafRef.current = requestAnimationFrame(animateLoop);
-  }, [animateLoop]);
+  const kick = useCallback(() => { if (!rafRef.current) rafRef.current = requestAnimationFrame(animateLoop); }, [animateLoop]);
+  const onSectionMove = useCallback((e: React.MouseEvent) => { mousePos.current = { x: e.clientX, y: e.clientY }; kick(); }, [kick]);
+  const onSectionEnter = useCallback(() => { isInSection.current = true; kick(); }, [kick]);
+  const onSectionLeave = useCallback(() => { isInSection.current = false; kick(); }, [kick]);
 
-  const onSectionMove = useCallback((e: React.MouseEvent) => {
-    mousePos.current = { x: e.clientX, y: e.clientY };
-    kick();
-  }, [kick]);
-
-  const onSectionEnter = useCallback(() => {
-    isInSection.current = true;
-    kick();
-  }, [kick]);
-
-  const onSectionLeave = useCallback(() => {
-    isInSection.current = false;
-    kick();
-  }, [kick]);
-
-  useEffect(() => {
-    return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
-  }, []);
+  useEffect(() => { return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); }; }, []);
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-
   const a = hasAnimated;
 
   return (
-    <section
-      ref={sectionRef}
-      id="como-funciona"
-      className="hiw-section"
-      onMouseMove={onSectionMove}
-      onMouseEnter={onSectionEnter}
-      onMouseLeave={onSectionLeave}
-    >
+    <section ref={sectionRef} id="como-funciona" className="hiw-section" onMouseMove={onSectionMove} onMouseEnter={onSectionEnter} onMouseLeave={onSectionLeave}>
       <style>{`
         .hiw-section {
           position: relative;
@@ -151,7 +85,6 @@ const HowItWorksScreen = () => {
           flex-direction: column;
           min-height: 85vh;
         }
-
         .hiw-bg {
           position: absolute;
           inset: 0;
@@ -167,7 +100,6 @@ const HowItWorksScreen = () => {
           min-height: 140%;
           object-fit: cover;
         }
-
         .hiw-wave {
           position: relative;
           width: 100%;
@@ -182,20 +114,17 @@ const HowItWorksScreen = () => {
           height: clamp(40px, 4.5vw, 65px);
           display: block;
         }
-
         .hiw-container {
           position: relative;
           z-index: 5;
           width: 100%;
-          max-width: 1240px;
+          max-width: 1380px;
           margin: 0 auto;
-          padding: clamp(20px, 3vw, 40px) clamp(20px, 5vw, 72px) clamp(32px, 4.5vw, 56px);
+          padding: clamp(20px, 3vw, 40px) 40px clamp(32px, 4.5vw, 56px);
           display: flex;
           flex-direction: column;
           align-items: center;
         }
-
-        /* ═══ HEADER ═══ */
         .hiw-header {
           display: flex;
           flex-direction: column;
@@ -203,7 +132,6 @@ const HowItWorksScreen = () => {
           text-align: center;
           margin-bottom: clamp(28px, 3.5vw, 44px);
         }
-
         .hiw-accent {
           width: 38px;
           height: 2.5px;
@@ -212,7 +140,6 @@ const HowItWorksScreen = () => {
           margin-bottom: 12px;
           opacity: 0;
         }
-
         .hiw-label {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
@@ -223,7 +150,6 @@ const HowItWorksScreen = () => {
           margin-bottom: 12px;
           opacity: 0;
         }
-
         .hiw-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
@@ -235,11 +161,7 @@ const HowItWorksScreen = () => {
           text-shadow: 0 2px 20px rgba(0,0,0,0.2);
           opacity: 0;
         }
-        .hiw-title-light {
-          font-weight: 400;
-          color: rgba(255,255,255,0.85);
-        }
-
+        .hiw-title-light { font-weight: 400; color: rgba(255,255,255,0.85); }
         .hiw-subtitle {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
@@ -251,14 +173,11 @@ const HowItWorksScreen = () => {
           letter-spacing: 0.015em;
           opacity: 0;
         }
-
-        /* ═══ STEPS ═══ */
         .hiw-steps-wrap {
           width: 100%;
           position: relative;
           margin-bottom: clamp(28px, 3.5vw, 44px);
         }
-
         .hiw-connector {
           position: absolute;
           top: 50%;
@@ -273,15 +192,8 @@ const HowItWorksScreen = () => {
         .hiw-connector-line {
           width: 100%;
           height: 100%;
-          background: repeating-linear-gradient(
-            90deg,
-            rgba(255,255,255,0.08) 0px,
-            rgba(255,255,255,0.08) 5px,
-            transparent 5px,
-            transparent 13px
-          );
+          background: repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 5px, transparent 5px, transparent 13px);
         }
-
         .hiw-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -290,8 +202,6 @@ const HowItWorksScreen = () => {
           position: relative;
           z-index: 1;
         }
-
-        /* ═══ CARD ═══ */
         .hiw-card {
           position: relative;
           border-radius: clamp(16px, 1.3vw, 22px);
@@ -310,7 +220,6 @@ const HowItWorksScreen = () => {
           opacity: 0;
           will-change: transform;
         }
-
         .hiw-card::before {
           content: '';
           position: absolute;
@@ -320,15 +229,12 @@ const HowItWorksScreen = () => {
           opacity: 0;
           transition: opacity 0.4s ease;
         }
-
         .hiw-card:hover {
           box-shadow: 0 20px 56px rgba(0,0,0,0.22), 0 0 28px var(--step-glow);
           border-color: rgba(255,255,255,0.12);
           background: rgba(255,255,255,0.06);
         }
         .hiw-card:hover::before { opacity: 1; }
-
-        /* Top accent line */
         .hiw-card::after {
           content: '';
           position: absolute;
@@ -342,16 +248,12 @@ const HowItWorksScreen = () => {
           transition: opacity 0.4s ease;
         }
         .hiw-card:hover::after { opacity: 0.55; }
-
-        /* Emoji */
         .hiw-card-emoji {
           font-size: clamp(20px, 1.6vw, 26px);
           line-height: 1;
           margin-bottom: clamp(10px, 0.9vw, 16px);
           filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
         }
-
-        /* Title */
         .hiw-card-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
@@ -360,8 +262,6 @@ const HowItWorksScreen = () => {
           line-height: 1.35;
           margin: 0 0 clamp(6px, 0.5vw, 10px);
         }
-
-        /* Description */
         .hiw-card-desc {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
@@ -371,8 +271,6 @@ const HowItWorksScreen = () => {
           margin: 0;
           letter-spacing: 0.01em;
         }
-
-        /* Number — bottom right, decorative */
         .hiw-card-num {
           position: absolute;
           bottom: clamp(12px, 1vw, 18px);
@@ -387,19 +285,13 @@ const HowItWorksScreen = () => {
           user-select: none;
           transition: opacity 0.4s ease, transform 0.4s ease;
         }
-        .hiw-card:hover .hiw-card-num {
-          opacity: 0.22;
-          transform: scale(1.06);
-        }
-
-        /* ═══ CTA ═══ */
+        .hiw-card:hover .hiw-card-num { opacity: 0.22; transform: scale(1.06); }
         .hiw-cta-area {
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 12px;
         }
-
         .hiw-btn {
           display: inline-flex;
           align-items: center;
@@ -428,15 +320,11 @@ const HowItWorksScreen = () => {
           opacity: 0;
           transition: opacity 0.3s ease;
         }
-        .hiw-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 36px rgba(249,221,163,0.35), 0 2px 8px rgba(0,0,0,0.1);
-        }
+        .hiw-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(249,221,163,0.35), 0 2px 8px rgba(0,0,0,0.1); }
         .hiw-btn:hover::before { opacity: 1; }
         .hiw-btn:active { transform: translateY(0); }
         .hiw-btn-arrow { width: 16px; height: 16px; transition: transform 0.3s ease; }
         .hiw-btn:hover .hiw-btn-arrow { transform: translateX(3px); }
-
         .hiw-microtrust {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
@@ -446,8 +334,6 @@ const HowItWorksScreen = () => {
           text-align: center;
           opacity: 0;
         }
-
-        /* ═══ DECO ═══ */
         .hiw-deco {
           position: absolute;
           pointer-events: none;
@@ -455,7 +341,6 @@ const HowItWorksScreen = () => {
           opacity: 0;
         }
         .hiw-deco img { width: 100%; height: 100%; object-fit: contain; }
-
         @keyframes hiwF1 { 0%, 100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-7px) rotate(-4deg); } }
         @keyframes hiwF2 { 0%, 100% { transform: translateY(0) rotate(10deg); } 50% { transform: translateY(-6px) rotate(14deg); } }
         @keyframes hiwF3 { 0%, 100% { transform: translateY(0) rotate(5deg); } 50% { transform: translateY(-8px) rotate(9deg); } }
@@ -464,37 +349,24 @@ const HowItWorksScreen = () => {
         .hiw-f2 { animation: hiwF2 4.6s ease-in-out infinite 0.5s; }
         .hiw-f3 { animation: hiwF3 3.9s ease-in-out infinite 1s; }
         .hiw-f4 { animation: hiwF4 4.4s ease-in-out infinite 0.8s; }
-
-        /* ═══ ANIMATIONS ═══ */
         @keyframes hiwUp { 0% { opacity: 0; transform: translateY(28px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes hiwDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes hiwCardIn { 0% { opacity: 0; transform: translateY(32px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes hiwPop { 0% { opacity: 0; transform: scale(0) rotate(-10deg); } 60% { opacity: 1; transform: scale(1.08) rotate(3deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
         @keyframes hiwLineIn { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
-
         .hiw-a-up { animation: hiwUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .hiw-a-down { animation: hiwDown 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .hiw-a-card { animation: hiwCardIn 0.75s cubic-bezier(0.22,1,0.36,1) both; }
         .hiw-a-pop { animation: hiwPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
         .hiw-a-line { animation: hiwLineIn 1s cubic-bezier(0.22,1,0.36,1) both; transform-origin: left center; }
-
-        /* ═══ TABLET ≤ 1024 ═══ */
         @media (max-width: 1024px) {
-          .hiw-grid {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            max-width: 580px;
-          }
+          .hiw-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 580px; }
           .hiw-card { min-height: 165px; }
           .hiw-connector { display: none; }
           .hiw-deco { display: none; }
         }
-
-        /* ═══ MOBILE ≤ 768 ═══ */
         @media (max-width: 768px) {
-          .hiw-container {
-            padding: clamp(20px, 3vw, 36px) 24px clamp(40px, 5vw, 56px);
-          }
+          .hiw-container { padding: clamp(20px, 3vw, 36px) 24px clamp(40px, 5vw, 56px); }
           .hiw-header { margin-bottom: clamp(24px, 4vw, 36px); }
           .hiw-title { font-size: clamp(24px, 5.5vw, 30px); }
           .hiw-subtitle { font-size: 15px; }
@@ -506,20 +378,9 @@ const HowItWorksScreen = () => {
           .hiw-card-num { font-size: 32px; bottom: 10px; right: 14px; }
           .hiw-btn { padding: 13px 30px; font-size: 14px; }
         }
-
-        /* ═══ SMALL ≤ 540 ═══ */
         @media (max-width: 540px) {
-          .hiw-grid {
-            grid-template-columns: 1fr;
-            max-width: 400px;
-          }
-          .hiw-card {
-            min-height: auto;
-            padding: 18px 18px 20px;
-            flex-direction: row;
-            align-items: flex-start;
-            gap: clamp(12px, 3vw, 16px);
-          }
+          .hiw-grid { grid-template-columns: 1fr; max-width: 400px; }
+          .hiw-card { min-height: auto; padding: 18px 18px 20px; flex-direction: row; align-items: flex-start; gap: clamp(12px, 3vw, 16px); }
           .hiw-card::after { left: 14px; right: 14px; }
           .hiw-card-emoji { font-size: 20px; margin-bottom: 0; flex-shrink: 0; margin-top: 2px; }
           .hiw-card-content { flex: 1; min-width: 0; }
@@ -530,8 +391,6 @@ const HowItWorksScreen = () => {
           .hiw-label { font-size: 10px; }
           .hiw-subtitle { font-size: 14.5px; }
         }
-
-        /* ═══ XS ≤ 400 ═══ */
         @media (max-width: 400px) {
           .hiw-container { padding: 18px 18px 38px; }
           .hiw-header { margin-bottom: 22px; }
@@ -549,8 +408,6 @@ const HowItWorksScreen = () => {
           .hiw-btn-arrow { width: 14px; height: 14px; }
           .hiw-microtrust { font-size: 11px; }
         }
-
-        /* ═══ XXS ≤ 340 ═══ */
         @media (max-width: 340px) {
           .hiw-container { padding: 16px 14px 34px; }
           .hiw-title { font-size: 19px; }
@@ -562,15 +419,10 @@ const HowItWorksScreen = () => {
           .hiw-card-num { font-size: 22px; }
           .hiw-btn { padding: 11px 20px; font-size: 13px; }
         }
-
-        @media (hover: none) {
-          .hiw-card { will-change: auto !important; }
-        }
+        @media (hover: none) { .hiw-card { will-change: auto !important; } }
       `}</style>
 
-      <div className="hiw-bg">
-        <img src="/fondoliso.jpeg" alt="" />
-      </div>
+      <div className="hiw-bg"><img src="/fondoliso.jpeg" alt="" /></div>
 
       <div className="hiw-wave">
         <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: 'rotate(180deg)' }}>
@@ -578,41 +430,25 @@ const HowItWorksScreen = () => {
         </svg>
       </div>
 
-      <div
-        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
-        style={{ left: '4vw', top: '15%', width: 'clamp(28px, 3.5vw, 55px)', height: 'clamp(28px, 3.5vw, 55px)', animationDelay: '0.7s' }}
-      >
+      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ left: '4vw', top: '15%', width: 'clamp(28px, 3.5vw, 55px)', height: 'clamp(28px, 3.5vw, 55px)', animationDelay: '0.7s' }}>
         <img src="/carta.png" alt="" className={mounted ? 'hiw-f1' : ''} />
       </div>
-      <div
-        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
-        style={{ right: '5vw', top: '13%', width: 'clamp(18px, 2.2vw, 35px)', height: 'clamp(18px, 2.2vw, 35px)', animationDelay: '0.85s' }}
-      >
+      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ right: '5vw', top: '13%', width: 'clamp(18px, 2.2vw, 35px)', height: 'clamp(18px, 2.2vw, 35px)', animationDelay: '0.85s' }}>
         <img src="/corazonizquierda.png" alt="" className={mounted ? 'hiw-f2' : ''} />
       </div>
-      <div
-        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
-        style={{ left: '3.5vw', bottom: '12%', width: 'clamp(24px, 3vw, 48px)', height: 'clamp(24px, 3vw, 48px)', animationDelay: '1s' }}
-      >
+      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ left: '3.5vw', bottom: '12%', width: 'clamp(24px, 3vw, 48px)', height: 'clamp(24px, 3vw, 48px)', animationDelay: '1s' }}>
         <img src="/corazonderecha.png" alt="" className={mounted ? 'hiw-f3' : ''} />
       </div>
-      <div
-        className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
-        style={{ right: '4.5vw', bottom: '14%', width: 'clamp(16px, 2vw, 30px)', height: 'clamp(16px, 2vw, 30px)', animationDelay: '1.15s' }}
-      >
+      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ right: '4.5vw', bottom: '14%', width: 'clamp(16px, 2vw, 30px)', height: 'clamp(16px, 2vw, 30px)', animationDelay: '1.15s' }}>
         <img src="/carta.png" alt="" className={mounted ? 'hiw-f4' : ''} />
       </div>
 
       <div className="hiw-container">
         <div className="hiw-header">
           <div className={`hiw-accent ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.1s' }} />
-          <span className={`hiw-label ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.2s' }}>
-            CÓMO FUNCIONA
-          </span>
+          <span className={`hiw-label ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.2s' }}>CÓMO FUNCIONA</span>
           <h2 className={`hiw-title ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.3s' }}>
-            4 pasos simples
-            <br />
-            <span className="hiw-title-light">para sentirte acompañado</span>
+            4 pasos simples<br /><span className="hiw-title-light">para sentirte acompañado</span>
           </h2>
           <p className={`hiw-subtitle ${a ? 'hiw-a-up' : ''}`} style={{ animationDelay: '0.45s' }}>
             Sin complicaciones, sin esperas largas. Elegí, completá y empezá a sentirte diferente.
@@ -623,27 +459,16 @@ const HowItWorksScreen = () => {
           <div className={`hiw-connector ${a ? 'hiw-a-line' : ''}`} style={{ animationDelay: '0.9s' }}>
             <div className="hiw-connector-line" />
           </div>
-
           <div className="hiw-grid">
             {STEPS.map((step, i) => (
-              <div
-                key={i}
-                ref={el => { cardRefs.current[i] = el; }}
-                className={`hiw-card ${a ? 'hiw-a-card' : ''}`}
-                style={{
-                  animationDelay: `${0.5 + i * 0.12}s`,
-                  ['--step-glow' as string]: `${step.color}30`,
-                  ['--step-color' as string]: step.color,
-                }}
-              >
+              <div key={i} ref={el => { cardRefs.current[i] = el; }} className={`hiw-card ${a ? 'hiw-a-card' : ''}`}
+                style={{ animationDelay: `${0.5 + i * 0.12}s`, ['--step-glow' as string]: `${step.color}30`, ['--step-color' as string]: step.color }}>
                 <span className="hiw-card-emoji">{step.emoji}</span>
                 <div className="hiw-card-content">
                   <h3 className="hiw-card-title">{step.title}</h3>
                   <p className="hiw-card-desc">{step.description}</p>
                 </div>
-                <span className="hiw-card-num" style={{ color: step.color }}>
-                  {step.number}
-                </span>
+                <span className="hiw-card-num" style={{ color: step.color }}>{step.number}</span>
               </div>
             ))}
           </div>

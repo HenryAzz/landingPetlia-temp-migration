@@ -1,3 +1,4 @@
+// WelcomeScreen.tsx
 import { useEffect, useState, useRef, useCallback } from 'react';
 
 interface WelcomeScreenProps {
@@ -33,12 +34,6 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
   const [isMobile, setIsMobile] = useState(false);
   const [heroVisible, setHeroVisible] = useState(true);
 
-  /* ★ TITLE PHASE — acoplado al sweep
-   *   'show' → visible, posición normal
-   *   'hide' → sale hacia la DERECHA + blur (siguiendo el sweep)
-   *   'prep' → snap invisible a la IZQUIERDA (sin transition)
-   *   'show' → entra desde la izquierda + deblur (emergiendo tras el sweep)
-   */
   const [heroLine, setHeroLine] = useState(0);
   const [titlePhase, setTitlePhase] = useState<'show' | 'hide' | 'prep'>('show');
 
@@ -55,8 +50,19 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
   const throttle = useRef(false);
   const isTransitioning = useRef(false);
 
+  const frontSlotRef = useRef<'A' | 'B'>('A');
+  const currentVideoIdxRef = useRef(0);
+  const enteredRef = useRef(false);
+
+  useEffect(() => { frontSlotRef.current = frontSlot; }, [frontSlot]);
+  useEffect(() => { currentVideoIdxRef.current = currentVideoIdx; }, [currentVideoIdx]);
+  useEffect(() => { enteredRef.current = entered; }, [entered]);
+
   const getFrontVideo = useCallback(() => (frontSlot === 'A' ? videoARef.current : videoBRef.current), [frontSlot]);
   const getBackVideo = useCallback(() => (frontSlot === 'A' ? videoBRef.current : videoARef.current), [frontSlot]);
+
+  const getFrontVideoByRef = useCallback(() => (frontSlotRef.current === 'A' ? videoARef.current : videoBRef.current), []);
+  const getBackVideoByRef = useCallback(() => (frontSlotRef.current === 'A' ? videoBRef.current : videoARef.current), []);
 
   const prepareVideo = useCallback((video: HTMLVideoElement, src: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -94,6 +100,26 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
     if (back) { prepareVideo(back, VIDEOS[1]); }
   }, [entered, isMobile]);
 
+  useEffect(() => {
+    if (isMobile) return;
+    const watchdog = setInterval(() => {
+      if (!enteredRef.current) return;
+      if (isTransitioning.current) return;
+      const front = getFrontVideoByRef();
+      if (!front) return;
+      if (front.paused && front.src && front.readyState >= 2) {
+        front.play().catch(() => {});
+      }
+      if (front.duration && !isNaN(front.duration) && front.currentTime >= front.duration - 0.1) {
+        if (!transitionStarted.current && !isTransitioning.current) {
+          transitionStarted.current = true;
+          doTransitionFromRef();
+        }
+      }
+    }, 800);
+    return () => clearInterval(watchdog);
+  }, [isMobile]);
+
   const handleTimeUpdate = useCallback(() => {
     if (isMobile || transitionStarted.current || isTransitioning.current) return;
     if (throttle.current) return;
@@ -107,113 +133,109 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
 
   const handleEnded = useCallback(() => {
     if (isMobile) return;
-    if (!transitionStarted.current && !isTransitioning.current) { transitionStarted.current = true; doTransition(); }
+    if (!transitionStarted.current && !isTransitioning.current) {
+      transitionStarted.current = true;
+      doTransition();
+    }
   }, [isMobile]);
+
+  const finishTransition = useCallback((nextIdx: number, usedRef = false) => {
+    const oldFront = usedRef ? getFrontVideoByRef() : getFrontVideo();
+    if (oldFront) { oldFront.pause(); oldFront.currentTime = 0; }
+    setFrontSlot(p => p === 'A' ? 'B' : 'A');
+    setCurrentVideoIdx(nextIdx);
+    setFrontFading(false); setBackVisible(false); setPhase('playing');
+    if (oldFront) { prepareVideo(oldFront, VIDEOS[(nextIdx + 1) % VIDEOS.length]); }
+    setTimeout(() => {
+      const newFront = frontSlotRef.current === 'A' ? videoARef.current : videoBRef.current;
+      if (newFront && newFront.paused) { newFront.play().catch(() => {}); }
+    }, 100);
+    transitionStarted.current = false;
+    isTransitioning.current = false;
+  }, [getFrontVideo, getFrontVideoByRef, prepareVideo]);
+
+  const runSweep = useCallback((back: HTMLVideoElement, nextIdx: number, usedRef = false) => {
+    setTitlePhase('hide');
+    requestAnimationFrame(() => { requestAnimationFrame(() => {
+      setPhase('sweep-in');
+      setTimeout(() => { setBackVisible(true); back.currentTime = 0; back.play().catch(() => {}); }, PEAK_AT - 600);
+      setTimeout(() => { setFrontFading(true); }, PEAK_AT - 350);
+      setTimeout(() => { setPhase('white-peak'); }, PEAK_AT - 100);
+      setTimeout(() => {
+        setHeroLine(nextIdx);
+        setTitlePhase('prep');
+        requestAnimationFrame(() => { requestAnimationFrame(() => { setTitlePhase('show'); }); });
+      }, PEAK_AT);
+      setTimeout(() => { setPhase('sweep-out'); }, PEAK_AT + 100);
+      setTimeout(() => finishTransition(nextIdx, usedRef), GLASS_DURATION);
+    }); });
+  }, [finishTransition]);
+
+  const doTransitionFromRef = useCallback(() => {
+    isTransitioning.current = true;
+    const nextIdx = (currentVideoIdxRef.current + 1) % VIDEOS.length;
+    const back = getBackVideoByRef();
+    if (!back) { isTransitioning.current = false; transitionStarted.current = false; return; }
+    const start = () => runSweep(back, nextIdx, true);
+    if (back.src.includes(VIDEOS[nextIdx]) && back.readyState >= 2) { back.currentTime = 0; start(); }
+    else {
+      const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; start(); };
+      back.addEventListener('canplay', onReady);
+      if (!back.src.includes(VIDEOS[nextIdx])) { back.src = VIDEOS[nextIdx]; } back.load();
+    }
+  }, [getBackVideoByRef, runSweep]);
 
   const doTransition = useCallback(() => {
     isTransitioning.current = true;
     const nextIdx = (currentVideoIdx + 1) % VIDEOS.length;
-    const back = getBackVideo(); if (!back) return;
-
-    const startAnimation = () => {
-      /* ★ Título sale hacia la derecha (siguiendo el sweep) */
-      setTitlePhase('hide');
-
-      requestAnimationFrame(() => { requestAnimationFrame(() => {
-        setPhase('sweep-in');
-        setTimeout(() => { setBackVisible(true); back.currentTime = 0; back.play().catch(() => {}); }, PEAK_AT - 600);
-        setTimeout(() => { setFrontFading(true); }, PEAK_AT - 350);
-        setTimeout(() => { setPhase('white-peak'); }, PEAK_AT - 100);
-
-        /* ★ En el flash: cambia texto + snap a posición izquierda */
-        setTimeout(() => {
-          setHeroLine(nextIdx);
-          setTitlePhase('prep');
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              setTitlePhase('show');
-            });
-          });
-        }, PEAK_AT);
-
-        setTimeout(() => { setPhase('sweep-out'); }, PEAK_AT + 100);
-
-        setTimeout(() => {
-          const oldFront = getFrontVideo();
-          if (oldFront) { oldFront.pause(); oldFront.currentTime = 0; }
-          setFrontSlot(p => p === 'A' ? 'B' : 'A'); setCurrentVideoIdx(nextIdx);
-          setFrontFading(false); setBackVisible(false); setPhase('playing');
-          if (oldFront) { prepareVideo(oldFront, VIDEOS[(nextIdx + 1) % VIDEOS.length]); }
-          transitionStarted.current = false; isTransitioning.current = false;
-        }, GLASS_DURATION);
-      }); });
-    };
-
-    if (back.src.includes(VIDEOS[nextIdx]) && back.readyState >= 2) { back.currentTime = 0; startAnimation(); }
+    const back = getBackVideo();
+    if (!back) { isTransitioning.current = false; transitionStarted.current = false; return; }
+    const start = () => runSweep(back, nextIdx, false);
+    if (back.src.includes(VIDEOS[nextIdx]) && back.readyState >= 2) { back.currentTime = 0; start(); }
     else {
-      const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; startAnimation(); };
+      const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; start(); };
       back.addEventListener('canplay', onReady);
       if (!back.src.includes(VIDEOS[nextIdx])) { back.src = VIDEOS[nextIdx]; } back.load();
     }
-  }, [currentVideoIdx, getFrontVideo, getBackVideo, prepareVideo]);
+  }, [currentVideoIdx, getBackVideo, runSweep]);
 
   const handleDotClick = useCallback((targetIdx: number) => {
     if (phase !== 'playing' || targetIdx === currentVideoIdx || isMobile || isTransitioning.current) return;
     isTransitioning.current = true; transitionStarted.current = true;
     const back = getBackVideo(); if (!back) return;
-
-    const startAnimation = () => {
-      setTitlePhase('hide');
-
-      requestAnimationFrame(() => { requestAnimationFrame(() => {
-        setPhase('sweep-in');
-        setTimeout(() => { setBackVisible(true); back.currentTime = 0; back.play().catch(() => {}); }, PEAK_AT - 600);
-        setTimeout(() => { setFrontFading(true); }, PEAK_AT - 350);
-        setTimeout(() => { setPhase('white-peak'); }, PEAK_AT - 100);
-
-        setTimeout(() => {
-          setHeroLine(targetIdx);
-          setTitlePhase('prep');
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              setTitlePhase('show');
-            });
-          });
-        }, PEAK_AT);
-
-        setTimeout(() => { setPhase('sweep-out'); }, PEAK_AT + 100);
-
-        setTimeout(() => {
-          const oldFront = getFrontVideo();
-          if (oldFront) { oldFront.pause(); oldFront.currentTime = 0; }
-          setFrontSlot(p => p === 'A' ? 'B' : 'A'); setCurrentVideoIdx(targetIdx);
-          setFrontFading(false); setBackVisible(false); setPhase('playing');
-          if (oldFront) { prepareVideo(oldFront, VIDEOS[(targetIdx + 1) % VIDEOS.length]); }
-          transitionStarted.current = false; isTransitioning.current = false;
-        }, GLASS_DURATION);
-      }); });
-    };
-
-    const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; startAnimation(); };
+    const start = () => runSweep(back, targetIdx, false);
+    const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; start(); };
     back.addEventListener('canplay', onReady); back.src = VIDEOS[targetIdx]; back.load();
-  }, [phase, currentVideoIdx, isMobile, getFrontVideo, getBackVideo, prepareVideo]);
+  }, [phase, currentVideoIdx, isMobile, getBackVideo, runSweep]);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const safetyNet = setInterval(() => {
+      if (!enteredRef.current) return;
+    }, 5000);
+    return () => clearInterval(safetyNet);
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isMobile) return;
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible' && enteredRef.current && !isTransitioning.current) {
+        const front = getFrontVideoByRef();
+        if (front && front.paused && front.src) { front.play().catch(() => {}); }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [isMobile, getFrontVideoByRef]);
 
   const scrollTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
   const isAFront = frontSlot === 'A';
 
-  /* ★ TITLE TRANSITION STYLES — acoplado al sweep */
   const titleTransition = titlePhase === 'prep'
     ? 'none'
     : 'opacity 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s cubic-bezier(0.4,0,0.2,1), filter 0.55s cubic-bezier(0.4,0,0.2,1)';
-
   const titleOpacity = titlePhase === 'show' ? 1 : 0;
-
-  const titleTransform = titlePhase === 'hide'
-    ? 'translateX(30px)'    // sale hacia la DERECHA (con el sweep)
-    : titlePhase === 'prep'
-      ? 'translateX(-20px)' // snap a la IZQUIERDA (invisible)
-      : 'translateX(0)';    // posición final
-
+  const titleTransform = titlePhase === 'hide' ? 'translateX(30px)' : titlePhase === 'prep' ? 'translateX(-20px)' : 'translateX(0)';
   const titleFilter = titlePhase === 'show' ? 'blur(0px)' : 'blur(6px)';
 
   return (
@@ -226,9 +248,6 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
         ...(isMobile ? { height: 'auto', minHeight: '100dvh', background: 'transparent' } : {}),
       }}
     >
-      {/* ╔══════════════════════════════════════════════════╗
-          ║                   DESKTOP                       ║
-          ╚══════════════════════════════════════════════════╝ */}
       {!isMobile && (
         <>
           <style>{`
@@ -269,6 +288,32 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
             .ws-vig{position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse 85% 85% at 50% 50%,transparent 55%,rgba(0,0,0,.12) 100%)}
             @keyframes dkHI{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:translateY(0)}}
             @keyframes dkBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
+            @keyframes btnShimmer{0%{transform:translateX(-100%) skewX(-15deg)}100%{transform:translateX(200%) skewX(-15deg)}}
+            @keyframes btnPulseGlow{0%,100%{box-shadow:0 4px 24px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1),0 0 0 0 rgba(249,221,163,0)}50%{box-shadow:0 4px 24px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1),0 0 0 6px rgba(249,221,163,0.08)}}
+            .ws-cta-premium{position:relative;display:inline-flex;align-items:center;gap:10px;padding:14px 30px;border-radius:50px;background:linear-gradient(135deg,#F9DDA3 0%,#e6c57a 100%);color:#2a1f0e;font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.04em;cursor:pointer;border:none;box-shadow:0 4px 24px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1);overflow:hidden;transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.4s cubic-bezier(0.4,0,0.2,1),background 0.4s ease,filter 0.35s ease;animation:btnPulseGlow 3s ease-in-out 3s infinite;isolation:isolate}
+            .ws-cta-premium::before{content:'';position:absolute;top:0;left:0;width:45%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0) 10%,rgba(255,255,255,0.35) 45%,rgba(255,255,255,0.6) 50%,rgba(255,255,255,0.35) 55%,rgba(255,255,255,0) 90%,transparent 100%);transform:translateX(-100%) skewX(-15deg);transition:none;pointer-events:none;z-index:1}
+            .ws-cta-premium::after{content:'';position:absolute;inset:-2px;border-radius:52px;background:linear-gradient(135deg,rgba(255,255,255,0.3) 0%,rgba(249,221,163,0.15) 30%,transparent 50%,rgba(249,221,163,0.1) 70%,rgba(255,255,255,0.2) 100%);opacity:0;transition:opacity 0.4s ease;z-index:-1;pointer-events:none}
+            .ws-cta-premium:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 32px rgba(249,221,163,0.4),0 4px 16px rgba(249,221,163,0.25),0 0 48px rgba(249,221,163,0.15),0 1px 3px rgba(0,0,0,0.08);background:linear-gradient(135deg,#fce5b5 0%,#F9DDA3 40%,#eecf8a 100%);filter:brightness(1.08);animation:none}
+            .ws-cta-premium:hover::before{animation:btnShimmer 0.8s cubic-bezier(0.4,0,0.2,1) forwards}
+            .ws-cta-premium:hover::after{opacity:1}
+            .ws-cta-premium:hover .ws-cta-arrow{transform:translateX(3px)}
+            .ws-cta-premium:active{transform:translateY(-1px) scale(1.005);box-shadow:0 4px 20px rgba(249,221,163,0.3),0 2px 8px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1);filter:brightness(1.02);transition:transform 0.12s ease,box-shadow 0.12s ease,filter 0.12s ease}
+            .ws-cta-arrow{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);position:relative;z-index:2}
+            .ws-cta-text{position:relative;z-index:2}
+
+            /* ★ HERO CONTENT CONTAINER — max-width for large screens */
+            .ws-hero-container{
+              position:absolute;inset:0;z-index:12;
+              display:flex;align-items:center;
+              pointer-events:none;
+            }
+            .ws-hero-inner{
+              width:100%;
+              max-width:1380px;
+              margin:0 auto;
+              padding:0 40px;
+              position:relative;
+            }
           `}</style>
 
           <div className={`ws-cl ${entered ? 'ws-cin-in' : ''}`} style={{ opacity: entered ? undefined : 0 }}>
@@ -288,93 +333,86 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
             <div className="ws-vig" />
           </div>
 
-          {/* ═══ HERO OVERLAY DESKTOP ═══ */}
-          <div style={{
-            position: 'absolute', left: 0, top: 0, bottom: 0, width: '52%',
-            zIndex: 12, display: 'flex', alignItems: 'center', pointerEvents: 'none',
-            opacity: entered ? 1 : 0,
-            transition: 'opacity 0.7s ease, transform 0.6s ease',
-            ...(heroVisible ? {} : { opacity: 0, transform: 'translateY(-12px)' }),
-          }}>
+          {/* ═══ HERO OVERLAY — now constrained by max-width container ═══ */}
+          <div
+            className="ws-hero-container"
+            style={{
+              opacity: entered ? 1 : 0,
+              transition: 'opacity 0.7s ease, transform 0.6s ease',
+              ...(heroVisible ? {} : { opacity: 0, transform: 'translateY(-12px)' }),
+            }}
+          >
+            {/* Dark gradient scrim — stays full width behind */}
             <div style={{
-              position: 'absolute', inset: 0,
+              position: 'absolute', left: 0, top: 0, bottom: 0, width: '52%',
               background: 'linear-gradient(to right, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.10) 45%, rgba(0,0,0,0.03) 70%, transparent 100%)',
-              pointerEvents: 'none',
+              pointerEvents: 'none', zIndex: 0,
             }} />
 
-            <div style={{
-              position: 'relative', zIndex: 2,
-              paddingLeft: 'clamp(40px, 7vw, 100px)',
-              maxWidth: 560, pointerEvents: 'auto',
-            }}>
-              {/* Gold accent */}
+            <div className="ws-hero-inner">
               <div style={{
-                width: 38, height: 2.5,
-                background: 'linear-gradient(90deg, #F9DDA3, rgba(249,221,163,0.2))',
-                borderRadius: 2, marginBottom: 22, opacity: 0,
-                ...(entered ? { animation: 'dkHI 0.8s ease-out 0.6s both' } : {}),
-              }} />
-
-              {/* ★ TÍTULO — contenedor fijo + wrapper de transición acoplada al sweep */}
-              <div style={{
-                minHeight: 'clamp(90px, 8.5vw, 130px)',
-                display: 'flex',
-                alignItems: 'flex-start',
+                maxWidth: 560, pointerEvents: 'auto',
               }}>
+                {/* Gold accent */}
                 <div style={{
-                  transition: titleTransition,
-                  opacity: titleOpacity,
-                  transform: titleTransform,
-                  filter: titleFilter,
+                  width: 38, height: 2.5,
+                  background: 'linear-gradient(90deg, #F9DDA3, rgba(249,221,163,0.2))',
+                  borderRadius: 2, marginBottom: 22, opacity: 0,
+                  ...(entered ? { animation: 'dkHI 0.8s ease-out 0.6s both' } : {}),
+                }} />
+
+                {/* Title */}
+                <div style={{
+                  minHeight: 'clamp(90px, 8.5vw, 130px)',
+                  display: 'flex', alignItems: 'flex-start',
                 }}>
-                  <h1 style={{
-                    fontFamily: "'Poppins', sans-serif", fontWeight: 700,
-                    fontSize: 'clamp(1.9rem, 3.4vw, 3.1rem)', lineHeight: 1.15,
-                    color: '#fff', letterSpacing: '-0.02em',
-                    margin: 0,
-                    textShadow: '0 2px 30px rgba(0,0,0,0.25)',
-                    opacity: 0,
-                    ...(entered ? { animation: 'dkHI 0.9s ease-out 0.75s both' } : {}),
+                  <div style={{
+                    transition: titleTransition,
+                    opacity: titleOpacity,
+                    transform: titleTransform,
+                    filter: titleFilter,
                   }}>
-                    {HERO_TITLES[heroLine]}
-                  </h1>
+                    <h1 style={{
+                      fontFamily: "'Poppins', sans-serif", fontWeight: 700,
+                      fontSize: 'clamp(1.9rem, 3.4vw, 3.1rem)', lineHeight: 1.15,
+                      color: '#fff', letterSpacing: '-0.02em',
+                      margin: 0,
+                      textShadow: '0 2px 30px rgba(0,0,0,0.25)',
+                      opacity: 0,
+                      ...(entered ? { animation: 'dkHI 0.9s ease-out 0.75s both' } : {}),
+                    }}>
+                      {HERO_TITLES[heroLine]}
+                    </h1>
+                  </div>
                 </div>
-              </div>
 
-              {/* Subtítulo — 100% estático */}
-              <p style={{
-                fontFamily: "'Poppins', sans-serif", fontWeight: 300,
-                fontSize: 'clamp(0.88rem, 1.15vw, 1.1rem)', lineHeight: 1.7,
-                color: 'rgba(255,255,255,0.72)',
-                margin: '16px 0 32px', letterSpacing: '0.015em',
-                textShadow: '0 1px 12px rgba(0,0,0,0.15)',
-                opacity: 0,
-                ...(entered ? { animation: 'dkHI 0.9s ease-out 1.0s both' } : {}),
-              }}>
-                Acompañamiento emocional real y personalizado.<br />
-                Un espacio seguro, creado para vos.
-              </p>
+                {/* Subtitle */}
+                <p style={{
+                  fontFamily: "'Poppins', sans-serif", fontWeight: 300,
+                  fontSize: 'clamp(0.88rem, 1.15vw, 1.1rem)', lineHeight: 1.7,
+                  color: 'rgba(255,255,255,0.72)',
+                  margin: '16px 0 32px', letterSpacing: '0.015em',
+                  textShadow: '0 1px 12px rgba(0,0,0,0.15)',
+                  opacity: 0,
+                  ...(entered ? { animation: 'dkHI 0.9s ease-out 1.0s both' } : {}),
+                }}>
+                  Acompañamiento emocional real y personalizado.<br />
+                  Un espacio seguro, creado para vos.
+                </p>
 
-              {/* CTA — estático */}
-              <button
-                 onClick={() => scrollTo('contacto')}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  padding: '14px 30px', borderRadius: 50,
-                  background: 'linear-gradient(135deg, #F9DDA3 0%, #e6c57a 100%)',
-                  color: '#2a1f0e', fontFamily: "'Poppins', sans-serif",
-                  fontWeight: 600, fontSize: 14, letterSpacing: '0.04em',
-                  cursor: 'pointer', border: 'none',
-                  boxShadow: '0 4px 24px rgba(249,221,163,0.2), 0 1px 3px rgba(0,0,0,0.1)',
+                {/* CTA */}
+                <div style={{
                   opacity: 0,
                   ...(entered ? { animation: 'dkHI 0.8s ease-out 1.25s both' } : {}),
-                }}
-              >
-                Quiero mi compañia
-                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </button>
+                }}>
+                  <button className="ws-cta-premium" onClick={() => scrollTo('contacto')}>
+                    <span className="ws-cta-text">Quiero mi compañia</span>
+                    <svg className="ws-cta-arrow" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -419,9 +457,6 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
         </>
       )}
 
-      {/* ╔══════════════════════════════════════════════════╗
-          ║                   MOBILE                        ║
-          ╚══════════════════════════════════════════════════╝ */}
       {isMobile && (
         <>
           <style>{`
@@ -437,6 +472,18 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
             @keyframes mFloor{0%{transform:translateY(100%)}100%{transform:translateY(0)}}
             @keyframes mBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
             @keyframes mScrollIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+            @keyframes btnShimmer{0%{transform:translateX(-100%) skewX(-15deg)}100%{transform:translateX(200%) skewX(-15deg)}}
+            @keyframes btnPulseGlow{0%,100%{box-shadow:0 4px 24px rgba(249,221,163,0.3),0 1px 3px rgba(0,0,0,0.12),0 0 0 0 rgba(249,221,163,0)}50%{box-shadow:0 4px 24px rgba(249,221,163,0.3),0 1px 3px rgba(0,0,0,0.12),0 0 0 5px rgba(249,221,163,0.06)}}
+            .ws-cta-premium-mobile{position:relative;display:inline-flex;align-items:center;gap:clamp(7px, 2vw, 10px);padding:clamp(11px, 2.8vw, 16px) clamp(26px, 8vw, 38px);border-radius:50px;background:linear-gradient(135deg,#F9DDA3 0%,#e6c57a 100%);color:#2a1f0e;font-family:'Poppins',sans-serif;font-weight:600;font-size:clamp(12px, 3.5vw, 15px);letter-spacing:0.04em;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(249,221,163,0.3),0 1px 3px rgba(0,0,0,0.12);overflow:hidden;-webkit-tap-highlight-color:transparent;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.35s ease,background 0.35s ease,filter 0.3s ease;animation:btnPulseGlow 3s ease-in-out 3s infinite;isolation:isolate}
+            .ws-cta-premium-mobile::before{content:'';position:absolute;top:0;left:0;width:45%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0) 10%,rgba(255,255,255,0.35) 45%,rgba(255,255,255,0.6) 50%,rgba(255,255,255,0.35) 55%,rgba(255,255,255,0) 90%,transparent 100%);transform:translateX(-100%) skewX(-15deg);pointer-events:none;z-index:1}
+            .ws-cta-premium-mobile::after{content:'';position:absolute;inset:-2px;border-radius:52px;background:linear-gradient(135deg,rgba(255,255,255,0.3) 0%,rgba(249,221,163,0.15) 30%,transparent 50%,rgba(249,221,163,0.1) 70%,rgba(255,255,255,0.2) 100%);opacity:0;transition:opacity 0.35s ease;z-index:-1;pointer-events:none}
+            .ws-cta-premium-mobile:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 28px rgba(249,221,163,0.4),0 3px 12px rgba(249,221,163,0.25),0 0 40px rgba(249,221,163,0.12);background:linear-gradient(135deg,#fce5b5 0%,#F9DDA3 40%,#eecf8a 100%);filter:brightness(1.06);animation:none}
+            .ws-cta-premium-mobile:hover::before{animation:btnShimmer 0.8s cubic-bezier(0.4,0,0.2,1) forwards}
+            .ws-cta-premium-mobile:hover::after{opacity:1}
+            .ws-cta-premium-mobile:hover .ws-cta-arrow{transform:translateX(3px)}
+            .ws-cta-premium-mobile:active{transform:translateY(0px) scale(0.97);box-shadow:0 2px 12px rgba(249,221,163,0.3),0 1px 4px rgba(0,0,0,0.1);filter:brightness(1.0);transition:transform 0.1s ease,box-shadow 0.1s ease,filter 0.1s ease}
+            .ws-cta-arrow{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);position:relative;z-index:2}
+            .ws-cta-text{position:relative;z-index:2}
           `}</style>
 
           <div style={{
@@ -451,7 +498,6 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
             display: 'flex', flexDirection: 'column', alignItems: 'center',
             width: '100%', minHeight: 0,
           }}>
-
             <div style={{
               width: '100%', flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -498,25 +544,17 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
                   Acompañamiento emocional real y personalizado.<br />Un espacio seguro, creado para vos.
                 </p>
 
-                <button onClick={() => scrollTo('que-es')} style={{
-                  display: 'inline-flex', alignItems: 'center',
-                  gap: 'clamp(7px, 2vw, 10px)',
-                  padding: 'clamp(11px, 2.8vw, 16px) clamp(26px, 8vw, 38px)',
-                  borderRadius: 50,
-                  background: 'linear-gradient(135deg, #F9DDA3 0%, #e6c57a 100%)',
-                  color: '#2a1f0e', fontFamily: "'Poppins', sans-serif",
-                  fontWeight: 600, fontSize: 'clamp(12px, 3.5vw, 15px)',
-                  letterSpacing: '0.04em', border: 'none', cursor: 'pointer',
-                  boxShadow: '0 4px 24px rgba(249,221,163,0.3), 0 1px 3px rgba(0,0,0,0.12)',
-                  WebkitTapHighlightColor: 'transparent',
+                <div style={{
                   opacity: 0,
                   ...(entered ? { animation: 'mUp 0.7s ease-out 0.95s both' } : {}),
                 }}>
-                  Conocé a Camil
-                  <svg width="clamp(13px, 3.5vw, 16px)" height="clamp(13px, 3.5vw, 16px)" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </button>
+                  <button className="ws-cta-premium-mobile" onClick={() => scrollTo('que-es')}>
+                    <span className="ws-cta-text">Conocé a Camil</span>
+                    <svg className="ws-cta-arrow" width="clamp(13px, 3.5vw, 16px)" height="clamp(13px, 3.5vw, 16px)" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -578,9 +616,7 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
                 position: 'absolute', bottom: 0, left: 0, right: 0,
                 zIndex: 55, pointerEvents: 'none',
                 height: 'clamp(140px, 22vh, 200px)',
-                background: `linear-gradient(to bottom,
-                  rgba(0,0,0,0) 0%, rgba(0,0,0,0.03) 15%, rgba(0,0,0,0.1) 30%,
-                  rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.42) 70%, rgba(0,0,0,0.58) 85%, rgba(0,0,0,0.7) 100%)`,
+                background: `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.03) 15%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.42) 70%, rgba(0,0,0,0.58) 85%, rgba(0,0,0,0.7) 100%)`,
               }}>
                 <div style={{
                   position: 'absolute', inset: 0,
@@ -607,9 +643,7 @@ const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
                     color: 'rgba(255,255,255,0.65)', letterSpacing: '0.15em',
                     textTransform: 'uppercase' as const,
                     textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                  }}>
-                    Descubrí más
-                  </span>
+                  }}>Descubrí más</span>
                   <svg width="clamp(10px, 3vw, 14px)" height="clamp(10px, 3vw, 14px)" fill="none" stroke="rgba(255,255,255,0.5)" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7" />
                   </svg>

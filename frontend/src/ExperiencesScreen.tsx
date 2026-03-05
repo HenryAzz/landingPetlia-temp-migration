@@ -134,6 +134,9 @@ const ExperiencesScreen = () => {
           z-index: 5;
           display: flex;
           min-height: 95vh;
+          max-width: 1380px;
+          margin: 0 auto;
+          padding: 0 40px;
         }
         .exp-left {
           width: 35%;
@@ -149,8 +152,8 @@ const ExperiencesScreen = () => {
           justify-content: center;
           width: 100%;
           max-width: 540px;
-          padding-left: clamp(40px, 6vw, 90px);
-          padding-right: clamp(20px, 2vw, 40px);
+          padding-left: clamp(0px, 3vw, 50px);
+          padding-right: clamp(0px, 1vw, 20px);
         }
         .exp-right {
           width: 55%;
@@ -514,11 +517,11 @@ const ExperiencesScreen = () => {
           .exp-layout {
             flex-direction: column;
             min-height: auto;
-            padding: 72px 0 64px;
+            padding: 72px 40px 64px;
           }
           .exp-left {
             width: 100%;
-            padding: 0 clamp(28px, 5vw, 48px);
+            padding: 0;
           }
           .exp-left-inner {
             padding: 0;
@@ -536,7 +539,7 @@ const ExperiencesScreen = () => {
           .exp-scene-desc { font-size: clamp(16px, 2.2vw, 19px); max-width: 100%; }
           .exp-right {
             width: 100%;
-            padding: 0 32px;
+            padding: 0;
             justify-content: center;
           }
           .exp-photos-wrap {
@@ -550,13 +553,13 @@ const ExperiencesScreen = () => {
         }
 
         @media (max-width: 768px) {
-          .exp-layout { padding: 60px 0 52px; }
-          .exp-left { padding: 0 28px; }
+          .exp-layout { padding: 60px 24px 52px; }
+          .exp-left { padding: 0; }
           .exp-left-inner {
             max-width: 500px;
             margin-bottom: 44px;
           }
-          .exp-right { padding: 0 28px; }
+          .exp-right { padding: 0; }
 
           .exp-accent { width: 46px; height: 3px; margin-bottom: 16px; }
           .exp-label { font-size: 13px; margin-bottom: 16px; letter-spacing: 0.18em; }
@@ -590,13 +593,13 @@ const ExperiencesScreen = () => {
         }
 
         @media (max-width: 540px) {
-          .exp-layout { padding: 52px 0 46px; }
-          .exp-left { padding: 0 24px; }
+          .exp-layout { padding: 52px 24px 46px; }
+          .exp-left { padding: 0; }
           .exp-left-inner {
             max-width: 100%;
             margin-bottom: 40px;
           }
-          .exp-right { padding: 0 24px; }
+          .exp-right { padding: 0; }
 
           .exp-accent { width: 42px; margin-bottom: 14px; }
           .exp-label { font-size: 12.5px; margin-bottom: 14px; }
@@ -630,9 +633,9 @@ const ExperiencesScreen = () => {
         }
 
         @media (max-width: 400px) {
-          .exp-layout { padding: 46px 0 40px; }
-          .exp-left { padding: 0 20px; }
-          .exp-right { padding: 0 20px; }
+          .exp-layout { padding: 46px 18px 40px; }
+          .exp-left { padding: 0; }
+          .exp-right { padding: 0; }
 
           .exp-accent { width: 38px; height: 2.5px; margin-bottom: 12px; }
           .exp-label { font-size: 12px; margin-bottom: 12px; letter-spacing: 0.16em; }
@@ -678,9 +681,9 @@ const ExperiencesScreen = () => {
         }
 
         @media (max-width: 340px) {
-          .exp-layout { padding: 40px 0 36px; }
-          .exp-left { padding: 0 16px; }
-          .exp-right { padding: 0 16px; }
+          .exp-layout { padding: 40px 14px 36px; }
+          .exp-left { padding: 0; }
+          .exp-right { padding: 0; }
 
           .exp-accent { width: 34px; margin-bottom: 10px; }
           .exp-label { font-size: 11px; margin-bottom: 10px; }

@@ -67,10 +67,13 @@ const EverythingGoodScreen = () => {
           }
         }
 
+        /* ★ Outer wrapper — full width for background, constrains inner content */
         .eg-row {
           display: flex;
           width: 100%;
           height: 100%;
+          max-width: 1380px;
+          margin: 0 auto;
         }
 
         .eg-col-left {
@@ -84,15 +87,11 @@ const EverythingGoodScreen = () => {
         .eg-left-text {
           padding-top: clamp(40px, 6vh, 80px);
           padding-bottom: 0;
+          padding-left: 40px;
           padding-right: clamp(24px, 3vw, 48px);
-          margin-left: clamp(24px, 3vw, 50px);
           flex-shrink: 0;
           position: relative;
           z-index: 3;
-          padding-left: max(
-            clamp(24px, 5vw, 80px),
-            calc((100vw - 1300px) / 2 + clamp(24px, 5vw, 80px))
-          );
         }
 
         .eg-left-img-wrap {
@@ -130,7 +129,7 @@ const EverythingGoodScreen = () => {
           object-position: left bottom;
           z-index: 1;
           opacity: 0;
-          margin-left: 20vh;
+          margin-left: min(20vh, 200px);
         }
 
         .eg-hearts-container {
@@ -193,7 +192,7 @@ const EverythingGoodScreen = () => {
           display: flex;
           align-items: center;
           justify-content: flex-start;
-          padding: clamp(40px, 6vh, 80px) clamp(24px, 3vw, 48px) clamp(40px, 6vh, 80px) clamp(32px, 3.5vw, 56px);
+          padding: clamp(40px, 6vh, 80px) 40px clamp(40px, 6vh, 80px) clamp(32px, 3.5vw, 56px);
           position: relative;
           overflow-y: auto;
         }
@@ -463,7 +462,6 @@ const EverythingGoodScreen = () => {
           opacity: 0;
         }
 
-        /* ═══ MOBILE IMAGE — cropped at bottom like desktop ═══ */
         .eg-img-mobile {
           display: none;
           width: 100%;
@@ -503,9 +501,8 @@ const EverythingGoodScreen = () => {
         .eg-a-pop   { animation: egPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
         .eg-a-card  { animation: egCardIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
 
-        /* ═══ TABLET ≤ 1024px ═══ */
         @media (max-width: 1024px) {
-          .eg-row { flex-direction: column; }
+          .eg-row { flex-direction: column; max-width: none; }
           .eg-col-left { display: none; }
           .eg-img-mobile {
             display: block;
@@ -524,10 +521,10 @@ const EverythingGoodScreen = () => {
           }
           .eg-col-right {
             order: 1;
-            padding: clamp(48px, 7vw, 80px) clamp(24px, 5vw, 80px) 40px;
+            padding: clamp(48px, 7vw, 80px) 40px 40px;
             justify-content: center;
           }
-          .eg-inner { max-width: 560px; align-items: center; text-align: center; }
+          .eg-inner { max-width: 560px; align-items: center; text-align: center; margin: 0 auto; }
           .eg-mobile-header {
             display: flex;
             flex-direction: column;
@@ -542,7 +539,6 @@ const EverythingGoodScreen = () => {
           .eg-dk-1, .eg-dk-2, .eg-dk-3 { display: none; }
         }
 
-        /* ═══ MOBILE ≤ 768px ═══ */
         @media (max-width: 768px) {
           .eg-col-right { padding: clamp(36px, 5vw, 56px) 24px 32px; }
           .eg-title { font-size: clamp(24px, 5.5vw, 30px); margin-bottom: 14px; }
@@ -558,17 +554,10 @@ const EverythingGoodScreen = () => {
           .eg-trust-title { font-size: 13.5px; }
           .eg-trust-desc { font-size: 12px; }
           .eg-btn { padding: 13px 28px; font-size: 14px; }
-          .eg-img-mobile {
-            max-height: 320px;
-          }
-          .eg-img-mobile img {
-            width: 55%;
-            max-width: 280px;
-            max-height: 320px;
-          }
+          .eg-img-mobile { max-height: 320px; }
+          .eg-img-mobile img { width: 55%; max-width: 280px; max-height: 320px; }
         }
 
-        /* ═══ ≤ 540px ═══ */
         @media (max-width: 540px) {
           .eg-col-right { padding: 36px 20px 28px; }
           .eg-title { font-size: clamp(22px, 5vw, 26px); }
@@ -576,17 +565,10 @@ const EverythingGoodScreen = () => {
           .eg-benefit { padding: 12px 14px; gap: 11px; border-radius: 12px; }
           .eg-benefit-icon { width: 34px; height: 34px; font-size: 15px; }
           .eg-trust { padding: 14px 16px; border-radius: 14px; }
-          .eg-img-mobile {
-            max-height: 280px;
-          }
-          .eg-img-mobile img {
-            width: 55%;
-            max-width: 240px;
-            max-height: 280px;
-          }
+          .eg-img-mobile { max-height: 280px; }
+          .eg-img-mobile img { width: 55%; max-width: 240px; max-height: 280px; }
         }
 
-        /* ═══ ≤ 400px ═══ */
         @media (max-width: 400px) {
           .eg-col-right { padding: 28px 18px 24px; }
           .eg-accent { width: 30px; margin-bottom: 10px; }
@@ -607,17 +589,10 @@ const EverythingGoodScreen = () => {
           .eg-btn { padding: 12px 24px; font-size: 13px; gap: 8px; }
           .eg-btn-arrow { width: 14px; height: 14px; }
           .eg-microtrust { font-size: 11px; }
-          .eg-img-mobile {
-            max-height: 240px;
-          }
-          .eg-img-mobile img {
-            width: 50%;
-            max-width: 200px;
-            max-height: 240px;
-          }
+          .eg-img-mobile { max-height: 240px; }
+          .eg-img-mobile img { width: 50%; max-width: 200px; max-height: 240px; }
         }
 
-        /* ═══ ≤ 340px ═══ */
         @media (max-width: 340px) {
           .eg-col-right { padding: 24px 14px 20px; }
           .eg-title { font-size: 19px; }
@@ -630,14 +605,8 @@ const EverythingGoodScreen = () => {
           .eg-trust-title { font-size: 12.5px; }
           .eg-trust-desc { font-size: 11px; }
           .eg-btn { padding: 11px 20px; font-size: 12.5px; }
-          .eg-img-mobile {
-            max-height: 200px;
-          }
-          .eg-img-mobile img {
-            width: 45%;
-            max-width: 170px;
-            max-height: 200px;
-          }
+          .eg-img-mobile { max-height: 200px; }
+          .eg-img-mobile img { width: 45%; max-width: 170px; max-height: 200px; }
         }
       `}</style>
 
@@ -722,11 +691,7 @@ const EverythingGoodScreen = () => {
 
             <div className="eg-benefits">
               {BENEFITS.map((b, i) => (
-                <div
-                  key={i}
-                  className={`eg-benefit ${a ? 'eg-a-card' : ''}`}
-                  style={{ animationDelay: `${0.55 + i * 0.08}s` }}
-                >
+                <div key={i} className={`eg-benefit ${a ? 'eg-a-card' : ''}`} style={{ animationDelay: `${0.55 + i * 0.08}s` }}>
                   <div className="eg-benefit-icon"><span>{b.emoji}</span></div>
                   <div className="eg-benefit-text">
                     <span className="eg-benefit-name">{b.title}</span>
@@ -752,11 +717,7 @@ const EverythingGoodScreen = () => {
             </div>
 
             <div className="eg-action">
-              <button
-                className={`eg-btn ${a ? 'eg-a-up' : ''}`}
-                style={{ animationDelay: '1.1s' }}
-                onClick={() => scrollTo('contacto')}
-              >
+              <button className={`eg-btn ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '1.1s' }} onClick={() => scrollTo('contacto')}>
                 Quiero empezar
                 <svg className="eg-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
@@ -770,14 +731,8 @@ const EverythingGoodScreen = () => {
         </div>
       </div>
 
-      {/* Mobile image — sized down & cropped at bottom */}
       <div className="eg-img-mobile">
-        <img
-          src="/beso.png"
-          alt="Camil"
-          className={a ? 'eg-a-scale' : ''}
-          style={{ animationDelay: '0.6s' }}
-        />
+        <img src="/beso.png" alt="Camil" className={a ? 'eg-a-scale' : ''} style={{ animationDelay: '0.6s' }} />
       </div>
     </section>
   );
