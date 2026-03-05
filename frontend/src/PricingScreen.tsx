@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, TouchEvent } from 'react';
+import Tilt from 'react-parallax-tilt';
 
 interface PricingScreenProps {
   onSelectPlan?: (planId: string) => void;
@@ -169,9 +170,9 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
       opacity: swipeOffset !== 0 ? 1 - Math.abs(swipeOffset) / 280 : undefined,
     } : {};
 
-    return (
+    const cardElement = (
       <div
-        key={`${mode}-${plan.id}`}
+        key={isMob ? `${mode}-${plan.id}` : undefined}
         className={`prc-card ${modeClass} ${entranceClass}`}
         style={{
           background: plan.highlighted
@@ -211,7 +212,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           {plan.cupos}
         </div>
 
-        {/* Icon */}
         <div
           className={`prc-icon prc-icon--${plan.id} ${a ? 'prc-icon-visible' : ''}`}
           style={{ animationDelay: `${0.7 + idx * 0.15}s` }}
@@ -256,13 +256,24 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         >
           Elegir este plan
         </button>
-
-        <div className="prc-card-trust">
-          <span>🔒 Sin permanencia</span>
-          <span>·</span>
-          <span>✓ Pago seguro</span>
-        </div>
       </div>
+    );
+
+    if (isMob) return cardElement;
+
+    return (
+      <Tilt
+        key={`${mode}-${plan.id}`}
+        className={mode === 'desktop' ? 'prc-tilt-dk' : 'prc-tilt-tb'}
+        tiltMaxAngleX={7}
+        tiltMaxAngleY={7}
+        scale={1.02}
+        transitionSpeed={1200}
+        glareEnable={false}
+        style={{ overflow: 'visible' }}
+      >
+        {cardElement}
+      </Tilt>
     );
   };
 
@@ -281,6 +292,25 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           background-color: #F3F3F3;
           padding-top: clamp(50px, 6vw, 90px);
           padding-bottom: clamp(40px, 5vw, 80px);
+        }
+
+        /* ═══ TILT WRAPPERS ═══ */
+        .prc-tilt-dk {
+          height: 100%;
+          overflow: visible !important;
+        }
+        .prc-tilt-dk > div {
+          height: 100%;
+          overflow: visible !important;
+        }
+
+        .prc-tilt-tb {
+          width: 100%;
+          max-width: 500px;
+          overflow: visible !important;
+        }
+        .prc-tilt-tb > div {
+          overflow: visible !important;
         }
 
         /* ═══ HEADER ═══ */
@@ -561,7 +591,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
 
         .prc-privacy {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           width: 100%;
           max-width: 780px;
           padding: 28px 32px;
@@ -577,17 +607,12 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         }
 
         .prc-privacy-icon {
-          width: 44px;
-          height: 44px;
-          min-width: 44px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, rgba(246,158,130,0.18), rgba(249,221,163,0.12));
-          border: 1px solid rgba(246,158,130,0.25);
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          font-size: 20px;
+          font-size: 28px;
+          line-height: 1;
         }
 
         .prc-privacy-content {
@@ -707,7 +732,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-a-up { animation: prcUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .prc-a-card { animation: prcCardIn 0.8s cubic-bezier(0.22,1,0.36,1) both; }
 
-        /* Highlighted card scales up */
         .prc-card-dk--hl.prc-a-card { animation-name: prcCardInHL; }
 
         .prc-slide-l { animation: prcSlideL 0.26s cubic-bezier(0.4,0,0.2,1) forwards; }
@@ -728,13 +752,16 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-wrap-mb { display: none; }
 
         .prc-card-dk {
-          transition: transform 0.35s ease, box-shadow 0.35s ease;
+          transition: box-shadow 0.35s ease, border-color 0.35s ease;
           width: clamp(260px, 20vw, 330px);
           padding: 2vw 1.6vw;
           box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+          height: 100%;
         }
 
-        .prc-card-dk:hover { transform: translateY(-6px); }
+        .prc-card-dk:hover {
+          box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
 
         .prc-card-dk--hl {
           width: clamp(280px, 22vw, 365px);
@@ -785,10 +812,10 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
             padding: 38px 34px 34px;
             border-radius: 22px;
             box-shadow: 0 6px 25px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
           }
 
-          .prc-card-tb:hover { transform: translateY(-4px); box-shadow: 0 10px 35px rgba(0,0,0,0.08); }
+          .prc-card-tb:hover { box-shadow: 0 10px 35px rgba(0,0,0,0.08); }
           .prc-card-tb--hl { box-shadow: 0 8px 30px rgba(244,63,94,0.1); }
 
           .prc-card-tb .prc-badge { top: -13px; font-size: 11px; padding: 5px 16px; }
@@ -812,9 +839,11 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-card-tb .prc-cta { padding: 15px 0; font-size: 15px; margin-top: 24px; }
           .prc-card-tb .prc-card-trust { font-size: 11px; margin-top: 10px; }
 
+          .prc-tilt-tb { max-width: 500px; }
+
           .prc-privacy-wrapper { padding: 0 32px; margin-top: 40px; }
           .prc-privacy { max-width: 500px; padding: 24px 28px; }
-          .prc-privacy-icon { width: 40px; height: 40px; min-width: 40px; font-size: 18px; }
+          .prc-privacy-icon { font-size: 26px; }
           .prc-privacy-title { font-size: 14px; }
           .prc-privacy-text { font-size: 13px; }
 
@@ -883,7 +912,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
             border-radius: 16px;
             gap: 16px;
           }
-          .prc-privacy-icon { width: 38px; height: 38px; min-width: 38px; font-size: 17px; }
+          .prc-privacy-icon { font-size: 24px; }
           .prc-privacy-title { font-size: 14px; }
           .prc-privacy-text { font-size: 13px; line-height: 1.65; }
         }
@@ -914,7 +943,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
             border-radius: 14px;
             gap: 14px;
           }
-          .prc-privacy-icon { width: 36px; height: 36px; min-width: 36px; font-size: 16px; }
+          .prc-privacy-icon { font-size: 22px; }
           .prc-privacy-title { font-size: 13px; }
           .prc-privacy-text { font-size: 12.5px; }
         }
@@ -962,7 +991,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
             border-radius: 14px;
             gap: 12px;
           }
-          .prc-privacy-icon { width: 34px; height: 34px; min-width: 34px; font-size: 15px; }
+          .prc-privacy-icon { font-size: 20px; }
           .prc-privacy-title { font-size: 12.5px; }
           .prc-privacy-text { font-size: 11.5px; line-height: 1.6; }
         }
@@ -997,7 +1026,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
             border-radius: 12px;
             gap: 10px;
           }
-          .prc-privacy-icon { width: 30px; height: 30px; min-width: 30px; font-size: 14px; }
+          .prc-privacy-icon { font-size: 18px; }
           .prc-privacy-title { font-size: 11.5px; }
           .prc-privacy-text { font-size: 10.5px; }
         }
@@ -1005,32 +1034,15 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
 
       {/* ═══ CONTENT ═══ */}
       <div className="prc-header">
-        <div
-          className={`prc-accent ${a ? 'prc-a-down' : ''}`}
-          style={{ animationDelay: '0.1s' }}
-        />
-        <span
-          className={`prc-label ${a ? 'prc-a-down' : ''}`}
-          style={{ animationDelay: '0.2s' }}
-        >
-          PLANES
-        </span>
-        <h2
-          className={`prc-title ${a ? 'prc-a-down' : ''}`}
-          style={{ animationDelay: '0.3s' }}
-        >
+        <div className={`prc-accent ${a ? 'prc-a-down' : ''}`} style={{ animationDelay: '0.1s' }} />
+        <span className={`prc-label ${a ? 'prc-a-down' : ''}`} style={{ animationDelay: '0.2s' }}>PLANES</span>
+        <h2 className={`prc-title ${a ? 'prc-a-down' : ''}`} style={{ animationDelay: '0.3s' }}>
           Elegí tu <span className="prc-title-light">vínculo</span>
         </h2>
-        <p
-          className={`prc-subtitle ${a ? 'prc-a-up' : ''}`}
-          style={{ animationDelay: '0.4s' }}
-        >
+        <p className={`prc-subtitle ${a ? 'prc-a-up' : ''}`} style={{ animationDelay: '0.4s' }}>
           Cada plan es un mundo. Elegí el que mejor se adapte a vos.
         </p>
-        <span
-          className={`prc-note ${a ? 'prc-a-up' : ''}`}
-          style={{ animationDelay: '0.5s' }}
-        >
+        <span className={`prc-note ${a ? 'prc-a-up' : ''}`} style={{ animationDelay: '0.5s' }}>
           Precios en pesos argentinos (ARS)
         </span>
       </div>
@@ -1054,10 +1066,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           {renderCard(currentPlan, mobileActive, 'mobile')}
         </div>
 
-        <div
-          className={`prc-dots ${a ? 'prc-a-up' : ''}`}
-          style={{ animationDelay: '0.65s' }}
-        >
+        <div className={`prc-dots ${a ? 'prc-a-up' : ''}`} style={{ animationDelay: '0.65s' }}>
           {PLANS.map((_, i) => (
             <button
               key={i}
@@ -1068,10 +1077,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           ))}
         </div>
 
-        <div
-          className={`prc-swipe ${a ? 'prc-a-up' : ''}`}
-          style={{ animationDelay: '0.8s' }}
-        >
+        <div className={`prc-swipe ${a ? 'prc-a-up' : ''}`} style={{ animationDelay: '0.8s' }}>
           <span className="prc-swipe-icon">👆</span>
           Deslizá para ver los planes
         </div>
@@ -1079,10 +1085,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
 
       {/* ═══ PRIVACY ═══ */}
       <div className="prc-privacy-wrapper">
-        <div
-          className={`prc-privacy ${a ? 'prc-a-up' : ''}`}
-          style={{ animationDelay: '0.9s' }}
-        >
+        <div className={`prc-privacy ${a ? 'prc-a-up' : ''}`} style={{ animationDelay: '0.9s' }}>
           <div className="prc-privacy-icon">🔒</div>
           <div className="prc-privacy-content">
             <h4 className="prc-privacy-title">Privacidad y seguridad garantizada</h4>

@@ -104,7 +104,7 @@ const ChooseYourBondScreen = () => {
           min-height: 95vh;
         }
         .cyb-left {
-          width: 45%;
+          width: 40%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -116,28 +116,33 @@ const ChooseYourBondScreen = () => {
           align-items: flex-start;
           justify-content: center;
           width: 100%;
-          padding-left: 6vw;
+          padding-left: 7vw;
           padding-right: 3vw;
-          gap: 2vw;
+          gap: clamp(14px, 1.3vw, 20px);
         }
         .cyb-right {
-          width: 55%;
+          width: 60%;
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
           padding: clamp(30px, 3vw, 50px) 0;
         }
+
+        /* ═══ CARDS CONTAINER — wider, tighter gap ═══ */
         .cyb-cards {
           display: flex;
           flex-direction: column;
           width: 100%;
-          max-width: 40vw;
-          gap: 1.5vw;
+          max-width: 46vw;
+          gap: clamp(10px, 0.85vw, 14px);
+                    margin: 0 35px 0 0;
+
         }
 
+        /* ═══ TYPOGRAPHY — matching reference sizing ═══ */
         .cyb-accent {
-          width: 40px;
+          width: 38px;
           height: 2.5px;
           border-radius: 2px;
           background: linear-gradient(90deg, #F9DDA3, rgba(249,221,163,0.2));
@@ -146,7 +151,7 @@ const ChooseYourBondScreen = () => {
         .cyb-label {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(12px, 1vw, 13px);
+          font-size: 11px;
           letter-spacing: 0.22em;
           color: rgba(255,255,255,0.6);
           text-transform: uppercase;
@@ -155,8 +160,8 @@ const ChooseYourBondScreen = () => {
         .cyb-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3.2vw, 40px);
-          line-height: 1.25;
+          font-size: clamp(28px, 4.2vw, 64px);
+          line-height: 1.10;
           color: #FFFFFF;
           letter-spacing: -0.02em;
           margin: 0;
@@ -164,20 +169,22 @@ const ChooseYourBondScreen = () => {
           opacity: 0;
         }
         .cyb-title-light {
-          font-weight: 300;
+          font-weight: 400;
           font-style: italic;
           color: rgba(255,255,255,0.9);
         }
         .cyb-sub {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(16px, 1.5vw, 22px);
-          line-height: 1.65;
+          font-size: clamp(15px, 1.15vw, 17px);
+          line-height: 1.75;
           color: rgba(255,255,255,0.75);
-          margin: 0;
-          max-width: clamp(300px, 88%, 480px);
+          margin: 10px 0 30px 0 ;
+          max-width: 440px;
+          letter-spacing: 0.015em;
           opacity: 0;
         }
+
         .cyb-cta-wrap {
           display: flex;
           flex-direction: column;
@@ -232,20 +239,21 @@ const ChooseYourBondScreen = () => {
           color: rgba(255,255,255,0.45);
           letter-spacing: 0.03em;
           opacity: 0;
+          margin-top: 30px;
         }
 
+        /* ═══ CARD — compact, wider proportions ═══ */
         .cyb-card {
           position: relative;
-          border-radius: clamp(18px, 1.5vw, 24px);
-          padding: clamp(24px, 2vw, 34px);
-          min-height: clamp(120px, 11vw, 190px);
+          border-radius: clamp(16px, 1.3vw, 22px);
+          padding: clamp(18px, 1.4vw, 24px) clamp(22px, 1.8vw, 30px);
           backdrop-filter: blur(28px);
           -webkit-backdrop-filter: blur(28px);
           box-shadow: 0 4px 4px rgba(0,0,0,0.2), inset 1px 4px 8px rgba(0,0,0,0.2);
           display: flex;
           flex-direction: column;
           justify-content: center;
-          gap: clamp(8px, 0.7vw, 12px);
+          gap: clamp(5px, 0.4vw, 8px);
           overflow: visible;
           cursor: pointer;
           opacity: 0;
@@ -255,8 +263,8 @@ const ChooseYourBondScreen = () => {
           content: '';
           position: absolute;
           top: 0;
-          left: clamp(22px, 2.2vw, 34px);
-          right: clamp(22px, 2.2vw, 34px);
+          left: clamp(22px, 2vw, 30px);
+          right: clamp(22px, 2vw, 30px);
           height: 2px;
           border-radius: 0 0 2px 2px;
           background: var(--card-accent);
@@ -278,8 +286,8 @@ const ChooseYourBondScreen = () => {
         }
         .cyb-card:hover::before { opacity: 1; }
         .cyb-card > * { position: relative; z-index: 1; }
-        .cyb-stagger-r { margin-left: clamp(10px, 1.7vw, 26px); }
-        .cyb-stagger-l { margin-right: clamp(10px, 1.7vw, 26px); }
+        .cyb-stagger-r { margin-left: clamp(8px, 1vw, 16px); }
+        .cyb-stagger-l { margin-right: clamp(8px, 1vw, 16px); }
 
         .cyb-popular {
           position: absolute;
@@ -304,16 +312,16 @@ const ChooseYourBondScreen = () => {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
           color: #FFFFFF;
-          font-size: clamp(20px, 1.9vw, 29px);
-          line-height: 1.35;
+          font-size: clamp(18px, 1.55vw, 24px);
+          line-height: 1.3;
           margin: 0;
         }
         .cyb-card-subtitle {
           font-family: 'Poppins', sans-serif;
           font-weight: 500;
-          font-size: clamp(11.5px, 0.85vw, 14px);
+          font-size: clamp(11px, 0.8vw, 13px);
           letter-spacing: 0.05em;
-          padding: 4px 12px;
+          padding: 3px 11px;
           border-radius: 50px;
           background: rgba(255,255,255,0.1);
           border: 1px solid rgba(255,255,255,0.08);
@@ -325,28 +333,28 @@ const ChooseYourBondScreen = () => {
           font-family: 'Poppins', sans-serif;
           font-weight: 300;
           color: rgba(255,255,255,0.8);
-          font-size: clamp(14px, 1.15vw, 18px);
-          line-height: 1.65;
+          font-size: clamp(13px, 1vw, 16px);
+          line-height: 1.55;
           margin: 0;
-          padding-right: clamp(45px, 4.5vw, 75px);
+          padding-right: clamp(40px, 4vw, 65px);
         }
         .cyb-card-features {
           display: flex;
           flex-wrap: wrap;
-          gap: clamp(5px, 0.4vw, 7px);
-          margin-top: clamp(4px, 0.4vw, 8px);
+          gap: clamp(4px, 0.3vw, 6px);
+          margin-top: clamp(2px, 0.25vw, 4px);
         }
         .cyb-card-feat {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
-          padding: 4px 12px;
+          gap: 5px;
+          padding: 3px 10px;
           border-radius: 50px;
           background: rgba(255,255,255,0.07);
           border: 1px solid rgba(255,255,255,0.06);
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(11.5px, 0.8vw, 13.5px);
+          font-size: clamp(10.5px, 0.72vw, 12px);
           color: rgba(255,255,255,0.75);
           white-space: nowrap;
           transition: all 0.3s ease;
@@ -369,9 +377,9 @@ const ChooseYourBondScreen = () => {
           opacity: 0;
         }
         .cyb-icon-wrap img { width: 100%; height: 100%; object-fit: contain; }
-        .cyb-icon-pos-0 { right: 0; top: 0; transform: translate(35%, -35%); width: clamp(55px, 6vw, 95px); height: clamp(55px, 6vw, 95px); }
-        .cyb-icon-pos-1 { left: -1.5vw; bottom: -1vw; transform: translate(-40%, 40%); width: clamp(110px, 11vw, 165px); height: clamp(110px, 11vw, 165px); }
-        .cyb-icon-pos-2 { right: 0; bottom: 0; transform: translate(35%, 35%); width: clamp(60px, 6.5vw, 100px); height: clamp(60px, 6.5vw, 100px); }
+        .cyb-icon-pos-0 { right: 0; top: 0; transform: translate(35%, -35%); width: clamp(50px, 5.5vw, 85px); height: clamp(50px, 5.5vw, 85px); }
+        .cyb-icon-pos-1 { left: -1.5vw; bottom: -1vw; transform: translate(-40%, 40%); width: clamp(100px, 10vw, 150px); height: clamp(100px, 10vw, 150px); }
+        .cyb-icon-pos-2 { right: 0; bottom: 0; transform: translate(35%, 35%); width: clamp(55px, 6vw, 90px); height: clamp(55px, 6vw, 90px); }
 
         @keyframes cybF1 { 0%, 100% { transform: translate(35%, -35%) rotate(-12deg) translateY(0); } 50% { transform: translate(35%, -35%) rotate(-9deg) translateY(-5px); } }
         @keyframes cybF2 { 0%, 100% { transform: translate(-40%, 40%) rotate(-25deg) translateY(0); } 50% { transform: translate(-40%, 40%) rotate(-22deg) translateY(-4px); } }
@@ -401,15 +409,14 @@ const ChooseYourBondScreen = () => {
             padding: 0;
             align-items: center;
             text-align: center;
-            gap: 18px;
+            gap: 16px;
             margin-bottom: 46px;
           }
-          .cyb-title { font-size: clamp(44px, 6.5vw, 58px); }
-          .cyb-sub { font-size: clamp(16px, 2vw, 19px); }
+          .cyb-sub { max-width: 480px; }
           .cyb-right { width: 100%; padding: 0 32px; }
-          .cyb-cards { max-width: 560px; margin: 0 auto; gap: 26px; }
-          .cyb-stagger-r { margin-left: 14px; }
-          .cyb-stagger-l { margin-right: 14px; }
+          .cyb-cards { max-width: 560px; margin: 0 auto; gap: 22px; }
+          .cyb-stagger-r { margin-left: 12px; }
+          .cyb-stagger-l { margin-right: 12px; }
           .cyb-a-card { animation-name: cybUp; }
           .cyb-a-slide { animation-name: cybUp; }
           .cyb-cta-wrap { align-items: center; }
@@ -419,71 +426,71 @@ const ChooseYourBondScreen = () => {
         @media (max-width: 768px) {
           .cyb-layout { padding: 56px 0 50px; }
           .cyb-left { padding: 0 24px; }
-          .cyb-left-inner { gap: 16px; margin-bottom: 38px; }
+          .cyb-left-inner { gap: 14px; margin-bottom: 38px; }
           .cyb-right { padding: 0 24px; }
-          .cyb-cards { gap: 22px; }
+          .cyb-cards { gap: 20px; }
 
-          .cyb-title { font-size: clamp(38px, 10.5vw, 50px); }
-          .cyb-sub { font-size: 16px; }
+          .cyb-title { font-size: clamp(24px, 5.5vw, 30px); }
+          .cyb-sub { font-size: 15px; }
 
-          .cyb-card { padding: 20px; min-height: auto; gap: 9px; }
-          .cyb-card-title { font-size: 19px; }
-          .cyb-card-subtitle { font-size: 12px; }
-          .cyb-card-desc { font-size: 14px; }
-          .cyb-card-feat { font-size: 11.5px; }
+          .cyb-card { padding: 16px 18px; gap: 6px; border-radius: 16px; }
+          .cyb-card-title { font-size: 17px; }
+          .cyb-card-subtitle { font-size: 11.5px; padding: 3px 10px; }
+          .cyb-card-desc { font-size: 13px; line-height: 1.5; }
+          .cyb-card-feat { font-size: 10.5px; padding: 3px 9px; }
           .cyb-btn { padding: 14px 30px; font-size: 15px; }
-          .cyb-icon-pos-0 { width: 50px; height: 50px; }
-          .cyb-icon-pos-1 { width: 95px; height: 95px; left: -10px; bottom: -6px; }
-          .cyb-icon-pos-2 { width: 54px; height: 54px; }
+          .cyb-icon-pos-0 { width: 46px; height: 46px; }
+          .cyb-icon-pos-1 { width: 88px; height: 88px; left: -10px; bottom: -6px; }
+          .cyb-icon-pos-2 { width: 50px; height: 50px; }
         }
 
         /* ═══ SMALL ≤ 540 ═══ */
         @media (max-width: 540px) {
           .cyb-layout { padding: 50px 0 44px; }
           .cyb-left { padding: 0 20px; }
-          .cyb-left-inner { gap: 14px; margin-bottom: 32px; }
+          .cyb-left-inner { gap: 12px; margin-bottom: 32px; }
           .cyb-right { padding: 0 20px; }
-          .cyb-cards { gap: 26px; }
+          .cyb-cards { gap: 24px; }
           .cyb-stagger-r, .cyb-stagger-l { margin-left: 0; margin-right: 0; }
 
-          .cyb-title { font-size: clamp(36px, 10vw, 46px); }
-          .cyb-label { font-size: 11.5px; }
-          .cyb-sub { font-size: 15.5px; }
+          .cyb-title { font-size: clamp(22px, 5vw, 26px); }
+          .cyb-label { font-size: 10px; }
+          .cyb-sub { font-size: 14.5px; }
 
-          .cyb-card { padding: 18px; border-radius: 18px; gap: 8px; }
-          .cyb-card-title { font-size: 18px; }
-          .cyb-card-subtitle { font-size: 11.5px; }
-          .cyb-card-desc { font-size: 13.5px; padding-right: clamp(40px, 11vw, 65px); }
-          .cyb-card-feat { font-size: 11px; padding: 3px 10px; }
-          .cyb-icon-pos-0 { width: 46px; height: 46px; }
-          .cyb-icon-pos-1 { width: 85px; height: 85px; left: -8px; bottom: -5px; }
-          .cyb-icon-pos-2 { width: 50px; height: 50px; }
+          .cyb-card { padding: 15px 16px; border-radius: 14px; gap: 5px; }
+          .cyb-card-title { font-size: 16px; }
+          .cyb-card-subtitle { font-size: 11px; }
+          .cyb-card-desc { font-size: 12.5px; padding-right: clamp(36px, 11vw, 60px); }
+          .cyb-card-feat { font-size: 10px; padding: 3px 8px; }
+          .cyb-icon-pos-0 { width: 42px; height: 42px; }
+          .cyb-icon-pos-1 { width: 78px; height: 78px; left: -8px; bottom: -5px; }
+          .cyb-icon-pos-2 { width: 46px; height: 46px; }
         }
 
         /* ═══ XS ≤ 400 ═══ */
         @media (max-width: 400px) {
           .cyb-layout { padding: 44px 0 40px; }
           .cyb-left { padding: 0 18px; }
-          .cyb-left-inner { gap: 12px; margin-bottom: 28px; }
+          .cyb-left-inner { gap: 10px; margin-bottom: 28px; }
           .cyb-right { padding: 0 18px; }
 
           .cyb-accent { width: 34px; }
-          .cyb-label { font-size: 11px; }
-          .cyb-title { font-size: clamp(34px, 9.5vw, 42px); }
-          .cyb-sub { font-size: 15px; }
+          .cyb-label { font-size: 9.5px; }
+          .cyb-title { font-size: 21px; }
+          .cyb-sub { font-size: 13.5px; }
 
-          .cyb-card { padding: 16px; gap: 7px; }
-          .cyb-card-title { font-size: 17px; }
-          .cyb-card-subtitle { font-size: 11px; }
-          .cyb-card-desc { font-size: 13px; }
-          .cyb-card-feat { font-size: 10.5px; }
+          .cyb-card { padding: 14px 15px; gap: 5px; }
+          .cyb-card-title { font-size: 15.5px; }
+          .cyb-card-subtitle { font-size: 10.5px; }
+          .cyb-card-desc { font-size: 12px; }
+          .cyb-card-feat { font-size: 9.5px; }
           .cyb-popular { font-size: 9.5px; padding: 4px 12px; }
           .cyb-btn { padding: 13px 26px; font-size: 14.5px; gap: 9px; }
           .cyb-btn-arrow { width: 15px; height: 15px; }
           .cyb-microtrust { font-size: 12.5px; }
-          .cyb-icon-pos-0 { width: 42px; height: 42px; }
-          .cyb-icon-pos-1 { width: 75px; height: 75px; left: -6px; bottom: -4px; }
-          .cyb-icon-pos-2 { width: 44px; height: 44px; }
+          .cyb-icon-pos-0 { width: 38px; height: 38px; }
+          .cyb-icon-pos-1 { width: 68px; height: 68px; left: -6px; bottom: -4px; }
+          .cyb-icon-pos-2 { width: 40px; height: 40px; }
         }
 
         /* ═══ XXS ≤ 340 ═══ */
@@ -491,17 +498,17 @@ const ChooseYourBondScreen = () => {
           .cyb-layout { padding: 38px 0 36px; }
           .cyb-left { padding: 0 14px; }
           .cyb-right { padding: 0 14px; }
-          .cyb-title { font-size: clamp(30px, 9vw, 36px); }
-          .cyb-sub { font-size: 14px; }
-          .cyb-card { padding: 14px; }
-          .cyb-card-title { font-size: 16px; }
-          .cyb-card-subtitle { font-size: 10.5px; }
-          .cyb-card-desc { font-size: 12.5px; }
-          .cyb-card-feat { font-size: 10px; }
+          .cyb-title { font-size: 19px; }
+          .cyb-sub { font-size: 13px; }
+          .cyb-card { padding: 13px 14px; }
+          .cyb-card-title { font-size: 15px; }
+          .cyb-card-subtitle { font-size: 10px; }
+          .cyb-card-desc { font-size: 11.5px; }
+          .cyb-card-feat { font-size: 9px; }
           .cyb-btn { padding: 12px 22px; font-size: 14px; }
-          .cyb-icon-pos-0 { width: 38px; height: 38px; }
-          .cyb-icon-pos-1 { width: 65px; height: 65px; }
-          .cyb-icon-pos-2 { width: 40px; height: 40px; }
+          .cyb-icon-pos-0 { width: 34px; height: 34px; }
+          .cyb-icon-pos-1 { width: 60px; height: 60px; }
+          .cyb-icon-pos-2 { width: 36px; height: 36px; }
         }
       `}</style>
 

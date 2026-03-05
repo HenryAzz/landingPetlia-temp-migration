@@ -55,25 +55,23 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    // Obtener el texto completo del plan seleccionado
     const planTexto = PLANS.find(p => p.id === selectedPlan)?.label || selectedPlan || 'No especificado';
 
-    // Agregar fecha y hora
     const ahora = new Date();
-    const fecha = ahora.toLocaleDateString('es-AR', { 
-      day: '2-digit', 
-      month: 'long', 
-      year: 'numeric' 
+    const fecha = ahora.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
     });
-    const hora = ahora.toLocaleTimeString('es-AR', { 
-      hour: '2-digit', 
-      minute: '2-digit' 
+    const hora = ahora.toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit'
     });
 
     try {
       await emailjs.send(
-        'service_xq4kynq',      // Tu Service ID
-        'template_ltem9eo',     // Tu Template ID
+        'service_xq4kynq',
+        'template_ltem9eo',
         {
           nombre: formData.get('nombre'),
           contacto: formData.get('contacto'),
@@ -82,7 +80,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           fecha: fecha,
           hora: hora
         },
-        'DyVuk6RLny9SZJDPT'     // Tu Public Key
+        'DyVuk6RLny9SZJDPT'
       );
 
       setSubmitted(true);
@@ -106,9 +104,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
   return (
     <section ref={sectionRef} id="contacto" className="cnt-section">
       <style>{`
-        /* ═══════════════════════════════
-           BASE
-        ═══════════════════════════════ */
         .cnt-section {
           position: relative;
           width: 100%;
@@ -119,7 +114,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           padding-bottom: clamp(32px, 3.2vw, 56px);
         }
 
-        /* ═══ BACKGROUND ═══ */
         .cnt-bg {
           position: absolute;
           inset: 0;
@@ -137,7 +131,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           object-fit: cover;
         }
 
-        /* ═══ WAVE ═══ */
         .cnt-wave {
           position: relative;
           width: 100%;
@@ -154,7 +147,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           display: block;
         }
 
-        /* ═══ FLOATING DECO ═══ */
         .cnt-deco {
           position: absolute;
           pointer-events: none;
@@ -205,11 +197,16 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           flex: 1;
           display: flex;
           width: 100%;
+          max-width: 1280px;
+          margin: 0 auto;
           align-items: center;
+          gap: clamp(20px, 2vw, 40px);
+          padding: 0 clamp(24px, 3vw, 48px);
+          box-sizing: border-box;
         }
 
         .cnt-left {
-          width: 45%;
+          width: 42%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -223,13 +220,11 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           align-items: flex-start;
           justify-content: center;
           width: 100%;
-          padding-left: 6vw;
-          padding-right: 3vw;
           position: relative;
         }
 
         .cnt-right {
-          width: 55%;
+          width: 58%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -254,7 +249,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           opacity: 0;
         }
 
-        /* ═══ LEFT — LABEL ═══ */
         .cnt-label {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
@@ -266,7 +260,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           opacity: 0;
         }
 
-        /* ═══ LEFT — TITLE ═══ */
         .cnt-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
@@ -285,7 +278,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           color: rgba(255,255,255,0.85);
         }
 
-        /* ═══ LEFT — DESC ═══ */
         .cnt-desc {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
@@ -308,7 +300,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
 
         .cnt-trust-card {
           display: flex;
-          align-items: flex-start;
+          align-items: center;
           gap: clamp(12px, 1vw, 16px);
           padding: clamp(14px, 1.2vw, 20px);
           border-radius: clamp(14px, 1.2vw, 18px);
@@ -329,15 +321,12 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         }
 
         .cnt-trust-card-icon {
-          width: clamp(36px, 2.8vw, 44px);
-          height: clamp(36px, 2.8vw, 44px);
-          border-radius: clamp(10px, 0.9vw, 13px);
-          background: linear-gradient(135deg, rgba(249,221,163,0.15), rgba(246,158,130,0.1));
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: clamp(15px, 1.2vw, 19px);
+          font-size: clamp(20px, 1.6vw, 26px);
           flex-shrink: 0;
+          line-height: 1;
         }
 
         .cnt-trust-card-text {
@@ -364,6 +353,40 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           letter-spacing: 0.01em;
         }
 
+        /* ═══ JOIN TEAM (LEFT SIDE) ═══ */
+        .cnt-join {
+          display: flex;
+          align-items: center;
+          gap: clamp(5px, 0.6vw, 10px);
+          padding: clamp(9px, 0.7vw, 13px) clamp(16px, 1.6vw, 26px);
+          border-radius: 50px;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.15);
+          color: rgba(255,255,255,0.5);
+          font-family: 'Poppins', sans-serif;
+          font-weight: 400;
+          font-size: clamp(11px, 0.88vw, 14px);
+          cursor: pointer;
+          transition: all 0.3s ease;
+          -webkit-tap-highlight-color: transparent;
+          opacity: 0;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-top: clamp(18px, 1.6vw, 28px);
+          width: fit-content;
+        }
+
+        .cnt-join:hover {
+          background: rgba(249,221,163,0.12);
+          border-color: rgba(249,221,163,0.4);
+          transform: translateY(-1px);
+        }
+
+        .cnt-join-cta {
+          color: #F9DDA3;
+          font-weight: 500;
+        }
+
         /* ═══ FORM CARD ═══ */
         .cnt-form-card {
           display: flex;
@@ -375,9 +398,9 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           border: 1px solid rgba(255,255,255,0.15);
           box-shadow: 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.1);
           width: 100%;
-          max-width: clamp(340px, 34vw, 520px);
-          padding: clamp(22px, 2.5vw, 40px);
-          gap: clamp(14px, 1.3vw, 22px);
+          max-width: 580px;
+          padding: clamp(20px, 2vw, 32px) clamp(22px, 2.5vw, 36px);
+          gap: clamp(12px, 1vw, 16px);
           opacity: 0;
         }
 
@@ -389,11 +412,18 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           margin: 0 0 clamp(2px, 0.3vw, 6px);
         }
 
+        /* ═══ TWO-COL ROW ═══ */
+        .cnt-row-2 {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: clamp(10px, 0.8vw, 16px);
+        }
+
         /* ═══ FORM FIELDS ═══ */
         .cnt-field {
           display: flex;
           flex-direction: column;
-          gap: clamp(4px, 0.4vw, 7px);
+          gap: clamp(4px, 0.35vw, 6px);
         }
 
         .cnt-field-label {
@@ -405,7 +435,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
 
         .cnt-input {
           width: 100%;
-          padding: clamp(11px, 0.85vw, 16px) clamp(14px, 1.3vw, 20px);
+          padding: clamp(10px, 0.7vw, 13px) clamp(14px, 1.1vw, 18px);
           border-radius: clamp(10px, 0.9vw, 14px);
           border: 1px solid rgba(255,255,255,0.25);
           background: rgba(255,255,255,0.08);
@@ -414,7 +444,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           color: #FFFFFF;
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(13px, 1vw, 16px);
+          font-size: clamp(13px, 0.95vw, 15px);
           letter-spacing: 0.02em;
           outline: none;
           transition: all 0.3s ease;
@@ -431,7 +461,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
 
         .cnt-textarea {
           width: 100%;
-          padding: clamp(11px, 0.85vw, 16px) clamp(14px, 1.3vw, 20px);
+          padding: clamp(10px, 0.7vw, 13px) clamp(14px, 1.1vw, 18px);
           border-radius: clamp(10px, 0.9vw, 14px);
           border: 1px solid rgba(255,255,255,0.25);
           background: rgba(255,255,255,0.08);
@@ -440,10 +470,10 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           color: #FFFFFF;
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(13px, 1vw, 16px);
+          font-size: clamp(13px, 0.95vw, 15px);
           outline: none;
           resize: none;
-          min-height: clamp(75px, 6vw, 100px);
+          min-height: clamp(60px, 4.5vw, 80px);
           transition: all 0.3s ease;
           box-sizing: border-box;
         }
@@ -460,15 +490,15 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-methods {
           display: flex;
           gap: clamp(6px, 0.5vw, 10px);
-          margin-bottom: clamp(4px, 0.4vw, 7px);
+          margin-bottom: clamp(2px, 0.3vw, 5px);
         }
 
         .cnt-method {
-          padding: clamp(6px, 0.4vw, 9px) clamp(14px, 1.1vw, 20px);
+          padding: clamp(5px, 0.35vw, 8px) clamp(14px, 1.1vw, 20px);
           border-radius: 50px;
           font-family: 'Poppins', sans-serif;
           font-weight: 500;
-          font-size: clamp(12px, 0.88vw, 14px);
+          font-size: clamp(12px, 0.85vw, 14px);
           cursor: pointer;
           transition: all 0.3s ease;
           -webkit-tap-highlight-color: transparent;
@@ -482,14 +512,14 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-plans {
           display: flex;
           flex-direction: column;
-          gap: clamp(5px, 0.45vw, 8px);
+          gap: clamp(4px, 0.35vw, 7px);
         }
 
         .cnt-plan {
           display: flex;
           align-items: center;
           gap: clamp(7px, 0.6vw, 12px);
-          padding: clamp(9px, 0.6vw, 13px) clamp(12px, 1.1vw, 18px);
+          padding: clamp(8px, 0.5vw, 11px) clamp(12px, 1vw, 16px);
           border-radius: clamp(9px, 0.8vw, 12px);
           cursor: pointer;
           transition: all 0.3s ease;
@@ -521,11 +551,10 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
 
         .cnt-plan-label {
           font-family: 'Poppins', sans-serif;
-          font-size: clamp(12px, 0.92vw, 15px);
+          font-size: clamp(12px, 0.88vw, 14px);
           transition: all 0.3s ease;
         }
 
-        /* ═══ OPTIONAL TAG ═══ */
         .cnt-optional {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
@@ -534,11 +563,10 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           font-style: italic;
         }
 
-        /* ═══ LEGAL ═══ */
         .cnt-legal {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(10px, 0.78vw, 12px);
+          font-size: clamp(10px, 0.72vw, 12px);
           color: rgba(255,255,255,0.35);
           line-height: 1.6;
           margin: 0;
@@ -555,14 +583,14 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           position: relative;
           overflow: hidden;
           width: 100%;
-          padding: clamp(12px, 0.85vw, 16px) 0;
+          padding: clamp(11px, 0.75vw, 15px) 0;
           border-radius: 50px;
           background: linear-gradient(135deg, #F9DDA3, #f0c96e);
           border: 1px solid rgba(255,255,255,0.3);
           color: #5A4520;
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(13px, 1.05vw, 16px);
+          font-size: clamp(13px, 1vw, 16px);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -599,7 +627,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           transform: none !important;
         }
 
-        /* ═══ SUBMIT TRUST LINE ═══ */
         .cnt-submit-trust {
           display: flex;
           align-items: center;
@@ -619,7 +646,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           white-space: nowrap;
         }
 
-        /* ═══ SPINNER ═══ */
         @keyframes cntSpin { to { transform: rotate(360deg); } }
 
         .cnt-spinner {
@@ -629,38 +655,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           border-top-color: #5A4520;
           border-radius: 50%;
           animation: cntSpin 1s linear infinite;
-        }
-
-        /* ═══ JOIN TEAM ═══ */
-        .cnt-join {
-          display: flex;
-          align-items: center;
-          gap: clamp(5px, 0.6vw, 10px);
-          padding: clamp(9px, 0.7vw, 13px) clamp(16px, 1.6vw, 26px);
-          border-radius: 50px;
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.15);
-          color: rgba(255,255,255,0.5);
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          font-size: clamp(11px, 0.88vw, 14px);
-          cursor: pointer;
-          transition: all 0.3s ease;
-          -webkit-tap-highlight-color: transparent;
-          opacity: 0;
-          flex-wrap: wrap;
-          justify-content: center;
-        }
-
-        .cnt-join:hover {
-          background: rgba(249,221,163,0.12);
-          border-color: rgba(249,221,163,0.4);
-          transform: translateY(-1px);
-        }
-
-        .cnt-join-cta {
-          color: #F9DDA3;
-          font-weight: 500;
         }
 
         /* ═══ SUCCESS CARD ═══ */
@@ -677,7 +671,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           border: 1px solid rgba(255,255,255,0.15);
           box-shadow: 0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.08);
           width: 100%;
-          max-width: clamp(340px, 34vw, 520px);
+          max-width: 580px;
           padding: clamp(32px, 3.5vw, 56px) clamp(22px, 2.5vw, 40px);
           gap: clamp(14px, 1.4vw, 22px);
         }
@@ -795,17 +789,17 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
             flex-direction: column;
             align-items: center;
             gap: 40px;
+            padding: 0 40px;
           }
 
           .cnt-left { width: 100%; }
           .cnt-left-inner {
             align-items: center;
             text-align: center;
-            padding: 30px 40px 0;
           }
 
           .cnt-right { width: 100%; }
-          .cnt-right-inner { padding: 0 40px; }
+          .cnt-right-inner { padding: 0; }
 
           .cnt-desc { max-width: 460px; }
           .cnt-form-card { max-width: 560px; }
@@ -819,6 +813,10 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
             text-align: left;
           }
 
+          .cnt-join {
+            align-self: center;
+          }
+
           .cnt-deco { display: none !important; }
 
           .cnt-a-slide { animation-name: cntUp; }
@@ -827,13 +825,12 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         /* ═══ RESPONSIVE: MOBILE ≤ 768px ═══ */
         @media (max-width: 768px) {
           .cnt-section { padding-bottom: 50px; }
-          .cnt-layout { gap: 32px; }
-
-          .cnt-left-inner { padding: 24px 24px 0; }
-          .cnt-right-inner { padding: 0 24px; }
+          .cnt-layout { gap: 32px; padding: 0 24px; }
 
           .cnt-title { font-size: clamp(26px, 6vw, 34px); }
           .cnt-desc { font-size: 14px; max-width: 380px; }
+
+          .cnt-row-2 { grid-template-columns: 1fr; }
 
           .cnt-form-card { max-width: 100%; padding: 26px; border-radius: 20px; }
           .cnt-success { max-width: 100%; padding: 40px 24px; border-radius: 20px; }
@@ -845,13 +842,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
             gap: 12px;
           }
 
-          .cnt-trust-card-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            font-size: 16px;
-          }
-
+          .cnt-trust-card-icon { font-size: 22px; }
           .cnt-trust-card-title { font-size: 13px; }
           .cnt-trust-card-desc { font-size: 11.5px; }
         }
@@ -859,10 +850,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         /* ═══ RESPONSIVE: SMALL ≤ 540px ═══ */
         @media (max-width: 540px) {
           .cnt-section { padding-bottom: 44px; }
-          .cnt-layout { gap: 26px; }
-
-          .cnt-left-inner { padding: 20px 20px 0; }
-          .cnt-right-inner { padding: 0 20px; }
+          .cnt-layout { gap: 26px; padding: 0 20px; }
 
           .cnt-title { font-size: clamp(24px, 5.5vw, 28px); }
           .cnt-label { font-size: 10px; }
@@ -876,10 +864,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         /* ═══ RESPONSIVE: XS ≤ 400px ═══ */
         @media (max-width: 400px) {
           .cnt-section { padding-bottom: 40px; }
-          .cnt-layout { gap: 22px; }
-
-          .cnt-left-inner { padding: 18px 18px 0; }
-          .cnt-right-inner { padding: 0 18px; }
+          .cnt-layout { gap: 22px; padding: 0 18px; }
 
           .cnt-accent { width: 30px; margin-bottom: 12px; }
           .cnt-label { margin-bottom: 12px; font-size: 9.5px; }
@@ -892,13 +877,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
             border-radius: 12px;
           }
 
-          .cnt-trust-card-icon {
-            width: 32px;
-            height: 32px;
-            font-size: 14px;
-            border-radius: 8px;
-          }
-
+          .cnt-trust-card-icon { font-size: 20px; }
           .cnt-trust-card-title { font-size: 12.5px; }
           .cnt-trust-card-desc { font-size: 11px; }
 
@@ -908,7 +887,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-submit { padding: 12px 0; font-size: 13px; }
           .cnt-submit-trust-item { font-size: 9.5px; }
 
-          .cnt-join { padding: 9px 14px; font-size: 11px; }
+          .cnt-join { padding: 9px 14px; font-size: 11px; margin-top: 14px; }
 
           .cnt-success { padding: 32px 18px; border-radius: 16px; }
         }
@@ -916,15 +895,13 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         /* ═══ RESPONSIVE: XXS ≤ 340px ═══ */
         @media (max-width: 340px) {
           .cnt-section { padding-bottom: 36px; }
-          .cnt-layout { gap: 20px; }
-          .cnt-left-inner { padding: 16px 14px 0; }
-          .cnt-right-inner { padding: 0 14px; }
+          .cnt-layout { gap: 20px; padding: 0 14px; }
 
           .cnt-title { font-size: 20px; }
           .cnt-desc { font-size: 12px; }
 
           .cnt-trust-card { padding: 10px; }
-          .cnt-trust-card-icon { width: 28px; height: 28px; font-size: 13px; }
+          .cnt-trust-card-icon { font-size: 18px; }
           .cnt-trust-card-title { font-size: 12px; }
           .cnt-trust-card-desc { font-size: 10.5px; }
 
@@ -1033,6 +1010,17 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                 </div>
               ))}
             </div>
+
+            {/* Join team — now on the left */}
+            <button
+              className={`cnt-join ${a ? 'cnt-a-up' : ''}`}
+              style={{ animationDelay: '0.8s' }}
+              onClick={onNavigateToJoinTeam}
+            >
+              <span>🌟</span>
+              ¿Querés ser parte del equipo de Camil?
+              <span className="cnt-join-cta">Conocé más →</span>
+            </button>
           </div>
         </div>
 
@@ -1041,15 +1029,15 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           <div className="cnt-right-inner">
 
             {!submitted ? (
-              <>
-                <form
-                  onSubmit={handleSubmit}
-                  className={`cnt-form-card ${a ? 'cnt-a-scale' : ''}`}
-                  style={{ animationDelay: '0.3s' }}
-                >
-                  <h3 className="cnt-form-title">Solicitar vínculo</h3>
+              <form
+                onSubmit={handleSubmit}
+                className={`cnt-form-card ${a ? 'cnt-a-scale' : ''}`}
+                style={{ animationDelay: '0.3s' }}
+              >
+                <h3 className="cnt-form-title">Solicitar vínculo</h3>
 
-                  {/* Name */}
+                {/* Name + Contact in 2 cols */}
+                <div className="cnt-row-2">
                   <div className="cnt-field">
                     <label className="cnt-field-label">Nombre *</label>
                     <input
@@ -1061,121 +1049,111 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                     />
                   </div>
 
-                  {/* Contact method */}
                   <div className="cnt-field">
-                    <label className="cnt-field-label">¿Cómo preferís que te contactemos? *</label>
-                    <div className="cnt-methods">
-                      {(['telefono', 'correo'] as const).map((m) => (
-                        <button
-                          key={m}
-                          type="button"
-                          className="cnt-method"
-                          onClick={() => setContactMethod(m)}
+  <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(6px, 0.5vw, 10px)' }}>
+    <label className="cnt-field-label" style={{ margin: 0 }}>Contacto *</label>
+    <div className="cnt-methods" style={{ marginBottom: 0 }}>
+      {(['telefono', 'correo'] as const).map((m) => (
+        <button
+          key={m}
+          type="button"
+          className="cnt-method"
+          onClick={() => setContactMethod(m)}
+          style={{
+            border: `1px solid ${contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.2)'}`,
+            backgroundColor: contactMethod === m ? 'rgba(249,221,163,0.15)' : 'transparent',
+            color: contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.5)',
+          }}
+        >
+          {m === 'telefono' ? '📞' : '✉️'}
+        </button>
+      ))}
+    </div>
+  </div>
+  <input
+    type={contactMethod === 'telefono' ? 'tel' : 'email'}
+    name="contacto"
+    className="cnt-input"
+    placeholder={contactMethod === 'telefono' ? '+54 11 1234-5678' : 'Tu correo electrónico'}
+    required
+  />
+</div>
+                </div>
+
+                {/* Plan */}
+                <div className="cnt-field">
+                  <label className="cnt-field-label">Plan de interés *</label>
+                  <div className="cnt-plans">
+                    {PLANS.map((plan) => (
+                      <button
+                        key={plan.id}
+                        type="button"
+                        className="cnt-plan"
+                        onClick={() => setSelectedPlan(plan.id)}
+                        style={{
+                          border: `1.5px solid ${selectedPlan === plan.id ? plan.border : 'rgba(255,255,255,0.15)'}`,
+                          backgroundColor: selectedPlan === plan.id ? plan.bg : 'rgba(255,255,255,0.05)',
+                        }}
+                      >
+                        <div
+                          className="cnt-plan-radio"
+                          style={{ border: `2px solid ${selectedPlan === plan.id ? '#FFFFFF' : 'rgba(255,255,255,0.35)'}` }}
+                        >
+                          {selectedPlan === plan.id && <div className="cnt-plan-dot" />}
+                        </div>
+                        <span
+                          className="cnt-plan-label"
                           style={{
-                            border: `1px solid ${contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.2)'}`,
-                            backgroundColor: contactMethod === m ? 'rgba(249,221,163,0.15)' : 'transparent',
-                            color: contactMethod === m ? '#F9DDA3' : 'rgba(255,255,255,0.5)',
+                            fontWeight: selectedPlan === plan.id ? 500 : 400,
+                            color: selectedPlan === plan.id ? '#FFFFFF' : 'rgba(255,255,255,0.7)',
                           }}
                         >
-                          {m === 'telefono' ? '📞 Teléfono' : '✉️ Correo'}
-                        </button>
-                      ))}
-                    </div>
-                    <input
-                      type={contactMethod === 'telefono' ? 'tel' : 'email'}
-                      name="contacto"
-                      className="cnt-input"
-                      placeholder={contactMethod === 'telefono' ? 'Ej: +54 11 1234-5678' : 'Tu correo electrónico'}
-                      required
-                    />
+                          {plan.label}
+                        </span>
+                      </button>
+                    ))}
                   </div>
+                </div>
 
-                  {/* Plan */}
-                  <div className="cnt-field">
-                    <label className="cnt-field-label">Plan de interés *</label>
-                    <div className="cnt-plans">
-                      {PLANS.map((plan) => (
-                        <button
-                          key={plan.id}
-                          type="button"
-                          className="cnt-plan"
-                          onClick={() => setSelectedPlan(plan.id)}
-                          style={{
-                            border: `1.5px solid ${selectedPlan === plan.id ? plan.border : 'rgba(255,255,255,0.15)'}`,
-                            backgroundColor: selectedPlan === plan.id ? plan.bg : 'rgba(255,255,255,0.05)',
-                          }}
-                        >
-                          <div
-                            className="cnt-plan-radio"
-                            style={{ border: `2px solid ${selectedPlan === plan.id ? '#FFFFFF' : 'rgba(255,255,255,0.35)'}` }}
-                          >
-                            {selectedPlan === plan.id && <div className="cnt-plan-dot" />}
-                          </div>
-                          <span
-                            className="cnt-plan-label"
-                            style={{
-                              fontWeight: selectedPlan === plan.id ? 500 : 400,
-                              color: selectedPlan === plan.id ? '#FFFFFF' : 'rgba(255,255,255,0.7)',
-                            }}
-                          >
-                            {plan.label}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                {/* Message */}
+                <div className="cnt-field">
+                  <label className="cnt-field-label">
+                    Contanos un poco sobre vos{' '}
+                    <span className="cnt-optional">(opcional)</span>
+                  </label>
+                  <textarea
+                    name="mensaje"
+                    className="cnt-textarea"
+                    placeholder="¿Qué te motivó a escribirnos?"
+                  />
+                </div>
 
-                  {/* Message — OPTIONAL */}
-                  <div className="cnt-field">
-                    <label className="cnt-field-label">
-                      Contanos un poco sobre vos{' '}
-                      <span className="cnt-optional">(opcional)</span>
-                    </label>
-                    <textarea
-                      name="mensaje"
-                      className="cnt-textarea"
-                      placeholder="¿Qué te motivó a escribirnos? Contanos lo que quieras"
-                    />
-                  </div>
+                {/* Legal */}
+                <p className="cnt-legal">
+                  Al enviar aceptás nuestra{' '}
+                  <span>política de privacidad</span> y{' '}
+                  <span>términos y condiciones</span>.
+                </p>
 
-                  {/* Legal */}
-                  <p className="cnt-legal">
-                    Al enviar aceptás nuestra{' '}
-                    <span>política de privacidad</span> y{' '}
-                    <span>términos y condiciones</span>.
-                  </p>
-
-                  {/* Submit */}
-                  <button type="submit" className="cnt-submit" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <div className="cnt-spinner" />
-                        Enviando...
-                      </>
-                    ) : (
-                      'Enviar solicitud'
-                    )}
-                  </button>
-
-                  {/* Trust seals */}
-                  <div className="cnt-submit-trust">
-                    <span className="cnt-submit-trust-item">🔒 Datos protegidos</span>
-                    <span className="cnt-submit-trust-item">✓ Sin permanencia</span>
-                    <span className="cnt-submit-trust-item">💳 Pago seguro</span>
-                  </div>
-                </form>
-
-                {/* Join team */}
-                <button
-                  className={`cnt-join ${a ? 'cnt-a-up' : ''}`}
-                  style={{ animationDelay: '0.7s' }}
-                  onClick={onNavigateToJoinTeam}
-                >
-                  <span>🌟</span>
-                  ¿Querés ser parte del equipo de Camil?
-                  <span className="cnt-join-cta">Conocé más →</span>
+                {/* Submit */}
+                <button type="submit" className="cnt-submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <div className="cnt-spinner" />
+                      Enviando...
+                    </>
+                  ) : (
+                    'Enviar solicitud'
+                  )}
                 </button>
-              </>
+
+                {/* Trust seals */}
+                <div className="cnt-submit-trust">
+                  <span className="cnt-submit-trust-item">🔒 Datos protegidos</span>
+                  <span className="cnt-submit-trust-item">✓ Sin permanencia</span>
+                  <span className="cnt-submit-trust-item">💳 Pago seguro</span>
+                </div>
+              </form>
             ) : (
               <div className="cnt-success">
                 <div className="cnt-success-circle cnt-s-heart">

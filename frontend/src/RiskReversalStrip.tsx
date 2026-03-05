@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import Tilt from 'react-parallax-tilt';
 
 const GUARANTEES = [
   { emoji: '🛡️', title: 'Garantía de satisfacción', desc: 'Si no es lo que esperabas, te devolvemos el 100%' },
@@ -65,30 +66,34 @@ const RiskReversalStrip = () => {
           gap: clamp(14px, 1.5vw, 24px); width: 100%;
         }
 
+        .rr-tilt-wrapper {
+          border-radius: clamp(14px, 1.2vw, 18px);
+          overflow: visible;
+        }
+
         .rr-card {
-          display: flex; align-items: flex-start;
+          display: flex; align-items: center;
           gap: clamp(14px, 1.1vw, 18px);
           padding: clamp(20px, 1.8vw, 28px);
           border-radius: clamp(14px, 1.2vw, 18px);
           background: #FFF;
           border: 1px solid rgba(0,0,0,0.05);
           box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-          transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+          transition: box-shadow 0.35s cubic-bezier(0.4,0,0.2,1),
+                      border-color 0.35s cubic-bezier(0.4,0,0.2,1);
           cursor: default; opacity: 0;
+          height: 100%;
         }
         .rr-card:hover {
-          transform: translateY(-4px);
           box-shadow: 0 12px 30px rgba(0,0,0,0.06);
           border-color: rgba(246,158,130,0.15);
         }
 
         .rr-card-icon {
-          width: clamp(44px, 3.2vw, 52px); height: clamp(44px, 3.2vw, 52px);
-          border-radius: clamp(12px, 1vw, 14px);
-          background: linear-gradient(135deg, rgba(76,175,80,0.1), rgba(76,175,80,0.05));
-          border: 1px solid rgba(76,175,80,0.15);
           display: flex; align-items: center; justify-content: center;
-          font-size: clamp(20px, 1.5vw, 24px); flex-shrink: 0;
+          font-size: clamp(28px, 2.2vw, 36px);
+          flex-shrink: 0;
+          line-height: 1;
         }
 
         .rr-card-text {
@@ -114,7 +119,7 @@ const RiskReversalStrip = () => {
         @media (max-width: 768px) {
           .rr-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
           .rr-card { padding: 18px; gap: 14px; }
-          .rr-card-icon { width: 42px; height: 42px; font-size: 19px; }
+          .rr-card-icon { font-size: 26px; }
           .rr-card-title { font-size: 14.5px; }
           .rr-card-desc { font-size: 13px; }
         }
@@ -123,13 +128,13 @@ const RiskReversalStrip = () => {
           .rr-container { gap: 18px; }
           .rr-badge { font-size: 10.5px; padding: 5px 14px; }
           .rr-card { padding: 14px; gap: 12px; border-radius: 12px; }
-          .rr-card-icon { width: 38px; height: 38px; font-size: 17px; border-radius: 10px; }
+          .rr-card-icon { font-size: 24px; }
           .rr-card-title { font-size: 13.5px; }
           .rr-card-desc { font-size: 12.5px; color: #555; }
         }
         @media (max-width: 340px) {
           .rr-card { padding: 12px; gap: 10px; }
-          .rr-card-icon { width: 34px; height: 34px; font-size: 15px; }
+          .rr-card-icon { font-size: 22px; }
           .rr-card-title { font-size: 13px; }
           .rr-card-desc { font-size: 12px; }
         }
@@ -143,13 +148,24 @@ const RiskReversalStrip = () => {
 
         <div className="rr-grid">
           {GUARANTEES.map((g, i) => (
-            <div key={i} className={`rr-card ${a ? 'rr-a-card' : ''}`} style={{ animationDelay: `${0.2 + i * 0.12}s` }}>
-              <div className="rr-card-icon">{g.emoji}</div>
-              <div className="rr-card-text">
-                <span className="rr-card-title">{g.title}</span>
-                <span className="rr-card-desc">{g.desc}</span>
+            <Tilt
+              key={i}
+              className="rr-tilt-wrapper"
+              tiltMaxAngleX={8}
+              tiltMaxAngleY={8}
+              glareEnable={false}
+              scale={1.02}
+              transitionSpeed={1200}
+              tiltReverse={false}
+            >
+              <div className={`rr-card ${a ? 'rr-a-card' : ''}`} style={{ animationDelay: `${0.2 + i * 0.12}s` }}>
+                <div className="rr-card-icon">{g.emoji}</div>
+                <div className="rr-card-text">
+                  <span className="rr-card-title">{g.title}</span>
+                  <span className="rr-card-desc">{g.desc}</span>
+                </div>
               </div>
-            </div>
+            </Tilt>
           ))}
         </div>
       </div>

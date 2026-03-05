@@ -88,7 +88,7 @@ const EverythingGoodScreen = () => {
           padding-top: clamp(40px, 6vh, 80px);
           padding-bottom: clamp(16px, 2vh, 28px);
           padding-right: clamp(24px, 3vw, 48px);
-                    margin-left: clamp(24px, 7vw, 500px);
+                    margin-left: clamp(24px, 3vw, 50px);
 
           flex-shrink: 0;
           position: relative;
@@ -287,24 +287,32 @@ const EverythingGoodScreen = () => {
         }
 
         .eg-title {
+
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3vw, 40px);
-          line-height: 1.18;
+          font-size: clamp(28px, 3.2vw, 44px);
+          line-height: 1.25;
           color: #1C1C1E;
-          letter-spacing: -0.025em;
-          margin: 0 0 18px;
+          letter-spacing: -0.02em;
+          margin: 0 0 20px;
           opacity: 0;
+       
+
+         
         }
-        .eg-title-light { font-weight: 400; color: #555; }
+        .eg-title-light { 
+          font-weight: 400;
+          color: #4A4A4A;
+        } 
 
         .eg-sub {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(14px, 1.05vw, 16px);
-          line-height: 1.6;
+          font-size: clamp(15px, 1.15vw, 17px);
           color: #666;
-          margin: 0;
+          line-height: 1.75;
+          margin: 0 0 clamp(14px, 1.4vw, 20px);
+          max-width: 440px;
           letter-spacing: 0.015em;
           opacity: 0;
         }

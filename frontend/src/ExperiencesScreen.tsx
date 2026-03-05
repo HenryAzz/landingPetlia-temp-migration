@@ -136,7 +136,7 @@ const ExperiencesScreen = () => {
           min-height: 95vh;
         }
         .exp-left {
-          width: 52%;
+          width: 35%;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -153,12 +153,13 @@ const ExperiencesScreen = () => {
           padding-right: clamp(20px, 2vw, 40px);
         }
         .exp-right {
-          width: 48%;
+          width: 55%;
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
           position: relative;
+          padding-left: 20%;
         }
 
         .exp-accent {
@@ -182,10 +183,10 @@ const ExperiencesScreen = () => {
         }
 
         .exp-title {
-          font-family: 'Poppins', sans-serif;
+         font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3.2vw, 40px);
-          line-height: 1.25;
+          font-size: clamp(28px, 4.2vw, 64px);
+          line-height: 1.10;
           color: #FFFFFF;
           letter-spacing: -0.02em;
           margin: 0 0 24px;
