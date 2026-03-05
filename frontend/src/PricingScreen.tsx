@@ -279,8 +279,8 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           display: flex;
           flex-direction: column;
           background-color: #F3F3F3;
-          padding-top: clamp(70px, 8vw, 130px);
-          padding-bottom: clamp(60px, 6vw, 100px);
+          padding-top: clamp(50px, 6vw, 90px);
+          padding-bottom: clamp(40px, 5vw, 80px);
         }
 
         /* ═══ HEADER ═══ */
@@ -316,11 +316,11 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(32px, 4vw, 56px);
-          line-height: 1.18;
+          font-size: clamp(26px, 3.2vw, 40px);
+          line-height: 1.25;
           color: #1C1C1E;
           letter-spacing: -0.025em;
-          margin: 0 0 12px;
+          margin: 0 0 10px;
           opacity: 0;
         }
 

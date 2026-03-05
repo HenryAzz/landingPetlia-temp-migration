@@ -133,7 +133,7 @@ const ExperiencesScreen = () => {
           position: relative;
           z-index: 5;
           display: flex;
-          min-height: 100vh;
+          min-height: 95vh;
         }
         .exp-left {
           width: 52%;
@@ -184,11 +184,11 @@ const ExperiencesScreen = () => {
         .exp-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(32px, 4.5vw, 62px);
-          line-height: 1.12;
+          font-size: clamp(26px, 3.2vw, 40px);
+          line-height: 1.25;
           color: #FFFFFF;
           letter-spacing: -0.02em;
-          margin: 0 0 32px;
+          margin: 0 0 24px;
           text-shadow: 0 2px 20px rgba(0,0,0,0.2);
           opacity: 0;
         }

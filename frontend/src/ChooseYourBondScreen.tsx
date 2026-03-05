@@ -101,7 +101,7 @@ const ChooseYourBondScreen = () => {
           position: relative;
           z-index: 5;
           display: flex;
-          min-height: 100vh;
+          min-height: 95vh;
         }
         .cyb-left {
           width: 45%;
@@ -155,8 +155,8 @@ const ChooseYourBondScreen = () => {
         .cyb-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(40px, 5vw, 68px);
-          line-height: 1.18;
+          font-size: clamp(26px, 3.2vw, 40px);
+          line-height: 1.25;
           color: #FFFFFF;
           letter-spacing: -0.02em;
           margin: 0;

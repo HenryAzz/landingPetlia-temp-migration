@@ -215,8 +215,8 @@ const GiftCamilSection = () => {
         .gc-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(38px, 4.8vw, 64px);
-          line-height: 1.15;
+          font-size: clamp(26px, 3.2vw, 40px);
+          line-height: 1.25;
           color: #FFF;
           letter-spacing: -0.03em;
           margin: 0 0 clamp(18px, 1.8vw, 26px);

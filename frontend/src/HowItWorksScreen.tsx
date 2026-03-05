@@ -177,7 +177,7 @@ const HowItWorksScreen = () => {
           width: 100%;
           max-width: 1200px;
           margin: 0 auto;
-          padding: clamp(32px, 5vw, 72px) clamp(20px, 5vw, 80px) clamp(56px, 8vw, 110px);
+          padding: clamp(28px, 4.5vw, 56px) clamp(20px, 5vw, 72px) clamp(44px, 6.5vw, 80px);
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -214,11 +214,11 @@ const HowItWorksScreen = () => {
         .hiw-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(38px, 4.5vw, 60px);
+          font-size: clamp(26px, 3.2vw, 40px);
           line-height: 1.25;
           color: #FFFFFF;
           letter-spacing: -0.025em;
-          margin: 0 0 18px;
+          margin: 0 0 16px;
           text-shadow: 0 2px 20px rgba(0,0,0,0.25);
           opacity: 0;
         }

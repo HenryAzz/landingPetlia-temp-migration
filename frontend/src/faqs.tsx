@@ -153,8 +153,8 @@ const FAQScreen = () => {
         .faq-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(32px, 4vw, 56px);
-          line-height: 1.18;
+          font-size: clamp(26px, 3.2vw, 40px);
+          line-height: 1.25;
           color: #1C1C1E;
           letter-spacing: -0.025em;
           margin: 0 0 clamp(10px, 1vw, 16px);

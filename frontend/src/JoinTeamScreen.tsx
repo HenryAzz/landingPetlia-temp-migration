@@ -216,8 +216,8 @@ const JoinTeamScreen = ({ onGoBack }: JoinTeamScreenProps) => {
         .jt-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3.8vw, 54px);
-          line-height: 1.14;
+          font-size: clamp(26px, 3.2vw, 40px);
+          line-height: 1.25;
           color: #FFFFFF;
           letter-spacing: -0.02em;
           margin: 0 0 clamp(14px, 1.2vw, 22px);

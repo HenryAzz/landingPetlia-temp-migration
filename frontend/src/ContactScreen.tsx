@@ -115,8 +115,8 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          min-height: 100vh;
-          padding-bottom: clamp(40px, 4vw, 70px);
+          min-height: 95vh;
+          padding-bottom: clamp(32px, 3.2vw, 56px);
         }
 
         /* ═══ BACKGROUND ═══ */
@@ -270,8 +270,8 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 4vw, 58px);
-          line-height: 1.12;
+          font-size: clamp(26px, 3.2vw, 40px);
+          line-height: 1.25;
           color: #FFFFFF;
           letter-spacing: -0.02em;
           margin: 0 0 clamp(14px, 1.2vw, 22px);
