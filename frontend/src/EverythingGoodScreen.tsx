@@ -272,8 +272,8 @@ const EverythingGoodScreen = () => {
         .eg-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(28px, 2.8vw, 42px);
-          line-height: 1.25;
+          font-size: clamp(70px, 2.8vw, 60px);
+          line-height: 1.5;
           color: #1C1C1E;
           letter-spacing: -0.02em;
           margin: 0 0 20px;

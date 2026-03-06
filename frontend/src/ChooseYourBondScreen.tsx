@@ -89,8 +89,9 @@ const ChooseYourBondScreen = () => {
           display: flex;
           flex-direction: column;
           width: 100%;
-          max-width: 680px;
-          gap: clamp(8px, 0.65vw, 12px);
+          max-width: 600px;
+          gap: clamp(8px, 1.65vw, 25px);
+            margin-left: auto;
         }
 
         .cyb-accent {
@@ -112,7 +113,7 @@ const ChooseYourBondScreen = () => {
         .cyb-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(28px, 2.8vw, 42px);
+          font-size: clamp(70px, 2.8vw, 55px);
           line-height: 1.10;
           color: #FFFFFF;
           letter-spacing: -0.02em;
@@ -128,7 +129,7 @@ const ChooseYourBondScreen = () => {
           line-height: 1.75;
           color: rgba(255,255,255,0.75);
           margin: 10px 0 30px 0;
-          max-width: 440px;
+          max-width: 400px;
           letter-spacing: 0.015em;
           opacity: 0;
         }
@@ -159,7 +160,7 @@ const ChooseYourBondScreen = () => {
         .cyb-btn:active { transform: translateY(0); }
         .cyb-btn-arrow { width: 17px; height: 17px; transition: transform 0.3s ease; }
         .cyb-btn:hover .cyb-btn-arrow { transform: translateX(3px); }
-        .cyb-microtrust { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(13px, 1vw, 14px); color: rgba(255,255,255,0.45); letter-spacing: 0.03em; opacity: 0; margin-top: 30px; }
+        .cyb-microtrust { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(13px, 1vw, 14px); color: rgba(255,255,255,0.45); letter-spacing: 0.03em; opacity: 0; margin-top: 10px; }
 
         .cyb-card {
           position: relative;
@@ -170,7 +171,7 @@ const ChooseYourBondScreen = () => {
           box-shadow: 0 4px 4px rgba(0,0,0,0.2), inset 1px 4px 8px rgba(0,0,0,0.2);
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: right;
           gap: clamp(3px, 0.25vw, 5px);
           overflow: visible;
           cursor: pointer;
@@ -189,7 +190,7 @@ const ChooseYourBondScreen = () => {
 
         .cyb-card-title { font-family: 'Poppins', sans-serif; font-weight: 600; color: #FFFFFF; font-size: clamp(16px, 1.35vw, 22px); line-height: 1.2; margin: 0; }
         .cyb-card-subtitle { font-family: 'Poppins', sans-serif; font-weight: 500; font-size: clamp(10px, 0.72vw, 12px); letter-spacing: 0.05em; padding: 2px 10px; border-radius: 50px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); white-space: nowrap; align-self: flex-start; }
-        .cyb-card-desc { font-family: 'Poppins', sans-serif; font-weight: 300; color: rgba(255,255,255,0.8); font-size: clamp(12px, 0.88vw, 14.5px); line-height: 1.45; margin: 0; padding-right: clamp(40px, 4vw, 65px); }
+        .cyb-card-desc { font-family: 'Poppins', sans-serif; font-weight: 400; color: rgba(255,255,255,0.8); font-size: clamp(14px, 0.88vw, 15.5px); line-height: 1.45; margin: 0; padding-right: clamp(40px, 4vw, 65px); }
         .cyb-card-features { display: flex; flex-wrap: wrap; gap: clamp(3px, 0.25vw, 5px); margin-top: clamp(1px, 0.15vw, 3px); }
         .cyb-card-feat { display: inline-flex; align-items: center; gap: 5px; padding: 2px 9px; border-radius: 50px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.06); font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(10px, 0.68vw, 11.5px); color: rgba(255,255,255,0.75); white-space: nowrap; transition: all 0.3s ease; }
         .cyb-card:hover .cyb-card-feat { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.1); }
@@ -221,7 +222,7 @@ const ChooseYourBondScreen = () => {
           .cyb-layout { flex-direction: column; padding: 70px clamp(24px, 5vw, 60px) 60px; }
           .cyb-left { width: 100%; }
           .cyb-left-inner { padding: 0; align-items: center; text-align: center; gap: 16px; margin-bottom: 46px; }
-          .cyb-sub { max-width: 480px; }
+          .cyb-sub { max-width: 460px; }
           .cyb-right { width: 100%; padding: 0; }
           .cyb-cards { max-width: 560px; margin: 0 auto; gap: 22px; }
           .cyb-stagger-r { margin-left: 12px; }
