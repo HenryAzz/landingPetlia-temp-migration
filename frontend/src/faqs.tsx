@@ -85,9 +85,6 @@ const FAQScreen = () => {
   return (
     <section ref={sectionRef} id="faq" className="faq-section">
       <style>{`
-        /* ═══════════════════════════════
-           BASE
-        ═══════════════════════════════ */
         .faq-section {
           position: relative;
           width: 100%;
@@ -109,7 +106,7 @@ const FAQScreen = () => {
           margin: 0 auto;
           padding-left: 40px;
           padding-right: 40px;
-          gap: 4vw;
+          gap: clamp(24px, 4vw, 50px); /* ← FIX: era 4vw puro (200px a 5000px) */
         }
 
         .faq-left {
@@ -118,14 +115,14 @@ const FAQScreen = () => {
           align-items: flex-start;
           flex-shrink: 0;
           width: 30%;
-          padding-top: 1vw;
+          padding-top: 14px; /* ← FIX: era 1vw (50px a 5000px) */
         }
 
         .faq-right {
           display: flex;
           flex-direction: column;
           flex: 1;
-          gap: 0.8vw;
+          gap: clamp(8px, 0.8vw, 12px); /* ← FIX: era 0.8vw puro (40px a 5000px) */
           min-width: 0;
         }
 
@@ -394,7 +391,6 @@ const FAQScreen = () => {
         .faq-a-item { animation: faqItemIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
         .faq-a-pop { animation: faqPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-        /* ═══ RESPONSIVE: TABLET ≤ 1024px ═══ */
         @media (max-width: 1024px) {
           .faq-section {
             padding-top: 70px;
@@ -430,7 +426,6 @@ const FAQScreen = () => {
           .faq-a-item { animation-name: faqItemUpIn; }
         }
 
-        /* ═══ RESPONSIVE: MOBILE ≤ 768px ═══ */
         @media (max-width: 768px) {
           .faq-section {
             padding-top: 56px;
@@ -458,7 +453,6 @@ const FAQScreen = () => {
           .faq-btn { padding: 12px 26px; font-size: 14px; }
         }
 
-        /* ═══ RESPONSIVE: SMALL ≤ 540px ═══ */
         @media (max-width: 540px) {
           .faq-section {
             padding-top: 48px;
@@ -483,7 +477,6 @@ const FAQScreen = () => {
           .faq-btn { padding: 11px 24px; font-size: 13px; }
         }
 
-        /* ═══ RESPONSIVE: XS ≤ 400px ═══ */
         @media (max-width: 400px) {
           .faq-section {
             padding-top: 42px;
@@ -512,7 +505,6 @@ const FAQScreen = () => {
           .faq-microtrust { font-size: 10.5px; }
         }
 
-        /* ═══ RESPONSIVE: XXS ≤ 340px ═══ */
         @media (max-width: 340px) {
           .faq-section { padding-top: 36px; padding-bottom: 36px; }
           .faq-layout { padding-left: 14px; padding-right: 14px; gap: 20px; }
@@ -532,19 +524,19 @@ const FAQScreen = () => {
       {/* ═══ FLOATING DECO (desktop) ═══ */}
       <div
         className={`faq-deco ${a ? 'faq-a-pop' : ''}`}
-        style={{ left: '2.5vw', top: '55%', width: 'clamp(28px, 3.2vw, 50px)', height: 'clamp(28px, 3.2vw, 50px)', animationDelay: '0.6s' }}
+        style={{ left: 'clamp(20px, 2.5vw, 40px)', top: '55%', width: 'clamp(28px, 3.2vw, 50px)', height: 'clamp(28px, 3.2vw, 50px)', animationDelay: '0.6s' }}
       >
         <img src="/corazonderecha.png" alt="" className={mounted ? 'faq-fl-1' : ''} />
       </div>
       <div
         className={`faq-deco ${a ? 'faq-a-pop' : ''}`}
-        style={{ left: '4.5vw', top: '68%', width: 'clamp(24px, 2.8vw, 44px)', height: 'clamp(24px, 2.8vw, 44px)', animationDelay: '0.75s' }}
+        style={{ left: 'clamp(30px, 4.5vw, 60px)', top: '68%', width: 'clamp(24px, 2.8vw, 44px)', height: 'clamp(24px, 2.8vw, 44px)', animationDelay: '0.75s' }}
       >
         <img src="/carta.png" alt="" className={mounted ? 'faq-fl-2' : ''} />
       </div>
       <div
         className={`faq-deco ${a ? 'faq-a-pop' : ''}`}
-        style={{ left: '2vw', top: '80%', width: 'clamp(22px, 2.5vw, 40px)', height: 'clamp(22px, 2.5vw, 40px)', animationDelay: '0.9s' }}
+        style={{ left: 'clamp(16px, 2vw, 30px)', top: '80%', width: 'clamp(22px, 2.5vw, 40px)', height: 'clamp(22px, 2.5vw, 40px)', animationDelay: '0.9s' }}
       >
         <img src="/corazonizquierda.png" alt="" className={mounted ? 'faq-fl-3' : ''} />
       </div>

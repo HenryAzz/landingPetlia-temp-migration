@@ -1,3 +1,4 @@
+// HowItWorksScreen.tsx
 import { useEffect, useState, useRef, useCallback } from 'react';
 
 const STEPS = [
@@ -75,7 +76,14 @@ const HowItWorksScreen = () => {
   const a = hasAnimated;
 
   return (
-    <section ref={sectionRef} id="como-funciona" className="hiw-section" onMouseMove={onSectionMove} onMouseEnter={onSectionEnter} onMouseLeave={onSectionLeave}>
+    <section
+      ref={sectionRef}
+      id="como-funciona"
+      className="hiw-section"
+      onMouseMove={onSectionMove}
+      onMouseEnter={onSectionEnter}
+      onMouseLeave={onSectionLeave}
+    >
       <style>{`
         .hiw-section {
           position: relative;
@@ -83,23 +91,20 @@ const HowItWorksScreen = () => {
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          min-height: 85vh;
+          align-items: center;
         }
+
         .hiw-bg {
           position: absolute;
           inset: 0;
           z-index: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
         }
         .hiw-bg img {
-          width: 140%;
-          height: 140%;
-          min-width: 140%;
-          min-height: 140%;
+          width: 100%;
+          height: 100%;
           object-fit: cover;
         }
+
         .hiw-wave {
           position: relative;
           width: 100%;
@@ -114,23 +119,44 @@ const HowItWorksScreen = () => {
           height: clamp(40px, 4.5vw, 65px);
           display: block;
         }
-        .hiw-container {
+
+        /* ══════════════════════════════════════
+           CAJA CONTENEDORA ÚNICA
+           Todo vive acá adentro.
+           En 5000px → 1370px centrado.
+        ══════════════════════════════════════ */
+        .hiw-box {
           position: relative;
           z-index: 5;
           width: 100%;
-          max-width: 1380px;
+          max-width: 1370px;
           margin: 0 auto;
-          padding: clamp(20px, 3vw, 40px) 40px clamp(32px, 4.5vw, 56px);
+          padding: 40px 60px 56px;
           display: flex;
           flex-direction: column;
           align-items: center;
         }
+
+        /* ═══ DECOS — absolute dentro de .hiw-box (max 1370px) ═══ */
+        .hiw-deco {
+          position: absolute;
+          pointer-events: none;
+          z-index: 3;
+          opacity: 0;
+        }
+        .hiw-deco img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+
+        /* ═══ HEADER ═══ */
         .hiw-header {
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
-          margin-bottom: clamp(28px, 3.5vw, 44px);
+          margin-bottom: 40px;
         }
         .hiw-accent {
           width: 38px;
@@ -153,15 +179,18 @@ const HowItWorksScreen = () => {
         .hiw-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(28px, 3.2vw, 44px);
+          font-size: clamp(28px, 2.8vw, 42px);
           line-height: 1.25;
           color: #FFFFFF;
           letter-spacing: -0.02em;
-          margin: 0 0 clamp(10px, 1vw, 16px);
+          margin: 0 0 14px;
           text-shadow: 0 2px 20px rgba(0,0,0,0.2);
           opacity: 0;
         }
-        .hiw-title-light { font-weight: 400; color: rgba(255,255,255,0.85); }
+        .hiw-title-light {
+          font-weight: 400;
+          color: rgba(255,255,255,0.85);
+        }
         .hiw-subtitle {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
@@ -173,10 +202,12 @@ const HowItWorksScreen = () => {
           letter-spacing: 0.015em;
           opacity: 0;
         }
+
+        /* ═══ STEPS ═══ */
         .hiw-steps-wrap {
           width: 100%;
           position: relative;
-          margin-bottom: clamp(28px, 3.5vw, 44px);
+          margin-bottom: 40px;
         }
         .hiw-connector {
           position: absolute;
@@ -192,19 +223,27 @@ const HowItWorksScreen = () => {
         .hiw-connector-line {
           width: 100%;
           height: 100%;
-          background: repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 5px, transparent 5px, transparent 13px);
+          background: repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,0.08) 0px,
+            rgba(255,255,255,0.08) 5px,
+            transparent 5px,
+            transparent 13px
+          );
         }
         .hiw-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: clamp(12px, 1.1vw, 18px);
+          gap: 16px;
           width: 100%;
           position: relative;
           z-index: 1;
         }
+
+        /* ═══ CARD ═══ */
         .hiw-card {
           position: relative;
-          border-radius: clamp(16px, 1.3vw, 22px);
+          border-radius: 20px;
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.07);
           backdrop-filter: blur(28px);
@@ -212,8 +251,8 @@ const HowItWorksScreen = () => {
           box-shadow: 0 6px 28px rgba(0,0,0,0.1);
           display: flex;
           flex-direction: column;
-          padding: clamp(18px, 1.5vw, 26px);
-          min-height: clamp(170px, 13.5vw, 230px);
+          padding: 24px;
+          min-height: 210px;
           transition: box-shadow 0.4s ease, border-color 0.4s ease, background 0.4s ease;
           cursor: default;
           overflow: hidden;
@@ -239,8 +278,8 @@ const HowItWorksScreen = () => {
           content: '';
           position: absolute;
           top: 0;
-          left: clamp(18px, 1.5vw, 24px);
-          right: clamp(18px, 1.5vw, 24px);
+          left: 22px;
+          right: 22px;
           height: 2px;
           border-radius: 0 0 2px 2px;
           background: var(--step-color);
@@ -248,36 +287,37 @@ const HowItWorksScreen = () => {
           transition: opacity 0.4s ease;
         }
         .hiw-card:hover::after { opacity: 0.55; }
+
         .hiw-card-emoji {
-          font-size: clamp(20px, 1.6vw, 26px);
+          font-size: 24px;
           line-height: 1;
-          margin-bottom: clamp(10px, 0.9vw, 16px);
+          margin-bottom: 14px;
           filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
         }
         .hiw-card-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
           color: #FFFFFF;
-          font-size: clamp(14.5px, 1.15vw, 18px);
+          font-size: 17px;
           line-height: 1.35;
-          margin: 0 0 clamp(6px, 0.5vw, 10px);
+          margin: 0 0 8px;
         }
         .hiw-card-desc {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           color: rgba(255,255,255,0.5);
-          font-size: clamp(12px, 0.88vw, 14px);
+          font-size: 13.5px;
           line-height: 1.6;
           margin: 0;
           letter-spacing: 0.01em;
         }
         .hiw-card-num {
           position: absolute;
-          bottom: clamp(12px, 1vw, 18px);
-          right: clamp(16px, 1.4vw, 24px);
+          bottom: 16px;
+          right: 20px;
           font-family: 'Poppins', sans-serif;
           font-weight: 800;
-          font-size: clamp(34px, 2.8vw, 48px);
+          font-size: 44px;
           line-height: 1;
           letter-spacing: -0.04em;
           opacity: 0.12;
@@ -286,6 +326,8 @@ const HowItWorksScreen = () => {
           transition: opacity 0.4s ease, transform 0.4s ease;
         }
         .hiw-card:hover .hiw-card-num { opacity: 0.22; transform: scale(1.06); }
+
+        /* ═══ CTA ═══ */
         .hiw-cta-area {
           display: flex;
           flex-direction: column;
@@ -296,13 +338,13 @@ const HowItWorksScreen = () => {
           display: inline-flex;
           align-items: center;
           gap: 11px;
-          padding: clamp(13px, 1vw, 17px) clamp(30px, 2.3vw, 40px);
+          padding: 15px 36px;
           border-radius: 50px;
           background: linear-gradient(135deg, #F9DDA3 0%, #e6c57a 100%);
           color: #2a1f0e;
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(14px, 1.05vw, 17px);
+          font-size: 16px;
           letter-spacing: 0.04em;
           border: none;
           cursor: pointer;
@@ -314,13 +356,17 @@ const HowItWorksScreen = () => {
         }
         .hiw-btn::before {
           content: '';
-          position: absolute; inset: 0;
+          position: absolute;
+          inset: 0;
           border-radius: 50px;
           background: linear-gradient(135deg, rgba(255,255,255,0.35) 0%, transparent 50%);
           opacity: 0;
           transition: opacity 0.3s ease;
         }
-        .hiw-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(249,221,163,0.35), 0 2px 8px rgba(0,0,0,0.1); }
+        .hiw-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 36px rgba(249,221,163,0.35), 0 2px 8px rgba(0,0,0,0.1);
+        }
         .hiw-btn:hover::before { opacity: 1; }
         .hiw-btn:active { transform: translateY(0); }
         .hiw-btn-arrow { width: 16px; height: 16px; transition: transform 0.3s ease; }
@@ -328,19 +374,14 @@ const HowItWorksScreen = () => {
         .hiw-microtrust {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(11.5px, 0.85vw, 13px);
+          font-size: 13px;
           color: rgba(255,255,255,0.4);
           letter-spacing: 0.03em;
           text-align: center;
           opacity: 0;
         }
-        .hiw-deco {
-          position: absolute;
-          pointer-events: none;
-          z-index: 3;
-          opacity: 0;
-        }
-        .hiw-deco img { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ═══ FLOAT ANIMS ═══ */
         @keyframes hiwF1 { 0%, 100% { transform: translateY(0) rotate(-8deg); } 50% { transform: translateY(-7px) rotate(-4deg); } }
         @keyframes hiwF2 { 0%, 100% { transform: translateY(0) rotate(10deg); } 50% { transform: translateY(-6px) rotate(14deg); } }
         @keyframes hiwF3 { 0%, 100% { transform: translateY(0) rotate(5deg); } 50% { transform: translateY(-8px) rotate(9deg); } }
@@ -349,38 +390,65 @@ const HowItWorksScreen = () => {
         .hiw-f2 { animation: hiwF2 4.6s ease-in-out infinite 0.5s; }
         .hiw-f3 { animation: hiwF3 3.9s ease-in-out infinite 1s; }
         .hiw-f4 { animation: hiwF4 4.4s ease-in-out infinite 0.8s; }
+
+        /* ═══ ENTRANCE ═══ */
         @keyframes hiwUp { 0% { opacity: 0; transform: translateY(28px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes hiwDown { 0% { opacity: 0; transform: translateY(-20px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes hiwCardIn { 0% { opacity: 0; transform: translateY(32px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
         @keyframes hiwPop { 0% { opacity: 0; transform: scale(0) rotate(-10deg); } 60% { opacity: 1; transform: scale(1.08) rotate(3deg); } 100% { opacity: 1; transform: scale(1) rotate(0deg); } }
         @keyframes hiwLineIn { 0% { opacity: 0; transform: scaleX(0); } 100% { opacity: 1; transform: scaleX(1); } }
+
         .hiw-a-up { animation: hiwUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .hiw-a-down { animation: hiwDown 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .hiw-a-card { animation: hiwCardIn 0.75s cubic-bezier(0.22,1,0.36,1) both; }
         .hiw-a-pop { animation: hiwPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
         .hiw-a-line { animation: hiwLineIn 1s cubic-bezier(0.22,1,0.36,1) both; transform-origin: left center; }
+
+        /* ═══ TABLET ≤ 1024px ═══ */
         @media (max-width: 1024px) {
-          .hiw-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 580px; }
+          .hiw-box { padding: 36px 40px 48px; }
+          .hiw-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            max-width: 580px;
+            margin: 0 auto;
+          }
           .hiw-card { min-height: 165px; }
           .hiw-connector { display: none; }
-          .hiw-deco { display: none; }
+          .hiw-deco { display: none !important; }
         }
+
+        /* ═══ MOBILE ≤ 768px ═══ */
         @media (max-width: 768px) {
-          .hiw-container { padding: clamp(20px, 3vw, 36px) 24px clamp(40px, 5vw, 56px); }
-          .hiw-header { margin-bottom: clamp(24px, 4vw, 36px); }
+          .hiw-box { padding: 28px 24px 44px; }
+          .hiw-header { margin-bottom: 30px; }
           .hiw-title { font-size: clamp(24px, 5.5vw, 30px); }
           .hiw-subtitle { font-size: 15px; }
+          .hiw-steps-wrap { margin-bottom: 32px; }
           .hiw-grid { gap: 12px; }
-          .hiw-card { padding: 18px; min-height: 150px; }
+          .hiw-card { padding: 18px; min-height: 150px; border-radius: 16px; }
           .hiw-card-emoji { font-size: 20px; margin-bottom: 10px; }
           .hiw-card-title { font-size: 14.5px; }
           .hiw-card-desc { font-size: 12px; }
           .hiw-card-num { font-size: 32px; bottom: 10px; right: 14px; }
           .hiw-btn { padding: 13px 30px; font-size: 14px; }
         }
+
+        /* ═══ SMALL ≤ 540px ═══ */
         @media (max-width: 540px) {
-          .hiw-grid { grid-template-columns: 1fr; max-width: 400px; }
-          .hiw-card { min-height: auto; padding: 18px 18px 20px; flex-direction: row; align-items: flex-start; gap: clamp(12px, 3vw, 16px); }
+          .hiw-box { padding: 24px 20px 40px; }
+          .hiw-header { margin-bottom: 26px; }
+          .hiw-grid {
+            grid-template-columns: 1fr;
+            max-width: 400px;
+          }
+          .hiw-card {
+            min-height: auto;
+            padding: 18px 18px 20px;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 14px;
+          }
           .hiw-card::after { left: 14px; right: 14px; }
           .hiw-card-emoji { font-size: 20px; margin-bottom: 0; flex-shrink: 0; margin-top: 2px; }
           .hiw-card-content { flex: 1; min-width: 0; }
@@ -390,14 +458,18 @@ const HowItWorksScreen = () => {
           .hiw-title { font-size: clamp(22px, 5vw, 26px); }
           .hiw-label { font-size: 10px; }
           .hiw-subtitle { font-size: 14.5px; }
+          .hiw-steps-wrap { margin-bottom: 28px; }
         }
+
+        /* ═══ XS ≤ 400px ═══ */
         @media (max-width: 400px) {
-          .hiw-container { padding: 18px 18px 38px; }
+          .hiw-box { padding: 18px 18px 38px; }
           .hiw-header { margin-bottom: 22px; }
           .hiw-accent { width: 30px; margin-bottom: 10px; }
           .hiw-label { font-size: 9.5px; margin-bottom: 10px; }
           .hiw-title { font-size: 21px; }
           .hiw-subtitle { font-size: 13.5px; }
+          .hiw-steps-wrap { margin-bottom: 24px; }
           .hiw-grid { gap: 10px; }
           .hiw-card { padding: 16px 16px 18px; gap: 10px; border-radius: 14px; }
           .hiw-card-emoji { font-size: 18px; }
@@ -408,8 +480,10 @@ const HowItWorksScreen = () => {
           .hiw-btn-arrow { width: 14px; height: 14px; }
           .hiw-microtrust { font-size: 11px; }
         }
+
+        /* ═══ XXS ≤ 340px ═══ */
         @media (max-width: 340px) {
-          .hiw-container { padding: 16px 14px 34px; }
+          .hiw-box { padding: 16px 14px 34px; }
           .hiw-title { font-size: 19px; }
           .hiw-subtitle { font-size: 13px; }
           .hiw-card { padding: 14px 14px 16px; gap: 9px; }
@@ -419,31 +493,48 @@ const HowItWorksScreen = () => {
           .hiw-card-num { font-size: 22px; }
           .hiw-btn { padding: 11px 20px; font-size: 13px; }
         }
-        @media (hover: none) { .hiw-card { will-change: auto !important; } }
+
+        @media (hover: none) {
+          .hiw-card { will-change: auto !important; }
+        }
       `}</style>
 
+      {/* BG — cubre todo el viewport */}
       <div className="hiw-bg"><img src="/fondoliso.jpeg" alt="" /></div>
 
+      {/* WAVE — ancho completo */}
       <div className="hiw-wave">
         <svg viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ transform: 'rotate(180deg)' }}>
           <path d="M0,40 Q180,0 360,25 Q540,50 720,20 Q900,0 1080,30 Q1260,55 1440,15 L1440,120 L0,120 Z" fill="#F9DDA3" />
         </svg>
       </div>
 
-      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ left: '4vw', top: '15%', width: 'clamp(28px, 3.5vw, 55px)', height: 'clamp(28px, 3.5vw, 55px)', animationDelay: '0.7s' }}>
-        <img src="/carta.png" alt="" className={mounted ? 'hiw-f1' : ''} />
-      </div>
-      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ right: '5vw', top: '13%', width: 'clamp(18px, 2.2vw, 35px)', height: 'clamp(18px, 2.2vw, 35px)', animationDelay: '0.85s' }}>
-        <img src="/corazonizquierda.png" alt="" className={mounted ? 'hiw-f2' : ''} />
-      </div>
-      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ left: '3.5vw', bottom: '12%', width: 'clamp(24px, 3vw, 48px)', height: 'clamp(24px, 3vw, 48px)', animationDelay: '1s' }}>
-        <img src="/corazonderecha.png" alt="" className={mounted ? 'hiw-f3' : ''} />
-      </div>
-      <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`} style={{ right: '4.5vw', bottom: '14%', width: 'clamp(16px, 2vw, 30px)', height: 'clamp(16px, 2vw, 30px)', animationDelay: '1.15s' }}>
-        <img src="/carta.png" alt="" className={mounted ? 'hiw-f4' : ''} />
-      </div>
+      {/* ══════════════════════════════════════════
+          CAJA CONTENEDORA — max-width: 1370px
+          TODO vive acá: decos + header + cards + cta
+          En 5000px → bloque de 1370px centrado
+      ══════════════════════════════════════════ */}
+      <div className="hiw-box">
 
-      <div className="hiw-container">
+        {/* Decos — absolute DENTRO de .hiw-box (1370px max) */}
+        <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+          style={{ left: '20px', top: '24px', width: '48px', height: '48px', animationDelay: '0.7s' }}>
+          <img src="/carta.png" alt="" className={mounted ? 'hiw-f1' : ''} />
+        </div>
+        <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+          style={{ right: '28px', top: '18px', width: '32px', height: '32px', animationDelay: '0.85s' }}>
+          <img src="/corazonizquierda.png" alt="" className={mounted ? 'hiw-f2' : ''} />
+        </div>
+        <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+          style={{ left: '14px', bottom: '40px', width: '42px', height: '42px', animationDelay: '1s' }}>
+          <img src="/corazonderecha.png" alt="" className={mounted ? 'hiw-f3' : ''} />
+        </div>
+        <div className={`hiw-deco ${a ? 'hiw-a-pop' : ''}`}
+          style={{ right: '18px', bottom: '48px', width: '28px', height: '28px', animationDelay: '1.15s' }}>
+          <img src="/carta.png" alt="" className={mounted ? 'hiw-f4' : ''} />
+        </div>
+
+        {/* Header */}
         <div className="hiw-header">
           <div className={`hiw-accent ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.1s' }} />
           <span className={`hiw-label ${a ? 'hiw-a-down' : ''}`} style={{ animationDelay: '0.2s' }}>CÓMO FUNCIONA</span>
@@ -455,14 +546,23 @@ const HowItWorksScreen = () => {
           </p>
         </div>
 
+        {/* Cards */}
         <div className="hiw-steps-wrap">
           <div className={`hiw-connector ${a ? 'hiw-a-line' : ''}`} style={{ animationDelay: '0.9s' }}>
             <div className="hiw-connector-line" />
           </div>
           <div className="hiw-grid">
             {STEPS.map((step, i) => (
-              <div key={i} ref={el => { cardRefs.current[i] = el; }} className={`hiw-card ${a ? 'hiw-a-card' : ''}`}
-                style={{ animationDelay: `${0.5 + i * 0.12}s`, ['--step-glow' as string]: `${step.color}30`, ['--step-color' as string]: step.color }}>
+              <div
+                key={i}
+                ref={el => { cardRefs.current[i] = el; }}
+                className={`hiw-card ${a ? 'hiw-a-card' : ''}`}
+                style={{
+                  animationDelay: `${0.5 + i * 0.12}s`,
+                  ['--step-glow' as string]: `${step.color}30`,
+                  ['--step-color' as string]: step.color,
+                }}
+              >
                 <span className="hiw-card-emoji">{step.emoji}</span>
                 <div className="hiw-card-content">
                   <h3 className="hiw-card-title">{step.title}</h3>
@@ -474,6 +574,7 @@ const HowItWorksScreen = () => {
           </div>
         </div>
 
+        {/* CTA */}
         <div className="hiw-cta-area">
           <button className={`hiw-btn ${a ? 'hiw-a-up' : ''}`} style={{ animationDelay: '1.1s' }} onClick={() => scrollTo('contacto')}>
             Empezar ahora

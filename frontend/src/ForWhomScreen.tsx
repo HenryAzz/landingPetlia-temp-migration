@@ -1,3 +1,4 @@
+// ForWhomScreen.tsx
 import { useEffect, useState, useRef } from 'react';
 
 const PERSONAS = [
@@ -48,9 +49,9 @@ const ForWhomScreen = () => {
           position: relative;
           z-index: 5;
           width: 100%;
-          max-width: 1200px;
+          max-width: 1320px;
           margin: 0 auto;
-          padding: clamp(48px, 7vw, 100px) clamp(24px, 5vw, 80px) clamp(64px, 9vw, 120px);
+          padding: clamp(48px, 7vw, 100px) clamp(24px, 4vw, 60px) clamp(64px, 9vw, 120px);
         }
 
         .fw-layout {
@@ -59,7 +60,6 @@ const ForWhomScreen = () => {
           align-items: stretch;
         }
 
-        /* ═══ LEFT COLUMN ═══ */
         .fw-left {
           flex: 1;
           display: flex;
@@ -80,8 +80,8 @@ const ForWhomScreen = () => {
         .fw-label {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(12px, 1vw, 13px);
-          letter-spacing: 0.2em;
+          font-size: 11px;
+          letter-spacing: 0.22em;
           color: #E8856A;
           text-transform: uppercase;
           margin-bottom: 16px;
@@ -91,7 +91,7 @@ const ForWhomScreen = () => {
         .fw-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(28px, 3.2vw, 44px);
+          font-size: clamp(28px, 2.8vw, 42px);
           line-height: 1.25;
           color: #1C1C1E;
           letter-spacing: -0.02em;
@@ -129,7 +129,6 @@ const ForWhomScreen = () => {
           opacity: 0;
         }
 
-        /* ═══ CTA AREA ═══ */
         .fw-action {
           display: flex;
           flex-direction: column;
@@ -147,7 +146,7 @@ const ForWhomScreen = () => {
           color: #FFF;
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(15px, 1.1vw, 16px);
+          font-size: 15px;
           letter-spacing: 0.03em;
           border: none;
           cursor: pointer;
@@ -183,14 +182,13 @@ const ForWhomScreen = () => {
         .fw-trust {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(12.5px, 0.95vw, 13.5px);
+          font-size: 12px;
           color: #999;
           letter-spacing: 0.03em;
           line-height: 1.5;
           opacity: 0;
         }
 
-        /* ═══ RIGHT COLUMN ═══ */
         .fw-right {
           flex: 1;
           min-width: 0;
@@ -258,7 +256,7 @@ const ForWhomScreen = () => {
         .fw-item-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(14.5px, 1.1vw, 15.5px);
+          font-size: 14.5px;
           color: #2A2A2A;
           line-height: 1.35;
           letter-spacing: 0.01em;
@@ -269,7 +267,7 @@ const ForWhomScreen = () => {
         .fw-item-desc {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
-          font-size: clamp(13px, 1vw, 14px);
+          font-size: 13.5px;
           color: #717171;
           line-height: 1.55;
           letter-spacing: 0.015em;
@@ -293,7 +291,6 @@ const ForWhomScreen = () => {
           color: var(--item-accent);
         }
 
-        /* ═══ ANIMATIONS ═══ */
         @keyframes fwFadeUp {
           0% { opacity: 0; transform: translateY(28px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -305,7 +302,6 @@ const ForWhomScreen = () => {
         .fw-a-fu { animation: fwFadeUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .fw-a-si { animation: fwSlideIn 0.7s cubic-bezier(0.22,1,0.36,1) both; }
 
-        /* ═══ TABLET ≤ 1024px ═══ */
         @media (max-width: 1024px) {
           .fw-layout { flex-direction: column; gap: 40px; }
           .fw-left { text-align: center; align-items: center; }
@@ -316,7 +312,6 @@ const ForWhomScreen = () => {
           .fw-a-si { animation-name: fwFadeUp; }
         }
 
-        /* ═══ MOBILE ≤ 768px ═══ */
         @media (max-width: 768px) {
           .fw-container {
             padding: clamp(36px, 5vw, 50px) 24px clamp(50px, 7vw, 70px);
@@ -331,7 +326,6 @@ const ForWhomScreen = () => {
           .fw-btn { padding: 14px 30px; font-size: 15px; }
         }
 
-        /* ═══ SMALL ≤ 540px ═══ */
         @media (max-width: 540px) {
           .fw-title { font-size: clamp(23px, 5.2vw, 27px); }
           .fw-label { font-size: 11px; }
@@ -344,7 +338,6 @@ const ForWhomScreen = () => {
           .fw-item-arrow { display: none; }
         }
 
-        /* ═══ XS ≤ 400px ═══ */
         @media (max-width: 400px) {
           .fw-container { padding: 28px 18px 50px; }
           .fw-accent { width: 32px; margin-bottom: 12px; }
@@ -361,7 +354,6 @@ const ForWhomScreen = () => {
           .fw-item-desc { font-size: 12px; }
         }
 
-        /* ═══ XXS ≤ 340px ═══ */
         @media (max-width: 340px) {
           .fw-container { padding: 24px 14px 44px; }
           .fw-title { font-size: 20px; }

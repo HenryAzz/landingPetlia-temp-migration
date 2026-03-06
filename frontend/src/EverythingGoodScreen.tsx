@@ -1,3 +1,4 @@
+// EverythingGoodScreen.tsx
 import { useEffect, useState, useRef } from 'react';
 
 const BENEFITS = [
@@ -60,20 +61,17 @@ const EverythingGoodScreen = () => {
           background: linear-gradient(180deg, #F9F9F9 0%, #FEFEFE 50%, #F9F9F9 100%);
         }
 
-        @media (min-width: 1025px) {
-          .eg-section {
-            height: 100vh;
-            max-height: 100vh;
-          }
+        .eg-outer {
+          width: 100%;
+          max-width: 1320px;
+          margin: 0 auto;
+          padding: 0 clamp(24px, 4vw, 60px);
         }
 
-        /* ★ Outer wrapper — full width for background, constrains inner content */
         .eg-row {
           display: flex;
           width: 100%;
-          height: 100%;
-          max-width: 1380px;
-          margin: 0 auto;
+          min-height: 0;
         }
 
         .eg-col-left {
@@ -85,9 +83,9 @@ const EverythingGoodScreen = () => {
         }
 
         .eg-left-text {
-          padding-top: clamp(40px, 6vh, 80px);
+          padding-top: clamp(48px, 7vw, 100px);
           padding-bottom: 0;
-          padding-left: 40px;
+          padding-left: 0;
           padding-right: clamp(24px, 3vw, 48px);
           flex-shrink: 0;
           position: relative;
@@ -98,7 +96,8 @@ const EverythingGoodScreen = () => {
           flex: 1;
           position: relative;
           overflow: hidden;
-          min-height: 0;
+          min-height: 400px;
+          max-height: 700px;
           z-index: 2;
         }
 
@@ -120,18 +119,19 @@ const EverythingGoodScreen = () => {
         }
 
         .eg-img-desktop {
-  position: absolute;
-  top: 0;
-  bottom: -10px;
-  left: 0;
-  height: 120%;
-  width: auto;
-  object-fit: contain;
-  object-position: left bottom;
-  z-index: 1;
-  opacity: 0;
-  margin-left: clamp(60px, 12%, 200px);
-}
+          position: absolute;
+          top: 0;
+          bottom: -10px;
+          left: 0;
+          height: 120%;
+          max-height: 800px;
+          width: auto;
+          object-fit: contain;
+          object-position: left bottom;
+          z-index: 1;
+          opacity: 0;
+          margin-left: clamp(60px, 12%, 200px);
+        }
 
         .eg-hearts-container {
           position: absolute;
@@ -193,7 +193,7 @@ const EverythingGoodScreen = () => {
           display: flex;
           align-items: center;
           justify-content: flex-start;
-          padding: clamp(40px, 6vh, 80px) 40px clamp(40px, 6vh, 80px) clamp(32px, 3.5vw, 56px);
+          padding: clamp(48px, 7vw, 100px) 0 clamp(64px, 9vw, 120px) clamp(32px, 3.5vw, 56px);
           position: relative;
           overflow-y: auto;
         }
@@ -272,7 +272,7 @@ const EverythingGoodScreen = () => {
         .eg-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(28px, 3.2vw, 44px);
+          font-size: clamp(28px, 2.8vw, 42px);
           line-height: 1.25;
           color: #1C1C1E;
           letter-spacing: -0.02em;
@@ -503,7 +503,7 @@ const EverythingGoodScreen = () => {
         .eg-a-card  { animation: egCardIn 0.6s cubic-bezier(0.22,1,0.36,1) both; }
 
         @media (max-width: 1024px) {
-          .eg-row { flex-direction: column; max-width: none; }
+          .eg-row { flex-direction: column; }
           .eg-col-left { display: none; }
           .eg-img-mobile {
             display: block;
@@ -522,7 +522,7 @@ const EverythingGoodScreen = () => {
           }
           .eg-col-right {
             order: 1;
-            padding: clamp(48px, 7vw, 80px) 40px 40px;
+            padding: clamp(48px, 7vw, 80px) 0 40px;
             justify-content: center;
           }
           .eg-inner { max-width: 560px; align-items: center; text-align: center; margin: 0 auto; }
@@ -541,7 +541,8 @@ const EverythingGoodScreen = () => {
         }
 
         @media (max-width: 768px) {
-          .eg-col-right { padding: clamp(36px, 5vw, 56px) 24px 32px; }
+          .eg-outer { padding: 0 24px; }
+          .eg-col-right { padding: clamp(36px, 5vw, 56px) 0 32px; }
           .eg-title { font-size: clamp(24px, 5.5vw, 30px); margin-bottom: 14px; }
           .eg-sub { font-size: 15px; }
           .eg-benefits { gap: 8px; margin-bottom: 24px; }
@@ -560,7 +561,8 @@ const EverythingGoodScreen = () => {
         }
 
         @media (max-width: 540px) {
-          .eg-col-right { padding: 36px 20px 28px; }
+          .eg-outer { padding: 0 20px; }
+          .eg-col-right { padding: 36px 0 28px; }
           .eg-title { font-size: clamp(22px, 5vw, 26px); }
           .eg-label { font-size: 10px; }
           .eg-benefit { padding: 12px 14px; gap: 11px; border-radius: 12px; }
@@ -571,7 +573,8 @@ const EverythingGoodScreen = () => {
         }
 
         @media (max-width: 400px) {
-          .eg-col-right { padding: 28px 18px 24px; }
+          .eg-outer { padding: 0 18px; }
+          .eg-col-right { padding: 28px 0 24px; }
           .eg-accent { width: 30px; margin-bottom: 10px; }
           .eg-label { margin-bottom: 10px; font-size: 9.5px; }
           .eg-title { font-size: 21px; margin-bottom: 12px; }
@@ -595,7 +598,8 @@ const EverythingGoodScreen = () => {
         }
 
         @media (max-width: 340px) {
-          .eg-col-right { padding: 24px 14px 20px; }
+          .eg-outer { padding: 0 14px; }
+          .eg-col-right { padding: 24px 0 20px; }
           .eg-title { font-size: 19px; }
           .eg-sub { font-size: 13px; }
           .eg-benefit { padding: 10px 12px; }
@@ -611,62 +615,10 @@ const EverythingGoodScreen = () => {
         }
       `}</style>
 
-      <div className="eg-row">
-        <div className="eg-col-left">
-          <div className="eg-left-text">
-            <div className={`eg-accent ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.15s' }} />
-            <span className={`eg-label ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.25s' }}>
-              LA EXPERIENCIA
-            </span>
-            <h2 className={`eg-title ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.35s' }}>
-              Todo lo bueno, <span className="eg-title-light">sin lo que incomoda</span>
-            </h2>
-            <p className={`eg-sub ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.5s' }}>
-              Un espacio donde podés ser vos, sin presiones ni explicaciones.
-              Compañía genuina que se adapta a lo que necesitás.
-            </p>
-          </div>
-
-          <div className="eg-left-img-wrap">
-            <div className="eg-img-glow" />
-            <img
-              src="/beso.png"
-              alt="Camil"
-              className={`eg-img-desktop ${a ? 'eg-a-slide' : ''}`}
-              style={{ animationDelay: '0.15s' }}
-            />
-
-            {a && (
-              <div className="eg-hearts-container">
-                {RISING_HEARTS.map((h, i) => {
-                  const animClass = `eg-hr-anim${(i % 3) + 1}`;
-                  return (
-                    <div
-                      key={i}
-                      className={`eg-rising-heart ${animClass} eg-hr-active`}
-                      style={{
-                        right: h.right,
-                        bottom: h.bottom,
-                        animationDuration: `${h.dur}s`,
-                        animationDelay: `${h.delay}s`,
-                        ['--drift' as string]: `${h.drift}px`,
-                        ['--drift-half' as string]: `${h.drift * 0.5}px`,
-                      }}
-                    >
-                      <svg width={h.size} height={h.size} viewBox="0 0 24 24" fill={h.color} style={{ opacity: 0.85 }}>
-                        <path d={HEART_PATH} />
-                      </svg>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="eg-col-right">
-          <div className="eg-inner">
-            <div className="eg-mobile-header">
+      <div className="eg-outer">
+        <div className="eg-row">
+          <div className="eg-col-left">
+            <div className="eg-left-text">
               <div className={`eg-accent ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.15s' }} />
               <span className={`eg-label ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.25s' }}>
                 LA EXPERIENCIA
@@ -680,53 +632,107 @@ const EverythingGoodScreen = () => {
               </p>
             </div>
 
-            <div className={`eg-deco eg-dk-1 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '0.8s' }}>
-              <img src="/corazonderecha.png" alt="" className={mounted ? 'eg-fl-1' : ''} />
-            </div>
-            <div className={`eg-deco eg-dk-2 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '0.95s' }}>
-              <img src="/carta.png" alt="" className={mounted ? 'eg-fl-2' : ''} />
-            </div>
-            <div className={`eg-deco eg-dk-3 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '1.1s' }}>
-              <img src="/corazonizquierda.png" alt="" className={mounted ? 'eg-fl-3' : ''} />
-            </div>
+            <div className="eg-left-img-wrap">
+              <div className="eg-img-glow" />
+              <img
+                src="/beso.png"
+                alt="Camil"
+                className={`eg-img-desktop ${a ? 'eg-a-slide' : ''}`}
+                style={{ animationDelay: '0.15s' }}
+              />
 
-            <div className="eg-benefits">
-              {BENEFITS.map((b, i) => (
-                <div key={i} className={`eg-benefit ${a ? 'eg-a-card' : ''}`} style={{ animationDelay: `${0.55 + i * 0.08}s` }}>
-                  <div className="eg-benefit-icon"><span>{b.emoji}</span></div>
-                  <div className="eg-benefit-text">
-                    <span className="eg-benefit-name">{b.title}</span>
-                    <span className="eg-benefit-desc">{b.desc}</span>
-                  </div>
+              {a && (
+                <div className="eg-hearts-container">
+                  {RISING_HEARTS.map((h, i) => {
+                    const animClass = `eg-hr-anim${(i % 3) + 1}`;
+                    return (
+                      <div
+                        key={i}
+                        className={`eg-rising-heart ${animClass} eg-hr-active`}
+                        style={{
+                          right: h.right,
+                          bottom: h.bottom,
+                          animationDuration: `${h.dur}s`,
+                          animationDelay: `${h.delay}s`,
+                          ['--drift' as string]: `${h.drift}px`,
+                          ['--drift-half' as string]: `${h.drift * 0.5}px`,
+                        }}
+                      >
+                        <svg width={h.size} height={h.size} viewBox="0 0 24 24" fill={h.color} style={{ opacity: 0.85 }}>
+                          <path d={HEART_PATH} />
+                        </svg>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              )}
             </div>
+          </div>
 
-            <div className={`eg-trust ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.95s' }}>
-              <div className="eg-trust-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-              </div>
-              <div className="eg-trust-content">
-                <p className="eg-trust-title">Compañía genuina, con límites claros</p>
-                <p className="eg-trust-desc">
-                  Contención emocional y entretenimiento en un marco de respeto mutuo.
-                  No es un servicio de citas ni de contenido para adultos.
+          <div className="eg-col-right">
+            <div className="eg-inner">
+              <div className="eg-mobile-header">
+                <div className={`eg-accent ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.15s' }} />
+                <span className={`eg-label ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.25s' }}>
+                  LA EXPERIENCIA
+                </span>
+                <h2 className={`eg-title ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.35s' }}>
+                  Todo lo bueno, <span className="eg-title-light">sin lo que incomoda</span>
+                </h2>
+                <p className={`eg-sub ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.5s' }}>
+                  Un espacio donde podés ser vos, sin presiones ni explicaciones.
+                  Compañía genuina que se adapta a lo que necesitás.
                 </p>
               </div>
-            </div>
 
-            <div className="eg-action">
-              <button className={`eg-btn ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '1.1s' }} onClick={() => scrollTo('contacto')}>
-                Quiero empezar
-                <svg className="eg-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </button>
-              <span className={`eg-microtrust ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '1.2s' }}>
-                Sin permanencia · Cancelá cuando quieras
-              </span>
+              <div className={`eg-deco eg-dk-1 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '0.8s' }}>
+                <img src="/corazonderecha.png" alt="" className={mounted ? 'eg-fl-1' : ''} />
+              </div>
+              <div className={`eg-deco eg-dk-2 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '0.95s' }}>
+                <img src="/carta.png" alt="" className={mounted ? 'eg-fl-2' : ''} />
+              </div>
+              <div className={`eg-deco eg-dk-3 ${a ? 'eg-a-pop' : ''}`} style={{ animationDelay: '1.1s' }}>
+                <img src="/corazonizquierda.png" alt="" className={mounted ? 'eg-fl-3' : ''} />
+              </div>
+
+              <div className="eg-benefits">
+                {BENEFITS.map((b, i) => (
+                  <div key={i} className={`eg-benefit ${a ? 'eg-a-card' : ''}`} style={{ animationDelay: `${0.55 + i * 0.08}s` }}>
+                    <div className="eg-benefit-icon"><span>{b.emoji}</span></div>
+                    <div className="eg-benefit-text">
+                      <span className="eg-benefit-name">{b.title}</span>
+                      <span className="eg-benefit-desc">{b.desc}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className={`eg-trust ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '0.95s' }}>
+                <div className="eg-trust-badge">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
+                </div>
+                <div className="eg-trust-content">
+                  <p className="eg-trust-title">Compañía genuina, con límites claros</p>
+                  <p className="eg-trust-desc">
+                    Contención emocional y entretenimiento en un marco de respeto mutuo.
+                    No es un servicio de citas ni de contenido para adultos.
+                  </p>
+                </div>
+              </div>
+
+              <div className="eg-action">
+                <button className={`eg-btn ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '1.1s' }} onClick={() => scrollTo('contacto')}>
+                  Quiero empezar
+                  <svg className="eg-btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <span className={`eg-microtrust ${a ? 'eg-a-up' : ''}`} style={{ animationDelay: '1.2s' }}>
+                  Sin permanencia · Cancelá cuando quieras
+                </span>
+              </div>
             </div>
           </div>
         </div>

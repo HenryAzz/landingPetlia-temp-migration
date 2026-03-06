@@ -1,3 +1,4 @@
+// GiftCamilSection.tsx
 import { useEffect, useState, useRef, useCallback } from 'react';
 
 const STEPS = [
@@ -90,10 +91,10 @@ const GiftCamilSection = () => {
           position: relative;
           z-index: 5;
           display: flex;
-          min-height: 100vh;
           align-items: center;
-          max-width: 1380px;
+          max-width: 1320px;
           margin: 0 auto;
+          padding: clamp(48px, 7vw, 100px) clamp(24px, 4vw, 60px);
         }
         .gc-left { width: 46%; display: flex; align-items: center; flex-shrink: 0; }
         .gc-left-inner {
@@ -101,7 +102,7 @@ const GiftCamilSection = () => {
           flex-direction: column;
           align-items: flex-start;
           width: 100%;
-          padding: clamp(40px, 4vh, 60px) 3vw clamp(40px, 4vh, 60px) 40px;
+          padding-right: 3vw;
           gap: 0;
         }
         .gc-right {
@@ -111,12 +112,12 @@ const GiftCamilSection = () => {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          padding: clamp(30px, 3vw, 50px) 40px clamp(30px, 3vw, 50px) clamp(24px, 3vw, 50px);
+          padding: clamp(30px, 3vw, 50px) 0 clamp(30px, 3vw, 50px) clamp(24px, 3vw, 50px);
           gap: clamp(18px, 1.6vw, 26px);
         }
         .gc-accent { width: 38px; height: 2.5px; border-radius: 2px; background: linear-gradient(90deg, #F9DDA3, rgba(249,221,163,0.2)); margin-bottom: 14px; opacity: 0; }
         .gc-label { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.22em; color: rgba(255,255,255,0.55); text-transform: uppercase; margin-bottom: 14px; opacity: 0; }
-        .gc-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(28px, 3.2vw, 55px); line-height: 1.25; color: #FFFFFF; letter-spacing: -0.02em; margin: 0 0 clamp(14px, 1.4vw, 20px); text-shadow: 0 2px 16px rgba(0,0,0,0.15); opacity: 0; }
+        .gc-title { font-family: 'Poppins', sans-serif; font-weight: 700; font-size: clamp(28px, 2.8vw, 42px); line-height: 1.25; color: #FFFFFF; letter-spacing: -0.02em; margin: 0 0 clamp(14px, 1.4vw, 20px); text-shadow: 0 2px 16px rgba(0,0,0,0.15); opacity: 0; }
         .gc-title-light { font-weight: 400; font-style: italic; color: rgba(255,255,255,0.88); }
         .gc-title-gold { color: #F9DDA3; }
         .gc-sub { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(15px, 1.15vw, 17px); color: rgba(255,255,255,0.65); line-height: 1.75; margin: 0 0 clamp(14px, 1.4vw, 20px); max-width: 440px; letter-spacing: 0.015em; opacity: 0; }
@@ -169,23 +170,23 @@ const GiftCamilSection = () => {
         .gc-a-pop { animation: gcPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
         .gc-a-orb { animation: gcOrbIn 1.5s ease both; }
         @media (max-width: 1024px) {
-          .gc-layout { flex-direction: column; min-height: auto; padding: 70px 0 60px; max-width: none; }
+          .gc-layout { flex-direction: column; padding: 70px clamp(24px, 5vw, 60px) 60px; }
           .gc-left { width: 100%; }
-          .gc-left-inner { padding: 0 clamp(24px, 5vw, 80px); align-items: center; text-align: center; margin-bottom: 46px; }
+          .gc-left-inner { padding: 0; align-items: center; text-align: center; margin-bottom: 46px; }
           .gc-sub { max-width: 500px; }
           .gc-occasions { justify-content: center; }
           .gc-steps { max-width: 480px; }
           .gc-step { text-align: left; }
           .gc-steps-header { justify-content: center; }
-          .gc-right { width: 100%; padding: 0 clamp(24px, 5vw, 80px); }
+          .gc-right { width: 100%; padding: 0; }
           .gc-tilt-wrap { max-width: 520px; margin: 0 auto; }
           .gc-deco { display: none !important; }
           .gc-a-ci { animation-name: gcSlideUp; }
         }
         @media (max-width: 768px) {
-          .gc-layout { padding: 56px 0 50px; }
-          .gc-left-inner { padding: 0 24px; margin-bottom: 38px; }
-          .gc-right { padding: 0 24px; gap: 16px; }
+          .gc-layout { padding: 56px 24px 50px; }
+          .gc-left-inner { margin-bottom: 38px; }
+          .gc-right { gap: 16px; }
           .gc-title { font-size: clamp(24px, 5.5vw, 30px); }
           .gc-sub { font-size: 15px; }
           .gc-steps { gap: 8px; }
@@ -197,9 +198,9 @@ const GiftCamilSection = () => {
           .gc-btn { padding: 13px 28px; font-size: 14px; }
         }
         @media (max-width: 540px) {
-          .gc-layout { padding: 50px 0 44px; }
-          .gc-left-inner { padding: 0 24px; margin-bottom: 32px; }
-          .gc-right { padding: 0 24px; gap: 14px; }
+          .gc-layout { padding: 50px 20px 44px; }
+          .gc-left-inner { margin-bottom: 32px; }
+          .gc-right { gap: 14px; }
           .gc-title { font-size: clamp(22px, 5vw, 26px); }
           .gc-label { font-size: 10px; }
           .gc-sub { font-size: 14.5px; }
@@ -213,9 +214,9 @@ const GiftCamilSection = () => {
           .gc-card-feature { font-size: 12px; }
         }
         @media (max-width: 400px) {
-          .gc-layout { padding: 44px 0 40px; }
-          .gc-left-inner { padding: 0 18px; margin-bottom: 28px; }
-          .gc-right { padding: 0 18px; gap: 12px; }
+          .gc-layout { padding: 44px 18px 40px; }
+          .gc-left-inner { margin-bottom: 28px; }
+          .gc-right { gap: 12px; }
           .gc-accent { width: 30px; margin-bottom: 10px; }
           .gc-label { font-size: 9.5px; margin-bottom: 10px; }
           .gc-title { font-size: 21px; }
@@ -238,9 +239,7 @@ const GiftCamilSection = () => {
           .gc-microtrust { font-size: 11px; }
         }
         @media (max-width: 340px) {
-          .gc-layout { padding: 38px 0 36px; }
-          .gc-left-inner { padding: 0 14px; }
-          .gc-right { padding: 0 14px; gap: 10px; }
+          .gc-layout { padding: 38px 14px 36px; }
           .gc-title { font-size: 19px; }
           .gc-sub { font-size: 13px; }
           .gc-step { padding: 8px 10px; }

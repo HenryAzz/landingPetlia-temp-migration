@@ -1,3 +1,4 @@
+// ExperiencesScreen.tsx
 import { useEffect, useState, useRef } from 'react';
 
 const SCENES = [
@@ -133,10 +134,10 @@ const ExperiencesScreen = () => {
           position: relative;
           z-index: 5;
           display: flex;
-          min-height: 95vh;
-          max-width: 1380px;
+          align-items: center;
+          max-width: 1320px;
           margin: 0 auto;
-          padding: 0 40px;
+          padding: clamp(48px, 7vw, 100px) clamp(24px, 4vw, 60px);
         }
         .exp-left {
           width: 42%;
@@ -152,8 +153,6 @@ const ExperiencesScreen = () => {
           justify-content: center;
           width: 100%;
           max-width: 580px;
-          padding-left: clamp(0px, 2vw, 40px);
-          padding-right: clamp(0px, 1vw, 20px);
         }
         .exp-right {
           width: 48%;
@@ -162,7 +161,7 @@ const ExperiencesScreen = () => {
           justify-content: center;
           flex-shrink: 0;
           position: relative;
-          padding-left: 16%;
+          padding-left: 10%;
         }
 
         .exp-accent {
@@ -188,7 +187,7 @@ const ExperiencesScreen = () => {
         .exp-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(32px, 4.8vw, 68px);
+          font-size: clamp(32px, 3.5vw, 52px);
           line-height: 1.08;
           color: #FFFFFF;
           letter-spacing: -0.025em;
@@ -508,36 +507,10 @@ const ExperiencesScreen = () => {
         .exp-a-slide { animation: expSlide 0.85s cubic-bezier(0.22,1,0.36,1) both; }
         .exp-a-pop { animation: expPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-        /* ═══ LARGE DESKTOP (1400px+) ═══ */
-        @media (min-width: 1400px) {
-          .exp-title {
-            font-size: 72px;
-          }
-          .exp-scene-title {
-            font-size: 30px;
-          }
-          .exp-scene-desc {
-            font-size: 18px;
-          }
-          .exp-label {
-            font-size: 13px;
-            letter-spacing: 0.24em;
-          }
-          .exp-scene-chip {
-            font-size: 15px;
-            padding: 8px 20px;
-          }
-          .exp-btn {
-            padding: 18px 42px;
-            font-size: 17px;
-          }
-        }
-
         @media (max-width: 1024px) {
           .exp-layout {
             flex-direction: column;
-            min-height: auto;
-            padding: 72px 40px 64px;
+            padding: 72px clamp(24px, 5vw, 60px) 64px;
           }
           .exp-left {
             width: 100%;
@@ -574,21 +547,16 @@ const ExperiencesScreen = () => {
 
         @media (max-width: 768px) {
           .exp-layout { padding: 60px 24px 52px; }
-          .exp-left { padding: 0; }
           .exp-left-inner {
             max-width: 500px;
             margin-bottom: 44px;
           }
-          .exp-right { padding: 0; }
-
           .exp-accent { width: 46px; height: 3px; margin-bottom: 16px; }
           .exp-label { font-size: 13px; margin-bottom: 16px; letter-spacing: 0.18em; }
-
           .exp-title {
             font-size: clamp(36px, 10vw, 48px);
             margin-bottom: 28px;
           }
-
           .exp-scene {
             margin-bottom: 26px;
             min-height: 150px;
@@ -600,35 +568,27 @@ const ExperiencesScreen = () => {
             font-size: clamp(16px, 4.2vw, 18px);
             line-height: 1.65;
           }
-
           .exp-controls { margin-bottom: 28px; gap: 10px; }
           .exp-counter { font-size: 13px; }
           .exp-progress { width: clamp(140px, 40vw, 220px); }
-
           .exp-btn { padding: 15px 34px; font-size: 15px; }
           .exp-microtrust { font-size: 13px; }
-
           .exp-photos-wrap { width: clamp(260px, 60vw, 370px); }
           .exp-emoji-sizer { width: 52px; height: 52px; }
         }
 
         @media (max-width: 540px) {
-          .exp-layout { padding: 52px 24px 46px; }
-          .exp-left { padding: 0; }
+          .exp-layout { padding: 52px 20px 46px; }
           .exp-left-inner {
             max-width: 100%;
             margin-bottom: 40px;
           }
-          .exp-right { padding: 0; }
-
           .exp-accent { width: 42px; margin-bottom: 14px; }
           .exp-label { font-size: 12.5px; margin-bottom: 14px; }
-
           .exp-title {
             font-size: clamp(34px, 9.5vw, 44px);
             margin-bottom: 24px;
           }
-
           .exp-scene {
             min-height: 140px;
             margin-bottom: 24px;
@@ -640,13 +600,10 @@ const ExperiencesScreen = () => {
             font-size: clamp(15px, 4vw, 17px);
             line-height: 1.6;
           }
-
           .exp-controls { margin-bottom: 24px; }
           .exp-counter { font-size: 12.5px; }
-
           .exp-btn { padding: 14px 30px; font-size: 14.5px; }
           .exp-microtrust { font-size: 12.5px; }
-
           .exp-photos-wrap { width: 78vw; max-width: 340px; }
           .exp-emoji-sizer { width: 48px; height: 48px; }
           .exp-photo-card { border-radius: 16px; border-width: 2px; }
@@ -654,17 +611,12 @@ const ExperiencesScreen = () => {
 
         @media (max-width: 400px) {
           .exp-layout { padding: 46px 18px 40px; }
-          .exp-left { padding: 0; }
-          .exp-right { padding: 0; }
-
           .exp-accent { width: 38px; height: 2.5px; margin-bottom: 12px; }
           .exp-label { font-size: 12px; margin-bottom: 12px; letter-spacing: 0.16em; }
-
           .exp-title {
             font-size: clamp(32px, 9vw, 40px);
             margin-bottom: 22px;
           }
-
           .exp-scene {
             min-height: 130px;
             margin-bottom: 22px;
@@ -676,7 +628,6 @@ const ExperiencesScreen = () => {
             font-size: clamp(14.5px, 3.8vw, 16px);
             line-height: 1.55;
           }
-
           .exp-controls { margin-bottom: 22px; gap: 9px; }
           .exp-dots { gap: 7px; }
           .exp-dot { height: 7px; }
@@ -684,12 +635,10 @@ const ExperiencesScreen = () => {
           .exp-dot--idle { width: 7px; }
           .exp-counter { font-size: 12px; }
           .exp-progress { height: 2px; }
-
           .exp-cta-area { gap: 10px; }
           .exp-btn { padding: 13px 28px; font-size: 14px; gap: 9px; }
           .exp-btn-arrow { width: 15px; height: 15px; }
           .exp-microtrust { font-size: 12px; }
-
           .exp-photos-wrap { width: 84vw; max-width: 320px; }
           .exp-emoji-sizer { width: 44px; height: 44px; }
           .exp-emoji-orb { font-size: 21px; }
@@ -702,17 +651,12 @@ const ExperiencesScreen = () => {
 
         @media (max-width: 340px) {
           .exp-layout { padding: 40px 14px 36px; }
-          .exp-left { padding: 0; }
-          .exp-right { padding: 0; }
-
           .exp-accent { width: 34px; margin-bottom: 10px; }
           .exp-label { font-size: 11px; margin-bottom: 10px; }
-
           .exp-title {
             font-size: clamp(28px, 8.5vw, 34px);
             margin-bottom: 20px;
           }
-
           .exp-scene {
             min-height: 120px;
             margin-bottom: 20px;
@@ -721,11 +665,9 @@ const ExperiencesScreen = () => {
           .exp-scene-chip { font-size: 12px; padding: 5px 13px; }
           .exp-scene-title { font-size: clamp(17px, 5vw, 21px); }
           .exp-scene-desc { font-size: clamp(13.5px, 3.6vw, 15px); line-height: 1.5; }
-
           .exp-controls { margin-bottom: 20px; }
           .exp-btn { padding: 12px 24px; font-size: 13.5px; }
           .exp-microtrust { font-size: 11.5px; }
-
           .exp-photos-wrap { width: 88vw; }
           .exp-emoji-sizer { width: 40px; height: 40px; }
           .exp-emoji-orb { font-size: 19px; }

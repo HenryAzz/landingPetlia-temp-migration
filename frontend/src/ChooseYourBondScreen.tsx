@@ -1,3 +1,4 @@
+// ChooseYourBondScreen.tsx
 import { useEffect, useState, useRef } from 'react';
 
 const BONDS = [
@@ -54,9 +55,10 @@ const ChooseYourBondScreen = () => {
           position: relative;
           z-index: 5;
           display: flex;
-          min-height: 95vh;
-          max-width: 1380px;
+          align-items: center;
+          max-width: 1320px;
           margin: 0 auto;
+          padding: clamp(48px, 7vw, 100px) clamp(24px, 4vw, 60px);
         }
         .cyb-left {
           width: 38%;
@@ -71,7 +73,6 @@ const ChooseYourBondScreen = () => {
           align-items: flex-start;
           justify-content: center;
           width: 100%;
-          padding-left: 40px;
           padding-right: 3vw;
           gap: clamp(14px, 1.3vw, 20px);
         }
@@ -84,14 +85,12 @@ const ChooseYourBondScreen = () => {
           padding: clamp(30px, 3vw, 50px) 0;
         }
 
-        /* ★ Cards container — wider, less vertical space */
         .cyb-cards {
           display: flex;
           flex-direction: column;
           width: 100%;
           max-width: 680px;
           gap: clamp(8px, 0.65vw, 12px);
-          margin: 0 40px 0 0;
         }
 
         .cyb-accent {
@@ -113,7 +112,7 @@ const ChooseYourBondScreen = () => {
         .cyb-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(28px, 4.2vw, 64px);
+          font-size: clamp(28px, 2.8vw, 42px);
           line-height: 1.10;
           color: #FFFFFF;
           letter-spacing: -0.02em;
@@ -162,7 +161,6 @@ const ChooseYourBondScreen = () => {
         .cyb-btn:hover .cyb-btn-arrow { transform: translateX(3px); }
         .cyb-microtrust { font-family: 'Poppins', sans-serif; font-weight: 400; font-size: clamp(13px, 1vw, 14px); color: rgba(255,255,255,0.45); letter-spacing: 0.03em; opacity: 0; margin-top: 30px; }
 
-        /* ★ CARD — compact horizontal proportions */
         .cyb-card {
           position: relative;
           border-radius: clamp(14px, 1.1vw, 20px);
@@ -189,7 +187,6 @@ const ChooseYourBondScreen = () => {
 
         .cyb-popular { position: absolute; top: clamp(-11px, -0.8vw, -7px); right: clamp(16px, 1.7vw, 26px); padding: clamp(5px, 0.3vw, 7px) clamp(14px, 1vw, 18px); border-radius: 50px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15); color: #FFFFFF; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: clamp(10px, 0.75vw, 13px); letter-spacing: 0.1em; white-space: nowrap; z-index: 5; }
 
-        /* ★ Card inner text — tighter line heights */
         .cyb-card-title { font-family: 'Poppins', sans-serif; font-weight: 600; color: #FFFFFF; font-size: clamp(16px, 1.35vw, 22px); line-height: 1.2; margin: 0; }
         .cyb-card-subtitle { font-family: 'Poppins', sans-serif; font-weight: 500; font-size: clamp(10px, 0.72vw, 12px); letter-spacing: 0.05em; padding: 2px 10px; border-radius: 50px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.8); white-space: nowrap; align-self: flex-start; }
         .cyb-card-desc { font-family: 'Poppins', sans-serif; font-weight: 300; color: rgba(255,255,255,0.8); font-size: clamp(12px, 0.88vw, 14.5px); line-height: 1.45; margin: 0; padding-right: clamp(40px, 4vw, 65px); }
@@ -221,11 +218,11 @@ const ChooseYourBondScreen = () => {
         .cyb-a-pop { animation: cybPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
 
         @media (max-width: 1024px) {
-          .cyb-layout { flex-direction: column; min-height: auto; padding: 70px 0 60px; max-width: none; }
-          .cyb-left { width: 100%; padding: 0 32px; }
+          .cyb-layout { flex-direction: column; padding: 70px clamp(24px, 5vw, 60px) 60px; }
+          .cyb-left { width: 100%; }
           .cyb-left-inner { padding: 0; align-items: center; text-align: center; gap: 16px; margin-bottom: 46px; }
           .cyb-sub { max-width: 480px; }
-          .cyb-right { width: 100%; padding: 0 32px; }
+          .cyb-right { width: 100%; padding: 0; }
           .cyb-cards { max-width: 560px; margin: 0 auto; gap: 22px; }
           .cyb-stagger-r { margin-left: 12px; }
           .cyb-stagger-l { margin-right: 12px; }
@@ -239,10 +236,8 @@ const ChooseYourBondScreen = () => {
         }
 
         @media (max-width: 768px) {
-          .cyb-layout { padding: 56px 0 50px; }
-          .cyb-left { padding: 0 24px; }
+          .cyb-layout { padding: 56px 24px 50px; }
           .cyb-left-inner { gap: 14px; margin-bottom: 38px; }
-          .cyb-right { padding: 0 24px; }
           .cyb-cards { gap: 20px; }
           .cyb-title { font-size: clamp(24px, 5.5vw, 30px); }
           .cyb-sub { font-size: 15px; }
@@ -258,10 +253,8 @@ const ChooseYourBondScreen = () => {
         }
 
         @media (max-width: 540px) {
-          .cyb-layout { padding: 50px 0 44px; }
-          .cyb-left { padding: 0 20px; }
+          .cyb-layout { padding: 50px 20px 44px; }
           .cyb-left-inner { gap: 12px; margin-bottom: 32px; }
-          .cyb-right { padding: 0 20px; }
           .cyb-cards { gap: 24px; }
           .cyb-stagger-r, .cyb-stagger-l { margin-left: 0; margin-right: 0; }
           .cyb-title { font-size: clamp(22px, 5vw, 26px); }
@@ -278,10 +271,8 @@ const ChooseYourBondScreen = () => {
         }
 
         @media (max-width: 400px) {
-          .cyb-layout { padding: 44px 0 40px; }
-          .cyb-left { padding: 0 18px; }
+          .cyb-layout { padding: 44px 18px 40px; }
           .cyb-left-inner { gap: 10px; margin-bottom: 28px; }
-          .cyb-right { padding: 0 18px; }
           .cyb-accent { width: 34px; }
           .cyb-label { font-size: 9.5px; }
           .cyb-title { font-size: 21px; }
@@ -301,9 +292,7 @@ const ChooseYourBondScreen = () => {
         }
 
         @media (max-width: 340px) {
-          .cyb-layout { padding: 38px 0 36px; }
-          .cyb-left { padding: 0 14px; }
-          .cyb-right { padding: 0 14px; }
+          .cyb-layout { padding: 38px 14px 36px; }
           .cyb-title { font-size: 19px; }
           .cyb-sub { font-size: 13px; }
           .cyb-card { padding: 13px 14px; }

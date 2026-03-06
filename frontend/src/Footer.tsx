@@ -14,21 +14,21 @@ const Footer = () => {
     >
       <style>{`
         /* ══════════════════════════════
-           DESKTOP (default)
+           DESKTOP — todo vw puro → px fijo
         ══════════════════════════════ */
         .footer-grid {
           display: flex;
           justify-content: space-between;
           max-width: 1400px;
           margin: 0 auto;
-          padding: 0.5vw 6vw 1.5vw;
+          padding: 8px 60px 20px;          /* era 0.5vw 6vw 1.5vw → a 5000px = 25px 300px 75px */
         }
 
         .footer-col-logo {
           display: flex;
           flex-direction: column;
-          gap: 1vw;
-          max-width: 24vw;
+          gap: 14px;                        /* era 1vw → a 5000px = 50px */
+          max-width: 340px;                 /* era 24vw → a 5000px = 1200px */
         }
 
         .footer-logo-btn {
@@ -47,7 +47,7 @@ const Footer = () => {
         }
 
         .footer-logo-img {
-          height: 12.5vw;
+          height: clamp(80px, 10vw, 130px); /* era 12.5vw → a 5000px = 625px */
           width: auto;
         }
 
@@ -55,7 +55,7 @@ const Footer = () => {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           color: rgba(90,69,32,0.7);
-          font-size: 0.85vw;
+          font-size: 14px;                  /* era 0.85vw → a 5000px = 42.5px */
           line-height: 1.7;
           margin: 0;
         }
@@ -63,16 +63,16 @@ const Footer = () => {
         .footer-col {
           display: flex;
           flex-direction: column;
-          gap: 0.7vw;
+          gap: 10px;                        /* era 0.7vw → a 5000px = 35px */
         }
 
         .footer-col-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
           color: #5A4520;
-          font-size: 0.88vw;
+          font-size: 14px;                  /* era 0.88vw → a 5000px = 44px */
           letter-spacing: 0.08em;
-          margin: 0 0 0.3vw 0;
+          margin: 0 0 4px 0;               /* era 0 0 0.3vw 0 → a 5000px = 15px */
           text-transform: uppercase;
         }
 
@@ -83,7 +83,7 @@ const Footer = () => {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           color: rgba(90,69,32,0.65);
-          font-size: 0.85vw;
+          font-size: 14px;                  /* era 0.85vw → a 5000px = 42.5px */
           cursor: pointer;
           text-align: left;
           transition: color 0.3s ease;
@@ -96,14 +96,14 @@ const Footer = () => {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           color: rgba(90,69,32,0.65);
-          font-size: 0.85vw;
+          font-size: 14px;                  /* era 0.85vw */
         }
 
         .footer-socials {
           display: flex;
           align-items: center;
-          gap: 0.6vw;
-          margin-top: 0.5vw;
+          gap: 8px;                         /* era 0.6vw → a 5000px = 30px */
+          margin-top: 8px;                  /* era 0.5vw → a 5000px = 25px */
         }
 
         .footer-social-icon {
@@ -120,7 +120,7 @@ const Footer = () => {
           font-family: 'Poppins', sans-serif;
           font-weight: 500;
           color: rgba(90,69,32,0.6);
-          font-size: 0.7vw;
+          font-size: 12px;                  /* era 0.7vw → a 5000px = 35px */
         }
         .footer-social-icon:hover {
           background: rgba(90,69,32,0.2);
@@ -131,7 +131,7 @@ const Footer = () => {
         /* Bottom bar */
         .footer-bottom {
           border-top: 1px solid rgba(90,69,32,0.12);
-          padding: 1.2vw 6vw;
+          padding: 16px 60px;              /* era 1.2vw 6vw → a 5000px = 60px 300px */
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -143,14 +143,14 @@ const Footer = () => {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           color: rgba(90,69,32,0.5);
-          font-size: 0.78vw;
+          font-size: 12px;                  /* era 0.78vw → a 5000px = 39px */
         }
 
         .footer-bottom-right {
           font-family: 'Poppins', sans-serif;
           font-weight: 400;
           color: rgba(90,69,32,0.4);
-          font-size: 0.75vw;
+          font-size: 12px;                  /* era 0.75vw → a 5000px = 37.5px */
         }
 
         /* ══════════════════════════════

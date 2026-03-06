@@ -60,14 +60,13 @@ const TalkToSomeoneScreen = () => {
           display: block;
         }
 
-        /* ★ CONTAINER — max-width 1300 + 40px padding on large screens */
         .tts-container {
           position: relative;
           z-index: 5;
           width: 100%;
-          max-width: 1380px;
+          max-width: 1320px;
           margin: 0 auto;
-          padding: clamp(40px, 6vw, 80px) 40px clamp(60px, 8vw, 100px);
+          padding: clamp(40px, 6vw, 80px) clamp(24px, 4vw, 60px) clamp(60px, 8vw, 100px);
         }
 
         .tts-row {
@@ -114,7 +113,7 @@ const TalkToSomeoneScreen = () => {
         .tts-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3vw, 40px);
+          font-size: clamp(26px, 2.8vw, 42px);
           line-height: 1.18;
           color: #1C1C1E;
           letter-spacing: -0.025em;

@@ -84,6 +84,7 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
           padding: 0;
           transition: all 0.3s ease;
           -webkit-tap-highlight-color: transparent;
+          flex-shrink: 0;
         }
         .nav-logo:hover {
           opacity: 0.85;
@@ -112,6 +113,7 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
           letter-spacing: 0.04em;
           transition: color 0.3s ease;
           padding: 0;
+          white-space: nowrap;
           -webkit-tap-highlight-color: transparent;
         }
         .nav-link:hover { color: #F9DDA3; }
@@ -126,6 +128,7 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
           letter-spacing: 0.04em;
           cursor: pointer;
           transition: all 0.3s ease;
+          white-space: nowrap;
           -webkit-tap-highlight-color: transparent;
         }
         .nav-btn-outline:hover {
@@ -146,6 +149,7 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
           cursor: pointer;
           transition: all 0.3s ease;
           box-shadow: 0 2px 10px rgba(249,221,163,0.2);
+          white-space: nowrap;
           -webkit-tap-highlight-color: transparent;
         }
         .nav-btn-primary:hover {
@@ -287,15 +291,16 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
 
         /* ══════════════════════════════
            DESKTOP (> 1024px)
+           ✅ ALL vw VALUES CAPPED
         ══════════════════════════════ */
-        .nav-inner { padding: 0.3vw 40px; }
-        .nav-logo-img { height: 3.6vw; }
-        .nav-bar.scrolled .nav-logo-img { height: 3.2vw; }
-        .nav-bar.scrolled .nav-inner { padding: 0.2vw 40px; }
-        .nav-desktop { gap: 2.2vw; }
-        .nav-link { font-size: 0.85vw; }
-        .nav-btn-outline { padding: 0.4vw 1.3vw; font-size: 0.82vw; }
-        .nav-btn-primary { padding: 0.45vw 1.5vw; font-size: 0.82vw; }
+        .nav-inner { padding: clamp(3px, 0.3vw, 6px) 40px; }
+        .nav-logo-img { height: clamp(36px, 3.6vw, 52px); }
+        .nav-bar.scrolled .nav-logo-img { height: clamp(32px, 3.2vw, 46px); }
+        .nav-bar.scrolled .nav-inner { padding: clamp(2px, 0.2vw, 5px) 40px; }
+        .nav-desktop { gap: clamp(18px, 2.2vw, 34px); }
+        .nav-link { font-size: clamp(13px, 0.85vw, 15px); }
+        .nav-btn-outline { padding: clamp(6px, 0.4vw, 10px) clamp(16px, 1.3vw, 24px); font-size: clamp(13px, 0.82vw, 15px); }
+        .nav-btn-primary { padding: clamp(7px, 0.45vw, 11px) clamp(18px, 1.5vw, 26px); font-size: clamp(13px, 0.82vw, 15px); }
 
         /* ══════════════════════════════
            TABLET (≤ 1024px)
@@ -320,7 +325,6 @@ const Navbar = ({ onNavigateToJoinTeam, loaderFinished = false }: NavbarProps) =
 
         /* ══════════════════════════════
            MOBILE (≤ 768px)
-           → Transparent bg, compact
         ══════════════════════════════ */
         @media (max-width: 768px) {
           .nav-inner { padding: 6px 24px; }

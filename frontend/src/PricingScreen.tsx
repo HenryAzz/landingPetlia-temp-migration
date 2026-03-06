@@ -1,3 +1,4 @@
+// PricingScreen.tsx
 import { useEffect, useState, useRef, TouchEvent } from 'react';
 import Tilt from 'react-parallax-tilt';
 
@@ -280,9 +281,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
   return (
     <section ref={sectionRef} id="planes" className="prc-section">
       <style>{`
-        /* ═══════════════════════════════
-           BASE
-        ═══════════════════════════════ */
         .prc-section {
           position: relative;
           width: 100%;
@@ -294,7 +292,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           padding-bottom: clamp(40px, 5vw, 80px);
         }
 
-        /* ═══ TILT WRAPPERS ═══ */
         .prc-tilt-dk {
           height: 100%;
           overflow: visible !important;
@@ -313,14 +310,13 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           overflow: visible !important;
         }
 
-        /* ═══ HEADER ═══ */
         .prc-header {
           display: flex;
           flex-direction: column;
           align-items: center;
           text-align: center;
           margin-bottom: clamp(36px, 4vw, 64px);
-          padding: 0 24px;
+          padding: 0 clamp(24px, 4vw, 60px);
         }
 
         .prc-accent {
@@ -335,7 +331,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-label {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(12px, 1vw, 13px);
+          font-size: 11px;
           letter-spacing: 0.22em;
           color: #F69E82;
           text-transform: uppercase;
@@ -346,7 +342,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3.2vw, 40px);
+          font-size: clamp(26px, 2.8vw, 42px);
           line-height: 1.25;
           color: #1C1C1E;
           letter-spacing: -0.025em;
@@ -378,7 +374,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           opacity: 0;
         }
 
-        /* ═══ CARD BASE ═══ */
         .prc-card {
           position: relative;
           display: flex;
@@ -392,7 +387,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           position: absolute;
           left: 50%;
           transform: translateX(-50%);
-          padding: clamp(3px, 0.3vw, 5px) clamp(10px, 1vw, 16px);
+          padding: 4px 14px;
           border-radius: 50px;
           color: #FFF;
           font-family: 'Poppins', sans-serif;
@@ -429,7 +424,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           50% { opacity: 0.6; }
         }
 
-        /* ═══ ICON ═══ */
         .prc-icon {
           position: absolute;
           pointer-events: none;
@@ -465,10 +459,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-float-2 { animation: prcF2 4.5s ease-in-out infinite 0.7s; }
         .prc-float-3 { animation: prcF3 3.8s ease-in-out infinite 1.2s; }
 
-        /* ═══ CARD CONTENT ═══ */
-        .prc-bar {
-          border-radius: 4px;
-        }
+        .prc-bar { border-radius: 4px; }
 
         .prc-name {
           font-family: 'Poppins', sans-serif;
@@ -504,10 +495,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           color: #888;
         }
 
-        .prc-line {
-          width: 100%;
-          height: 1px;
-        }
+        .prc-line { width: 100%; height: 1px; }
 
         .prc-features {
           display: flex;
@@ -532,7 +520,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           line-height: 1.6;
         }
 
-        /* ═══ CARD CTA ═══ */
         .prc-cta {
           position: relative;
           overflow: hidden;
@@ -548,26 +535,16 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-cta::before {
           content: '';
           position: absolute;
-          top: 0;
-          left: -100%;
-          width: 100%;
-          height: 100%;
+          top: 0; left: -100%;
+          width: 100%; height: 100%;
           background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
           transition: left 0.5s ease;
         }
 
         .prc-cta:hover::before { left: 100%; }
+        .prc-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+        .prc-cta:active { transform: scale(0.97); }
 
-        .prc-cta:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-        }
-
-        .prc-cta:active {
-          transform: scale(0.97);
-        }
-
-        /* ═══ CARD MICROTRUST ═══ */
         .prc-card-trust {
           display: flex;
           align-items: center;
@@ -579,13 +556,13 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           white-space: nowrap;
         }
 
-        /* ═══ PRIVACY BLOCK ═══ */
         .prc-privacy-wrapper {
           display: flex;
           justify-content: center;
           width: 100%;
-          padding: 0 clamp(20px, 5vw, 100px);
-          margin-top: clamp(36px, 4vw, 64px);
+          max-width: 1320px;
+          margin: clamp(36px, 4vw, 64px) auto 0;
+          padding: 0 clamp(24px, 4vw, 60px);
           box-sizing: border-box;
         }
 
@@ -640,7 +617,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           margin: 0;
         }
 
-        /* ═══ MOBILE CONTROLS ═══ */
         .prc-dots {
           display: flex;
           align-items: center;
@@ -702,7 +678,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           75% { transform: translateX(-4px); }
         }
 
-        /* ═══ ENTRANCE ═══ */
         @keyframes prcUp {
           0% { opacity: 0; transform: translateY(28px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -731,21 +706,21 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         .prc-a-down { animation: prcDown 0.85s cubic-bezier(0.22,1,0.36,1) both; }
         .prc-a-up { animation: prcUp 0.8s cubic-bezier(0.22,1,0.36,1) both; }
         .prc-a-card { animation: prcCardIn 0.8s cubic-bezier(0.22,1,0.36,1) both; }
-
         .prc-card-dk--hl.prc-a-card { animation-name: prcCardInHL; }
-
         .prc-slide-l { animation: prcSlideL 0.26s cubic-bezier(0.4,0,0.2,1) forwards; }
         .prc-slide-r { animation: prcSlideR 0.26s cubic-bezier(0.4,0,0.2,1) forwards; }
 
         /* ═══════════════════════════════
-           DESKTOP (> 1024px)
+           DESKTOP (> 1024px) — FIXED VALUES
         ═══════════════════════════════ */
         .prc-row-dk {
           display: flex;
           align-items: stretch;
           justify-content: center;
-          gap: clamp(14px, 1.8vw, 30px);
-          padding: 0 clamp(20px, 5vw, 100px);
+          gap: clamp(14px, 1.8vw, 26px);
+          max-width: 1320px;
+          margin: 0 auto;
+          padding: 0 clamp(24px, 4vw, 60px);
         }
 
         .prc-col-tb { display: none; }
@@ -753,8 +728,8 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
 
         .prc-card-dk {
           transition: box-shadow 0.35s ease, border-color 0.35s ease;
-          width: clamp(260px, 20vw, 330px);
-          padding: 2vw 1.6vw;
+          width: 330px;
+          padding: 28px 22px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.04);
           height: 100%;
         }
@@ -764,30 +739,33 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         }
 
         .prc-card-dk--hl {
-          width: clamp(280px, 22vw, 365px);
+          width: 365px;
           box-shadow: 0 8px 30px rgba(244,63,94,0.08);
         }
 
-        /* Desktop sizing */
-        .prc-card-dk .prc-icon--correspondencia { right: -1.2vw; top: -1.2vw; width: clamp(45px,4.5vw,70px); height: clamp(45px,4.5vw,70px); }
-        .prc-card-dk .prc-icon--casual { right: -3.5vw; top: -3.5vw; width: clamp(80px,9vw,130px); height: clamp(80px,9vw,130px); }
-        .prc-card-dk .prc-icon--diaria { right: -1.2vw; top: -1.2vw; width: clamp(45px,4.5vw,70px); height: clamp(45px,4.5vw,70px); }
+        /* Desktop icon positions — fixed px */
+        .prc-card-dk .prc-icon--correspondencia { right: -16px; top: -16px; width: 70px; height: 70px; }
+        .prc-card-dk .prc-icon--casual { right: -46px; top: -46px; width: 130px; height: 130px; }
+        .prc-card-dk .prc-icon--diaria { right: -16px; top: -16px; width: 70px; height: 70px; }
 
-        .prc-card-dk .prc-badge { top: -0.8vw; font-size: clamp(9px,0.7vw,12px); }
-        .prc-card-dk .prc-cupos { top: 1.8vw; gap: 0.35vw; padding: 0.3vw 0.9vw 0.3vw 0.7vw; font-size: clamp(9px,0.68vw,12px); }
-        .prc-card-dk .prc-bar { width: 3vw; height: 4px; margin-bottom: 1.2vw; margin-top: 1.8vw; }
-        .prc-card-dk .prc-name { font-size: clamp(18px,1.6vw,26px); margin-bottom: 0.3vw; }
-        .prc-card-dk .prc-plan-sub { font-size: clamp(11px,0.78vw,13px); margin-bottom: 1vw; }
-        .prc-card-dk .prc-price { font-size: clamp(28px,2.6vw,42px); }
-        .prc-card-dk .prc-period { font-size: clamp(11px,0.85vw,14px); margin-left: 0.3vw; }
-        .prc-card-dk .prc-price-row { margin-bottom: 1.2vw; }
-        .prc-card-dk .prc-line { margin-bottom: 1.2vw; }
-        .prc-card-dk .prc-features { gap: 0.7vw; }
-        .prc-card-dk .prc-feat { gap: 0.5vw; }
-        .prc-card-dk .prc-feat-check { font-size: clamp(11px,0.9vw,14px); }
-        .prc-card-dk .prc-feat-text { font-size: clamp(12px,0.88vw,15px); }
-        .prc-card-dk .prc-cta { padding: 0.65vw 0; font-size: clamp(13px,0.9vw,15px); margin-top: 1.5vw; }
-        .prc-card-dk .prc-card-trust { font-size: clamp(9px,0.65vw,11px); margin-top: 0.7vw; }
+        /* Desktop badge & cupos — fixed px */
+        .prc-card-dk .prc-badge { top: -10px; font-size: 11px; }
+        .prc-card-dk .prc-cupos { top: 24px; gap: 5px; padding: 4px 12px 4px 10px; font-size: 11px; }
+
+        /* Desktop card content — ALL FIXED PX with capped values */
+        .prc-card-dk .prc-bar { width: 36px; height: 4px; margin-bottom: 16px; margin-top: 24px; }
+        .prc-card-dk .prc-name { font-size: 22px; margin-bottom: 4px; }
+        .prc-card-dk .prc-plan-sub { font-size: 13px; margin-bottom: 14px; }
+        .prc-card-dk .prc-price { font-size: 38px; }
+        .prc-card-dk .prc-period { font-size: 14px; margin-left: 4px; }
+        .prc-card-dk .prc-price-row { margin-bottom: 16px; }
+        .prc-card-dk .prc-line { margin-bottom: 16px; }
+        .prc-card-dk .prc-features { gap: 10px; }
+        .prc-card-dk .prc-feat { gap: 7px; }
+        .prc-card-dk .prc-feat-check { font-size: 14px; }
+        .prc-card-dk .prc-feat-text { font-size: 14px; }
+        .prc-card-dk .prc-cta { padding: 10px 0; font-size: 15px; margin-top: 20px; }
+        .prc-card-dk .prc-card-trust { font-size: 11px; margin-top: 10px; }
 
         /* ═══════════════════════════════
            TABLET (≤ 1024px)
@@ -802,7 +780,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            padding: 0 32px;
+            padding: 0 clamp(24px, 5vw, 60px);
             width: 100%;
           }
 
@@ -841,7 +819,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
 
           .prc-tilt-tb { max-width: 500px; }
 
-          .prc-privacy-wrapper { padding: 0 32px; margin-top: 40px; }
+          .prc-privacy-wrapper { padding: 0 clamp(24px, 5vw, 60px); margin-top: 40px; }
           .prc-privacy { max-width: 500px; padding: 24px 28px; }
           .prc-privacy-icon { font-size: 26px; }
           .prc-privacy-title { font-size: 14px; }
@@ -855,7 +833,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         ═══════════════════════════════ */
         @media (max-width: 768px) {
           .prc-section { padding-top: 70px; padding-bottom: 50px; }
-          .prc-header { margin-bottom: 28px; padding: 0 20px; }
+          .prc-header { margin-bottom: 28px; padding: 0 24px; }
           .prc-row-dk { display: none !important; }
           .prc-col-tb { display: none !important; }
 
@@ -917,10 +895,9 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-privacy-text { font-size: 13px; line-height: 1.65; }
         }
 
-        /* ═══ RESPONSIVE: SMALL ≤ 540px ═══ */
         @media (max-width: 540px) {
           .prc-section { padding-top: 64px; padding-bottom: 44px; }
-          .prc-header { padding: 0 16px; margin-bottom: 24px; }
+          .prc-header { padding: 0 20px; margin-bottom: 24px; }
           .prc-title { font-size: clamp(22px, 5vw, 26px); }
           .prc-label { font-size: 10px; }
           .prc-wrap-mb { padding: 0 20px; }
@@ -948,10 +925,9 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-privacy-text { font-size: 12.5px; }
         }
 
-        /* ═══ RESPONSIVE: XS ≤ 400px ═══ */
         @media (max-width: 400px) {
           .prc-section { padding-top: 58px; padding-bottom: 40px; }
-          .prc-header { padding: 0 14px; margin-bottom: 22px; }
+          .prc-header { padding: 0 18px; margin-bottom: 22px; }
           .prc-accent { width: 30px; margin-bottom: 12px; }
           .prc-label { margin-bottom: 12px; font-size: 9.5px; }
           .prc-title { font-size: 21px; margin-bottom: 10px; }
@@ -996,10 +972,9 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-privacy-text { font-size: 11.5px; line-height: 1.6; }
         }
 
-        /* ═══ RESPONSIVE: XXS ≤ 340px ═══ */
         @media (max-width: 340px) {
           .prc-section { padding-top: 52px; padding-bottom: 36px; }
-          .prc-header { padding: 0 12px; }
+          .prc-header { padding: 0 14px; }
           .prc-title { font-size: 19px; }
           .prc-subtitle { font-size: 12px; }
 
@@ -1032,7 +1007,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         }
       `}</style>
 
-      {/* ═══ CONTENT ═══ */}
       <div className="prc-header">
         <div className={`prc-accent ${a ? 'prc-a-down' : ''}`} style={{ animationDelay: '0.1s' }} />
         <span className={`prc-label ${a ? 'prc-a-down' : ''}`} style={{ animationDelay: '0.2s' }}>PLANES</span>
@@ -1047,17 +1021,14 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         </span>
       </div>
 
-      {/* ═══ DESKTOP ═══ */}
       <div className="prc-row-dk">
         {PLANS.map((plan, i) => renderCard(plan, i, 'desktop'))}
       </div>
 
-      {/* ═══ TABLET ═══ */}
       <div className="prc-col-tb">
         {PLANS.map((plan, i) => renderCard(plan, i, 'tablet'))}
       </div>
 
-      {/* ═══ MOBILE ═══ */}
       <div className="prc-wrap-mb">
         <div
           className={`prc-mb-area ${a ? 'prc-a-card' : ''}`}
@@ -1083,7 +1054,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         </div>
       </div>
 
-      {/* ═══ PRIVACY ═══ */}
       <div className="prc-privacy-wrapper">
         <div className={`prc-privacy ${a ? 'prc-a-up' : ''}`} style={{ animationDelay: '0.9s' }}>
           <div className="prc-privacy-icon">🔒</div>

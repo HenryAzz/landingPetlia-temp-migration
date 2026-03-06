@@ -1,3 +1,4 @@
+// ContactScreen.tsx
 import { useState, useEffect, useRef } from 'react';
 import emailjs from '@emailjs/browser';
 
@@ -110,7 +111,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          min-height: 95vh;
           padding-bottom: clamp(32px, 3.2vw, 56px);
         }
 
@@ -190,18 +190,17 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-fl-3 { animation: cntF3 3.8s ease-in-out infinite 1s; }
         .cnt-fl-4 { animation: cntF4 4.3s ease-in-out infinite 0.3s; }
 
-        /* ═══ LAYOUT ═══ */
         .cnt-layout {
           position: relative;
           z-index: 10;
           flex: 1;
           display: flex;
           width: 100%;
-          max-width: 1280px;
+          max-width: 1320px;
           margin: 0 auto;
           align-items: center;
           gap: clamp(20px, 2vw, 40px);
-          padding: 0 clamp(24px, 3vw, 48px);
+          padding: clamp(48px, 7vw, 100px) clamp(24px, 4vw, 60px);
           box-sizing: border-box;
         }
 
@@ -239,7 +238,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           gap: clamp(14px, 1.2vw, 20px);
         }
 
-        /* ═══ LEFT — ACCENT ═══ */
         .cnt-accent {
           width: 42px;
           height: 2.5px;
@@ -252,7 +250,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-label {
           font-family: 'Poppins', sans-serif;
           font-weight: 600;
-          font-size: clamp(10px, 0.82vw, 12px);
+          font-size: 11px;
           letter-spacing: 0.22em;
           color: rgba(255,255,255,0.5);
           text-transform: uppercase;
@@ -263,7 +261,7 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3.2vw, 40px);
+          font-size: clamp(26px, 2.8vw, 42px);
           line-height: 1.25;
           color: #FFFFFF;
           letter-spacing: -0.02em;
@@ -289,7 +287,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           opacity: 0;
         }
 
-        /* ═══ LEFT — TRUST CARDS ═══ */
         .cnt-trust-grid {
           display: flex;
           flex-direction: column;
@@ -353,7 +350,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           letter-spacing: 0.01em;
         }
 
-        /* ═══ JOIN TEAM (LEFT SIDE) ═══ */
         .cnt-join {
           display: flex;
           align-items: center;
@@ -387,7 +383,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           font-weight: 500;
         }
 
-        /* ═══ FORM CARD ═══ */
         .cnt-form-card {
           display: flex;
           flex-direction: column;
@@ -412,7 +407,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           margin: 0 0 clamp(2px, 0.3vw, 6px);
         }
 
-        /* ═══ TWO-COL ROW — CHANGED: subgrid for alignment ═══ */
         .cnt-row-2 {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -426,7 +420,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           grid-template-rows: subgrid;
         }
 
-        /* ═══ Label row wrapper (ensures same height in both columns) ═══ */
         .cnt-label-row {
           display: flex;
           align-items: center;
@@ -434,7 +427,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           min-height: 0;
         }
 
-        /* ═══ FORM FIELDS ═══ */
         .cnt-field {
           display: flex;
           flex-direction: column;
@@ -501,7 +493,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           box-shadow: 0 0 0 3px rgba(249,221,163,0.15);
         }
 
-        /* ═══ METHOD BUTTONS ═══ */
         .cnt-methods {
           display: flex;
           gap: clamp(6px, 0.5vw, 10px);
@@ -522,7 +513,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           background: rgba(255,255,255,0.15);
         }
 
-        /* ═══ PLAN OPTIONS ═══ */
         .cnt-plans {
           display: flex;
           flex-direction: column;
@@ -592,7 +582,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           text-decoration: underline;
         }
 
-        /* ═══ SUBMIT ═══ */
         .cnt-submit {
           position: relative;
           overflow: hidden;
@@ -671,7 +660,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           animation: cntSpin 1s linear infinite;
         }
 
-        /* ═══ SUCCESS CARD ═══ */
         .cnt-success {
           display: flex;
           flex-direction: column;
@@ -766,7 +754,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-s-2 { opacity: 0; animation: cntSuccessFade 0.6s cubic-bezier(0.22,1,0.36,1) 0.4s forwards; }
         .cnt-s-3 { opacity: 0; animation: cntSuccessFade 0.5s cubic-bezier(0.22,1,0.36,1) 0.6s forwards; }
 
-        /* ═══ ENTRANCE ═══ */
         @keyframes cntUp {
           0% { opacity: 0; transform: translateY(28px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -795,15 +782,12 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         .cnt-a-pop { animation: cntPop 0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
         .cnt-a-card { animation: cntCardIn 0.65s cubic-bezier(0.22,1,0.36,1) both; }
 
-        /* ═══ RESPONSIVE: TABLET ≤ 1024px ═══ */
         @media (max-width: 1024px) {
-          .cnt-section { min-height: auto; padding-bottom: 60px; }
-
           .cnt-layout {
             flex-direction: column;
             align-items: center;
             gap: 40px;
-            padding: 0 40px;
+            padding: clamp(48px, 7vw, 80px) clamp(24px, 5vw, 60px);
           }
 
           .cnt-left { width: 100%; }
@@ -836,15 +820,13 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-a-slide { animation-name: cntUp; }
         }
 
-        /* ═══ RESPONSIVE: MOBILE ≤ 768px ═══ */
         @media (max-width: 768px) {
           .cnt-section { padding-bottom: 50px; }
-          .cnt-layout { gap: 32px; padding: 0 24px; }
+          .cnt-layout { gap: 32px; padding: clamp(36px, 5vw, 56px) 24px; }
 
           .cnt-title { font-size: clamp(26px, 6vw, 34px); }
           .cnt-desc { font-size: 14px; max-width: 380px; }
 
-          /* CHANGED: reset subgrid for single column */
           .cnt-row-2 {
             grid-template-columns: 1fr;
             gap: clamp(10px, 0.8vw, 16px);
@@ -871,10 +853,9 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-trust-card-desc { font-size: 11.5px; }
         }
 
-        /* ═══ RESPONSIVE: SMALL ≤ 540px ═══ */
         @media (max-width: 540px) {
           .cnt-section { padding-bottom: 44px; }
-          .cnt-layout { gap: 26px; padding: 0 20px; }
+          .cnt-layout { gap: 26px; padding: 36px 20px; }
 
           .cnt-title { font-size: clamp(24px, 5.5vw, 28px); }
           .cnt-label { font-size: 10px; }
@@ -885,10 +866,9 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-trust-grid { max-width: 340px; }
         }
 
-        /* ═══ RESPONSIVE: XS ≤ 400px ═══ */
         @media (max-width: 400px) {
           .cnt-section { padding-bottom: 40px; }
-          .cnt-layout { gap: 22px; padding: 0 18px; }
+          .cnt-layout { gap: 22px; padding: 28px 18px; }
 
           .cnt-accent { width: 30px; margin-bottom: 12px; }
           .cnt-label { margin-bottom: 12px; font-size: 9.5px; }
@@ -916,10 +896,9 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           .cnt-success { padding: 32px 18px; border-radius: 16px; }
         }
 
-        /* ═══ RESPONSIVE: XXS ≤ 340px ═══ */
         @media (max-width: 340px) {
           .cnt-section { padding-bottom: 36px; }
-          .cnt-layout { gap: 20px; padding: 0 14px; }
+          .cnt-layout { gap: 20px; padding: 24px 14px; }
 
           .cnt-title { font-size: 20px; }
           .cnt-desc { font-size: 12px; }
@@ -939,12 +918,10 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         }
       `}</style>
 
-      {/* ═══ BACKGROUND ═══ */}
       <div className="cnt-bg">
         <img src="/fondoazul.png" alt="" />
       </div>
 
-      {/* ═══ WAVE ═══ */}
       <div className="cnt-wave">
         <svg
           viewBox="0 0 1440 120"
@@ -958,7 +935,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         </svg>
       </div>
 
-      {/* ═══ FLOATING DECO (desktop) ═══ */}
       <div
         className={`cnt-deco ${a ? 'cnt-a-pop' : ''}`}
         style={{ left: '3vw', top: '22%', width: 'clamp(28px, 3.2vw, 50px)', height: 'clamp(28px, 3.2vw, 50px)', animationDelay: '0.6s' }}
@@ -984,25 +960,19 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
         <img src="/carta.png" alt="" className={mounted ? 'cnt-fl-4' : ''} style={{ opacity: 0.55 }} />
       </div>
 
-      {/* ═══ LAYOUT ═══ */}
       <div className="cnt-layout">
-
-        {/* ── LEFT ── */}
         <div className="cnt-left">
           <div className="cnt-left-inner">
-
             <div
               className={`cnt-accent ${a ? 'cnt-a-slide' : ''}`}
               style={{ animationDelay: '0.1s' }}
             />
-
             <span
               className={`cnt-label ${a ? 'cnt-a-slide' : ''}`}
               style={{ animationDelay: '0.2s' }}
             >
               COMENZÁ AHORA
             </span>
-
             <h2
               className={`cnt-title ${a ? 'cnt-a-slide' : ''}`}
               style={{ animationDelay: '0.3s' }}
@@ -1010,7 +980,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
               <span className="cnt-title-light">Tu primer paso</span>
               <br />hacia algo especial
             </h2>
-
             <p
               className={`cnt-desc ${a ? 'cnt-a-slide' : ''}`}
               style={{ animationDelay: '0.42s' }}
@@ -1018,7 +987,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
               Completá el formulario y el equipo de Camil se pondrá en contacto
               a la brevedad para conocerte y comenzar.
             </p>
-
             <div className="cnt-trust-grid">
               {TRUST_ITEMS.map((item, i) => (
                 <div
@@ -1034,7 +1002,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                 </div>
               ))}
             </div>
-
             <button
               className={`cnt-join ${a ? 'cnt-a-up' : ''}`}
               style={{ animationDelay: '0.8s' }}
@@ -1047,10 +1014,8 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
           </div>
         </div>
 
-        {/* ── RIGHT ── */}
         <div className="cnt-right">
           <div className="cnt-right-inner">
-
             {!submitted ? (
               <form
                 onSubmit={handleSubmit}
@@ -1059,10 +1024,8 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
               >
                 <h3 className="cnt-form-title">Solicitar vínculo</h3>
 
-                {/* CHANGED: Name + Contact with subgrid alignment */}
                 <div className="cnt-row-2">
                   <div className="cnt-field">
-                    {/* Wrapper div so both label rows share the same subgrid row height */}
                     <div className="cnt-label-row">
                       <label className="cnt-field-label" style={{ margin: 0 }}>Nombre *</label>
                     </div>
@@ -1106,7 +1069,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                   </div>
                 </div>
 
-                {/* Plan */}
                 <div className="cnt-field">
                   <label className="cnt-field-label">Plan de interés *</label>
                   <div className="cnt-plans">
@@ -1141,7 +1103,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                   </div>
                 </div>
 
-                {/* Message */}
                 <div className="cnt-field">
                   <label className="cnt-field-label">
                     Contanos un poco sobre vos{' '}
@@ -1154,14 +1115,12 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                   />
                 </div>
 
-                {/* Legal */}
                 <p className="cnt-legal">
                   Al enviar aceptás nuestra{' '}
                   <span>política de privacidad</span> y{' '}
                   <span>términos y condiciones</span>.
                 </p>
 
-                {/* Submit */}
                 <button type="submit" className="cnt-submit" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
@@ -1172,8 +1131,6 @@ const ContactScreen = ({ preSelectedPlan, onNavigateToJoinTeam }: ContactScreenP
                     'Enviar solicitud'
                   )}
                 </button>
-
-              
               </form>
             ) : (
               <div className="cnt-success">
