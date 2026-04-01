@@ -59,12 +59,16 @@ const WelcomeScreen: React.FC<Props> = ({ loaderFinished }) => {
         style={{ opacity: show ? 0.025 : 0, transition: "opacity 1.5s ease-out 1600ms", animationDelay: "1s" }}
       />
 
-      <div className="w-full max-w-[1800px] px-6 md:px-10 lg:px-40
-        flex flex-col lg:flex-row items-center gap-10 lg:gap-0
-        min-h-[calc(100svh-4rem)] sm:min-h-[calc(100svh-5rem)]
-        pt-16 sm:pt-20
-        py-10 sm:py-14 lg:py-16
-        relative z-10">
+      <div
+        className="w-full max-w-[1800px] px-6 md:px-10 lg:px-40
+          flex flex-col lg:flex-row items-center gap-10 lg:gap-0
+          pt-16 sm:pt-20
+          py-10 sm:py-14 lg:py-16
+          relative z-10"
+        style={{
+          minHeight: "min(calc(100svh - 4rem), 900px)",
+        }}
+      >
 
         {/* ── PHONES ── */}
         <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-start lg:order-2">
