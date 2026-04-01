@@ -44,7 +44,6 @@ function App() {
       <RoadmapSection />
       <CTASection />
       <Footer />
-      <ExitIntentModal />
       <WhatsAppFloat />
     </div>
   );
