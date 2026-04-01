@@ -1,75 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [progress, setProgress] = useState(0); // 0 → 1
+
+  useEffect(() => {
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      const max = 120; // cuanto tarda en transformarse
+      const value = Math.min(scrollY / max, 1);
+      setProgress(value);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // estilos dinámicos suaves
+  const bgOpacity = progress * 0.9; // fondo aparece gradual
+  const blur = progress * 16; // blur progresivo
+  const shadow = progress * 0.15;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0b1a2b]/80 backdrop-blur-xl border-b border-white/5">
-      <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-40">
+    <nav className="fixed top-0 left-0 right-0 z-50">
+      
+      {/* Fondo dinámico REAL */}
+      <div
+        className="absolute inset-0 transition-all duration-300"
+        style={{
+          backgroundColor: `rgba(14,165,183,${bgOpacity})`,
+          backdropFilter: `blur(${blur}px)`,
+          WebkitBackdropFilter: `blur(${blur}px)`,
+          boxShadow: `0 10px 30px rgba(0,0,0,${shadow})`,
+        }}
+      />
+
+      <div className="relative w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-40">
         <div className="flex items-center justify-between h-16 sm:h-20">
-
-          {/* Logo */}
-          <a href="#" className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-            PET<span className="text-[#25f4f4]">LIA</span>
-          </a>
-
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-8">
-            {["Funciones", "Para Negocios", "Precios", "Contacto"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/ /g, "-")}`}
-                className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
-              >
-                {item}
-              </a>
-            ))}
+          
+          {/* LOGO con transición REAL */}
+          <div className="relative h-8 w-[120px]">
+            <img
+              src="/logoOriginal.png"
+              className="absolute inset-0 h-8 transition-all duration-300"
+              style={{
+                opacity: 1 - progress,
+                transform: `scale(${1 - progress * 0.05})`,
+              }}
+            />
+            <img
+              src="/logoBlanco.png"
+              className="absolute inset-0 h-8 transition-all duration-300"
+              style={{
+                opacity: progress,
+                transform: `scale(${0.95 + progress * 0.05})`,
+              }}
+            />
           </div>
 
-          {/* CTA + Hamburger */}
+          {/* LINKS */}
+          <div className="hidden md:flex items-center gap-8">
+            {["Funciones", "Para Negocios", "Precios", "Contacto"].map(
+              (item) => (
+                <a
+                  key={item}
+                  href="#"
+                  className="text-sm font-semibold transition-all duration-300"
+                  style={{
+                    color:
+                      progress > 0.5
+                        ? `rgba(255,255,255,${0.8 + progress * 0.2})`
+                        : "#6B7280",
+                  }}
+                >
+                  {item}
+                </a>
+              )
+            )}
+          </div>
+
+          {/* CTA */}
           <div className="flex items-center gap-4">
             <a
-              href="#download"
-              className="hidden sm:inline-flex bg-[#179bbf] hover:bg-[#148dae] text-white font-semibold text-sm px-6 py-2.5 rounded-full transition-all shadow-lg shadow-[#179bbf]/20 hover:shadow-xl hover:shadow-[#179bbf]/30 active:scale-[0.97]"
+              href="#"
+              className="hidden sm:inline-flex text-sm px-6 py-2.5 rounded-full font-bold transition-all duration-300"
+              style={{
+                background:
+                  progress > 0.5
+                    ? "white"
+                    : "linear-gradient(to right, #0EA5B7, #67D1E3)",
+                color: progress > 0.5 ? "#0EA5B7" : "white",
+              }}
             >
               Descargar App
             </a>
 
+            {/* HAMBURGER */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="md:hidden w-10 h-10 flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+              className="md:hidden w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-300"
+              style={{
+                color: progress > 0.5 ? "white" : "#6B7280",
+              }}
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                {isOpen ? (
-                  <path d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
+              ☰
             </button>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div className="md:hidden border-t border-white/5 py-4 flex flex-col gap-1">
-            {["Funciones", "Para Negocios", "Precios", "Contacto"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase().replace(/ /g, "-")}`}
-                className="text-sm font-medium text-gray-400 hover:text-white py-2.5 transition-colors"
-              >
-                {item}
-              </a>
-            ))}
-            <a
-              href="#download"
-              className="sm:hidden bg-[#179bbf] text-white font-semibold text-sm px-6 py-2.5 rounded-full text-center mt-3"
-            >
-              Descargar App
-            </a>
-          </div>
-        )}
       </div>
     </nav>
   );
