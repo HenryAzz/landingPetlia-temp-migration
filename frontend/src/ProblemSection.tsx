@@ -29,7 +29,7 @@ function useCountUp(target: number, duration = 1800) {
     const start = performance.now();
     const step = (now: number) => {
       const progress = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.round(eased * target));
       if (progress < 1) raf = requestAnimationFrame(step);
     };
@@ -101,21 +101,38 @@ const ProblemSection: React.FC = () => {
       <img src="/huella.png" alt="" className="absolute bottom-12 right-[7%] w-14 h-14 opacity-[0.03] rotate-[20deg] pointer-events-none select-none" />
 
       <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-40 py-20 sm:py-28">
-        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-10 xl:gap-16">
-          {/* ── LEFT: TEXT ── */}
-          <div className="w-full lg:w-[40%] flex flex-col">
-            <Reveal>
-              <span className="font-heading text-xs sm:text-sm font-bold tracking-[0.18em] text-[#EF4444] mb-4 uppercase">
-                El problema actual
-              </span>
-            </Reveal>
+        {/* ── TITLE ROW — spans left + center columns ── */}
+        <div className="lg:mb-[-2rem]">
+          <Reveal>
+            <span className="font-heading text-xs sm:text-sm font-bold tracking-[0.18em] text-[#EF4444] mb-4 uppercase block">
+              El problema actual
+            </span>
+          </Reveal>
+          <Reveal delay={100}>
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-[2.6rem] font-extrabold text-[#111827] leading-[1.12] mb-10 lg:mb-12 lg:w-[68%]">
+              Cuidar a tu mascota no debería ser un{" "}
+              <span className="text-[#EF4444]">caos</span> administrativo.
+            </h2>
+          </Reveal>
+        </div>
 
-            <Reveal delay={100}>
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-[2.6rem] font-extrabold text-[#111827] leading-[1.12] mb-10 lg:mb-12">
-                Cuidar a tu mascota no debería ser un{" "}
-                <span className="text-[#EF4444]">caos</span> administrativo.
-              </h2>
-            </Reveal>
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-10 xl:gap-16">
+          {/* ── LEFT: PAIN POINTS ── */}
+          <div className="w-full lg:w-[40%] flex flex-col">
+            {/* Title shown only on mobile (already rendered above for desktop) */}
+            <div className="lg:hidden">
+              <Reveal>
+                <span className="font-heading text-xs sm:text-sm font-bold tracking-[0.18em] text-[#EF4444] mb-4 uppercase block">
+                  El problema actual
+                </span>
+              </Reveal>
+              <Reveal delay={100}>
+                <h2 className="font-heading text-3xl sm:text-4xl font-extrabold text-[#111827] leading-[1.12] mb-10">
+                  Cuidar a tu mascota no debería ser un{" "}
+                  <span className="text-[#EF4444]">caos</span> administrativo.
+                </h2>
+              </Reveal>
+            </div>
 
             <div className="flex flex-col gap-7">
               {painPoints.map((point, i) => (
