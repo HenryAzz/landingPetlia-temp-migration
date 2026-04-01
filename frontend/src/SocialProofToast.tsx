@@ -1,11 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
 
 const MESSAGES = [
-  { emoji: '💛', text: '3 personas se unieron hoy', time: 'Hace 12 min' },
-  { emoji: '📮', text: '8 cartas enviadas esta semana', time: 'Últimas 24 hs' },
-  { emoji: '💬', text: 'Camil respondió 52 mensajes hoy', time: 'Hace 34 min' },
-  { emoji: '⭐', text: 'Nuevo testimonio de 5 estrellas', time: 'Hace 1 hora' },
-  { emoji: '🎁', text: 'Alguien regaló Camil a su mamá', time: 'Hace 45 min' },
+  { emoji: '💌', text: 'Una nueva carta está siendo escrita', time: 'Hace unos minutos' },
+  { emoji: '📮', text: 'Otra carta acaba de salir', time: 'Hace un momento' },
+  { emoji: '💬', text: 'Camil está respondiendo mensajes', time: 'Ahora' },
+  { emoji: '🌙', text: 'Una conversación tranquila sigue abierta', time: 'Hace un rato' },
+  { emoji: '✉️', text: 'Una respuesta acaba de enviarse', time: 'Hace unos minutos' },
+  { emoji: '🕊️', text: 'Un mensaje llegó a destino', time: 'Hace un momento' },
+  { emoji: '📬', text: 'Una carta encontró a su destinatario', time: 'Hace un rato' },
+  { emoji: '✨', text: 'Una nueva correspondencia comenzó', time: 'Hace un rato' },
+  { emoji: '☕', text: 'Camil está escribiendo', time: 'Ahora' },
+  { emoji: '💛', text: 'Otra conversación sigue su curso', time: 'Hace unos minutos' },
 ];
 
 const SocialProofToast = () => {
@@ -20,7 +25,7 @@ const SocialProofToast = () => {
     const showNext = () => {
       setCurrentIdx((p) => (p + 1) % MESSAGES.length);
       setVisible(true);
-      timerRef.current = setTimeout(() => setVisible(false), 5000);
+      timerRef.current = setTimeout(() => setVisible(false), 10000);
     };
 
     const initial = setTimeout(showNext, 15000);

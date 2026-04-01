@@ -14,7 +14,7 @@ const PLANS = [
     price: '$90.000',
     color: 'rgba(14,116,144,0.9)',
     colorLight: 'rgba(14,116,144,',
-    cupos: '7 cupos disponibles',
+    cupos: '4 cupos disponibles',
     icon: '/carta.png',
     iconFloat: 'prc-float-1',
     features: [
@@ -35,7 +35,7 @@ const PLANS = [
     price: '$180.000',
     color: 'rgba(244,63,94,0.9)',
     colorLight: 'rgba(244,63,94,',
-    cupos: '5 cupos disponibles',
+    cupos: '3 cupos disponibles',
     icon: '/celular.png',
     iconFloat: 'prc-float-2',
     badge: '⭐ MÁS ELEGIDO',
@@ -83,12 +83,19 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [slideDir, setSlideDir] = useState<'left' | 'right' | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const isSwiping = useRef(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    const checkMobile = () => setIsMobile(window.innerWidth <= 1024);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (hasAnimated) return;
@@ -161,15 +168,11 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
       ? `prc-card-dk ${plan.highlighted ? 'prc-card-dk--hl' : ''}`
       : mode === 'tablet'
         ? `prc-card-tb ${plan.highlighted ? 'prc-card-tb--hl' : ''}`
-        : `prc-card-mb ${plan.highlighted ? 'prc-card-mb--hl' : ''} ${slideDir === 'left' ? 'prc-slide-l' : slideDir === 'right' ? 'prc-slide-r' : ''}`;
+        : `prc-card-mb ${plan.highlighted ? 'prc-card-mb--hl' : ''}`;
 
-    const entranceClass = mode === 'mobile' ? '' :
-      `prc-card-entrance-${mode}-${idx} ${a ? 'prc-a-card' : ''}`;
-
-    const mobStyle = isMob ? {
-      transform: swipeOffset !== 0 ? `translateX(${swipeOffset}px)` : undefined,
-      opacity: swipeOffset !== 0 ? 1 - Math.abs(swipeOffset) / 280 : undefined,
-    } : {};
+    const entranceClass = mode === 'mobile'
+      ? `prc-card-entrance-mb-${idx} ${a ? 'prc-a-card' : ''}`
+      : `prc-card-entrance-${mode}-${idx} ${a ? 'prc-a-card' : ''}`;
 
     const cardElement = (
       <div
@@ -186,14 +189,8 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
             ? `${0.4 + idx * 0.15}s`
             : mode === 'tablet'
               ? `${0.35 + idx * 0.15}s`
-              : undefined,
-          ...mobStyle,
+              : `${0.4 + idx * 0.18}s`,
         }}
-        {...(isMob ? {
-          onTouchStart: handleTouchStart,
-          onTouchMove: handleTouchMove,
-          onTouchEnd: handleTouchEnd,
-        } : {})}
       >
         {plan.badge && (
           <div className="prc-badge" style={{ backgroundColor: plan.color }}>
@@ -261,6 +258,18 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
     );
 
     if (isMob) return cardElement;
+
+    if (isMobile) {
+      return (
+        <div
+          key={`${mode}-${plan.id}`}
+          className={mode === 'desktop' ? 'prc-tilt-dk' : 'prc-tilt-tb'}
+          style={{ overflow: 'visible' }}
+        >
+          {cardElement}
+        </div>
+      );
+    }
 
     return (
       <Tilt
@@ -343,10 +352,10 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
           font-size: clamp(26px, 2.8vw, 42px);
-          line-height: 1.25;
+          line-height: 1.18;
           color: #1C1C1E;
           letter-spacing: -0.025em;
-          margin: 0 0 10px;
+          margin: 0 0 18px;
           opacity: 0;
         }
 
@@ -829,7 +838,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
         }
 
         /* ═══════════════════════════════
-           MOBILE (≤ 768px)
+           MOBILE (≤ 768px) — STACKED VERTICAL
         ═══════════════════════════════ */
         @media (max-width: 768px) {
           .prc-section { padding-top: 70px; padding-bottom: 50px; }
@@ -846,18 +855,20 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           }
 
           .prc-mb-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
             width: 100%;
             max-width: 400px;
-            overflow: visible;
           }
 
           .prc-card-mb {
+            width: 100%;
             padding: 38px 28px 32px;
             border-radius: 22px;
             box-shadow: 0 14px 45px rgba(0,0,0,0.06), 0 2px 10px rgba(0,0,0,0.03);
-            touch-action: pan-y;
-            will-change: transform;
-            transition: transform 0.26s cubic-bezier(0.4,0,0.2,1), opacity 0.26s ease;
+            opacity: 0;
           }
 
           .prc-card-mb .prc-badge { top: -13px; font-size: 10.5px; padding: 5px 16px; }
@@ -883,6 +894,10 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
 
           .prc-title { font-size: clamp(24px, 5.5vw, 30px); }
 
+          /* Hide dots and swipe hint in stacked mode */
+          .prc-dots { display: none !important; }
+          .prc-swipe { display: none !important; }
+
           .prc-privacy-wrapper { padding: 0 24px; margin-top: 34px; }
           .prc-privacy {
             max-width: 400px;
@@ -901,7 +916,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-title { font-size: clamp(22px, 5vw, 26px); }
           .prc-label { font-size: 10px; }
           .prc-wrap-mb { padding: 0 20px; }
-          .prc-mb-area { max-width: 380px; }
+          .prc-mb-area { max-width: 380px; gap: 26px; }
 
           .prc-card-mb { padding: 34px 24px 28px; border-radius: 20px; }
           .prc-card-mb .prc-name { font-size: 19px; }
@@ -935,6 +950,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-note { font-size: 10px; }
 
           .prc-wrap-mb { padding: 0 18px; }
+          .prc-mb-area { gap: 24px; }
           .prc-card-mb { padding: 32px 22px 26px; border-radius: 18px; }
           .prc-card-mb .prc-badge { font-size: 9.5px; padding: 3px 12px; top: -11px; }
           .prc-card-mb .prc-cupos { font-size: 9.5px; padding: 4px 11px 4px 9px; top: 16px; }
@@ -955,12 +971,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-card-mb .prc-icon--casual { width: 130px; height: 130px; right: -45px; top: -45px; }
           .prc-card-mb .prc-icon--diaria { width: 70px; height: 70px; right: -18px; top: -10px; }
 
-          .prc-dots { margin-top: 18px; gap: 6px; }
-          .prc-dot { height: 7px; }
-          .prc-dot--active { width: 22px; }
-          .prc-dot--idle { width: 7px; }
-          .prc-swipe { margin-top: 10px; font-size: 10px; }
-
           .prc-privacy-wrapper { padding: 0 18px; margin-top: 26px; }
           .prc-privacy {
             padding: 18px 20px;
@@ -979,6 +989,7 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-subtitle { font-size: 12px; }
 
           .prc-wrap-mb { padding: 0 14px; }
+          .prc-mb-area { gap: 22px; }
           .prc-card-mb { padding: 28px 18px 22px; border-radius: 14px; }
           .prc-card-mb .prc-name { font-size: 16px; }
           .prc-card-mb .prc-price { font-size: 28px; }
@@ -989,11 +1000,6 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
           .prc-card-mb .prc-icon--correspondencia { width: 55px; height: 55px; }
           .prc-card-mb .prc-icon--casual { width: 110px; height: 110px; right: -38px; top: -38px; }
           .prc-card-mb .prc-icon--diaria { width: 60px; height: 60px; }
-
-          .prc-dots { margin-top: 16px; gap: 4px; }
-          .prc-dot { height: 6px; }
-          .prc-dot--active { width: 20px; }
-          .prc-dot--idle { width: 6px; }
 
           .prc-privacy-wrapper { padding: 0 14px; margin-top: 22px; }
           .prc-privacy {
@@ -1030,11 +1036,8 @@ const PricingScreen = ({ onSelectPlan }: PricingScreenProps) => {
       </div>
 
       <div className="prc-wrap-mb">
-        <div
-          className={`prc-mb-area ${a ? 'prc-a-card' : ''}`}
-          style={{ animationDelay: '0.4s', opacity: a ? undefined : 0 }}
-        >
-          {renderCard(currentPlan, mobileActive, 'mobile')}
+        <div className="prc-mb-area">
+          {PLANS.map((plan, i) => renderCard(plan, i, 'mobile'))}
         </div>
 
         <div className={`prc-dots ${a ? 'prc-a-up' : ''}`} style={{ animationDelay: '0.65s' }}>

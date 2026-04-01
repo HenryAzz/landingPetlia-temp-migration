@@ -1,667 +1,115 @@
-// WelcomeScreen.tsx
-import { useEffect, useState, useRef, useCallback } from 'react';
+import React from "react";
 
-interface WelcomeScreenProps {
+interface Props {
   loaderFinished?: boolean;
 }
 
-const VIDEOS = [
-  '/videos/primera.mp4',
-  '/videos/segunda.mp4',
-  '/videos/extra.mp4',
-  '/videos/tercera.mp4',
-  '/videos/cuarta.mp4',
-  '/videos/quinta.mp4',
-];
-
-const TRANSITION_LEAD_TIME = 1.8;
-const GLASS_DURATION = 2200;
-const PEAK_AT = 1100;
-const VIDEO_CUSTOM_LEAD: Record<number, number> = { 4: 1.4, 5: 0.8 };
-
-const HERO_TITLES = [
-  <>Sentite especial,<br />con alguien especial.</>,
-  <>Porque nadie debería<br />sentirse solo.</>,
-  <>Un mensaje puede<br />cambiarlo todo.</>,
-  <>El regalo más lindo<br />que podrías hacer.</>,
-  <>A vos mismo,<br />claro que también.</>,
-  <>Así se siente<br />tener a alguien.</>,
-];
-
-const WelcomeScreen = ({ loaderFinished = false }: WelcomeScreenProps) => {
-  const [entered, setEntered] = useState(false);
-  const [iconsReady, setIconsReady] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [heroVisible, setHeroVisible] = useState(true);
-
-  const [heroLine, setHeroLine] = useState(0);
-  const [titlePhase, setTitlePhase] = useState<'show' | 'hide' | 'prep'>('show');
-
-  const videoARef = useRef<HTMLVideoElement>(null);
-  const videoBRef = useRef<HTMLVideoElement>(null);
-
-  const [frontSlot, setFrontSlot] = useState<'A' | 'B'>('A');
-  const [currentVideoIdx, setCurrentVideoIdx] = useState(0);
-  const [phase, setPhase] = useState<'playing' | 'sweep-in' | 'white-peak' | 'sweep-out'>('playing');
-  const [backVisible, setBackVisible] = useState(false);
-  const [frontFading, setFrontFading] = useState(false);
-
-  const transitionStarted = useRef(false);
-  const throttle = useRef(false);
-  const isTransitioning = useRef(false);
-
-  const frontSlotRef = useRef<'A' | 'B'>('A');
-  const currentVideoIdxRef = useRef(0);
-  const enteredRef = useRef(false);
-
-  useEffect(() => { frontSlotRef.current = frontSlot; }, [frontSlot]);
-  useEffect(() => { currentVideoIdxRef.current = currentVideoIdx; }, [currentVideoIdx]);
-  useEffect(() => { enteredRef.current = entered; }, [entered]);
-
-  const getFrontVideo = useCallback(() => (frontSlot === 'A' ? videoARef.current : videoBRef.current), [frontSlot]);
-  const getBackVideo = useCallback(() => (frontSlot === 'A' ? videoBRef.current : videoARef.current), [frontSlot]);
-
-  const getFrontVideoByRef = useCallback(() => (frontSlotRef.current === 'A' ? videoARef.current : videoBRef.current), []);
-  const getBackVideoByRef = useCallback(() => (frontSlotRef.current === 'A' ? videoBRef.current : videoARef.current), []);
-
-  const prepareVideo = useCallback((video: HTMLVideoElement, src: string): Promise<void> => {
-    return new Promise((resolve) => {
-      if (video.src.includes(src) && video.readyState >= 2) { video.currentTime = 0; resolve(); return; }
-      const onReady = () => { video.removeEventListener('canplay', onReady); video.currentTime = 0; resolve(); };
-      video.addEventListener('canplay', onReady); video.src = src; video.load();
-    });
-  }, []);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 900);
-    check(); window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  useEffect(() => {
-    if (loaderFinished) { const t = setTimeout(() => setEntered(true), 200); return () => clearTimeout(t); }
-  }, [loaderFinished]);
-
-  useEffect(() => {
-    if (entered) { const t = setTimeout(() => setIconsReady(true), 1900); return () => clearTimeout(t); }
-  }, [entered]);
-
-  useEffect(() => {
-    if (isMobile) return;
-    const handleScroll = () => setHeroVisible(window.scrollY < 80);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isMobile]);
-
-  useEffect(() => {
-    if (isMobile || !entered) return;
-    const front = getFrontVideo(); const back = getBackVideo();
-    if (front && !front.src.includes('.mp4')) { prepareVideo(front, VIDEOS[0]).then(() => { front.play().catch(() => {}); }); }
-    if (back) { prepareVideo(back, VIDEOS[1]); }
-  }, [entered, isMobile]);
-
-  useEffect(() => {
-    if (isMobile) return;
-    const watchdog = setInterval(() => {
-      if (!enteredRef.current) return;
-      if (isTransitioning.current) return;
-      const front = getFrontVideoByRef();
-      if (!front) return;
-      if (front.paused && front.src && front.readyState >= 2) {
-        front.play().catch(() => {});
-      }
-      if (front.duration && !isNaN(front.duration) && front.currentTime >= front.duration - 0.1) {
-        if (!transitionStarted.current && !isTransitioning.current) {
-          transitionStarted.current = true;
-          doTransitionFromRef();
-        }
-      }
-    }, 800);
-    return () => clearInterval(watchdog);
-  }, [isMobile]);
-
-  const handleTimeUpdate = useCallback(() => {
-    if (isMobile || transitionStarted.current || isTransitioning.current) return;
-    if (throttle.current) return;
-    throttle.current = true; setTimeout(() => { throttle.current = false; }, 100);
-    const front = getFrontVideo();
-    if (!front || !front.duration || isNaN(front.duration)) return;
-    const leadTime = VIDEO_CUSTOM_LEAD[currentVideoIdx] ?? TRANSITION_LEAD_TIME;
-    const remaining = front.duration - front.currentTime;
-    if (remaining <= leadTime && remaining > 0) { transitionStarted.current = true; doTransition(); }
-  }, [isMobile, getFrontVideo, currentVideoIdx]);
-
-  const handleEnded = useCallback(() => {
-    if (isMobile) return;
-    if (!transitionStarted.current && !isTransitioning.current) {
-      transitionStarted.current = true;
-      doTransition();
-    }
-  }, [isMobile]);
-
-  const finishTransition = useCallback((nextIdx: number, usedRef = false) => {
-    const oldFront = usedRef ? getFrontVideoByRef() : getFrontVideo();
-    if (oldFront) { oldFront.pause(); oldFront.currentTime = 0; }
-    setFrontSlot(p => p === 'A' ? 'B' : 'A');
-    setCurrentVideoIdx(nextIdx);
-    setFrontFading(false); setBackVisible(false); setPhase('playing');
-    if (oldFront) { prepareVideo(oldFront, VIDEOS[(nextIdx + 1) % VIDEOS.length]); }
-    setTimeout(() => {
-      const newFront = frontSlotRef.current === 'A' ? videoARef.current : videoBRef.current;
-      if (newFront && newFront.paused) { newFront.play().catch(() => {}); }
-    }, 100);
-    transitionStarted.current = false;
-    isTransitioning.current = false;
-  }, [getFrontVideo, getFrontVideoByRef, prepareVideo]);
-
-  const runSweep = useCallback((back: HTMLVideoElement, nextIdx: number, usedRef = false) => {
-    setTitlePhase('hide');
-    requestAnimationFrame(() => { requestAnimationFrame(() => {
-      setPhase('sweep-in');
-      setTimeout(() => { setBackVisible(true); back.currentTime = 0; back.play().catch(() => {}); }, PEAK_AT - 600);
-      setTimeout(() => { setFrontFading(true); }, PEAK_AT - 350);
-      setTimeout(() => { setPhase('white-peak'); }, PEAK_AT - 100);
-      setTimeout(() => {
-        setHeroLine(nextIdx);
-        setTitlePhase('prep');
-        requestAnimationFrame(() => { requestAnimationFrame(() => { setTitlePhase('show'); }); });
-      }, PEAK_AT);
-      setTimeout(() => { setPhase('sweep-out'); }, PEAK_AT + 100);
-      setTimeout(() => finishTransition(nextIdx, usedRef), GLASS_DURATION);
-    }); });
-  }, [finishTransition]);
-
-  const doTransitionFromRef = useCallback(() => {
-    isTransitioning.current = true;
-    const nextIdx = (currentVideoIdxRef.current + 1) % VIDEOS.length;
-    const back = getBackVideoByRef();
-    if (!back) { isTransitioning.current = false; transitionStarted.current = false; return; }
-    const start = () => runSweep(back, nextIdx, true);
-    if (back.src.includes(VIDEOS[nextIdx]) && back.readyState >= 2) { back.currentTime = 0; start(); }
-    else {
-      const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; start(); };
-      back.addEventListener('canplay', onReady);
-      if (!back.src.includes(VIDEOS[nextIdx])) { back.src = VIDEOS[nextIdx]; } back.load();
-    }
-  }, [getBackVideoByRef, runSweep]);
-
-  const doTransition = useCallback(() => {
-    isTransitioning.current = true;
-    const nextIdx = (currentVideoIdx + 1) % VIDEOS.length;
-    const back = getBackVideo();
-    if (!back) { isTransitioning.current = false; transitionStarted.current = false; return; }
-    const start = () => runSweep(back, nextIdx, false);
-    if (back.src.includes(VIDEOS[nextIdx]) && back.readyState >= 2) { back.currentTime = 0; start(); }
-    else {
-      const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; start(); };
-      back.addEventListener('canplay', onReady);
-      if (!back.src.includes(VIDEOS[nextIdx])) { back.src = VIDEOS[nextIdx]; } back.load();
-    }
-  }, [currentVideoIdx, getBackVideo, runSweep]);
-
-  const handleDotClick = useCallback((targetIdx: number) => {
-    if (phase !== 'playing' || targetIdx === currentVideoIdx || isMobile || isTransitioning.current) return;
-    isTransitioning.current = true; transitionStarted.current = true;
-    const back = getBackVideo(); if (!back) return;
-    const start = () => runSweep(back, targetIdx, false);
-    const onReady = () => { back.removeEventListener('canplay', onReady); back.currentTime = 0; start(); };
-    back.addEventListener('canplay', onReady); back.src = VIDEOS[targetIdx]; back.load();
-  }, [phase, currentVideoIdx, isMobile, getBackVideo, runSweep]);
-
-  useEffect(() => {
-    if (isMobile) return;
-    const safetyNet = setInterval(() => {
-      if (!enteredRef.current) return;
-    }, 5000);
-    return () => clearInterval(safetyNet);
-  }, [isMobile]);
-
-  useEffect(() => {
-    if (isMobile) return;
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible' && enteredRef.current && !isTransitioning.current) {
-        const front = getFrontVideoByRef();
-        if (front && front.paused && front.src) { front.play().catch(() => {}); }
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [isMobile, getFrontVideoByRef]);
-
-  const scrollTo = (id: string) => { document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }); };
-  const isAFront = frontSlot === 'A';
-
-  const titleTransition = titlePhase === 'prep'
-    ? 'none'
-    : 'opacity 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s cubic-bezier(0.4,0,0.2,1), filter 0.55s cubic-bezier(0.4,0,0.2,1)';
-  const titleOpacity = titlePhase === 'show' ? 1 : 0;
-  const titleTransform = titlePhase === 'hide' ? 'translateX(30px)' : titlePhase === 'prep' ? 'translateX(-20px)' : 'translateX(0)';
-  const titleFilter = titlePhase === 'show' ? 'blur(0px)' : 'blur(6px)';
-
+const WelcomeScreen: React.FC<Props> = () => {
   return (
-    <section
-      id="inicio"
-      style={{
-        position: 'relative', width: '100%', overflow: 'hidden',
-        display: 'flex', flexDirection: 'column',
-        height: '100dvh', background: '#000',
-        ...(isMobile ? { height: 'auto', minHeight: '100dvh', background: 'transparent' } : {}),
-      }}
-    >
-      {!isMobile && (
-        <>
-          <style>{`
-            .ws-cl{position:absolute;inset:0;z-index:0}
-            .ws-vs{position:absolute;inset:0}
-            .ws-vsl{position:absolute;inset:0}
-            .ws-vsl video{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
-            .ws-vf{z-index:2;opacity:1;transition:opacity .7s cubic-bezier(.4,0,.2,1)}
-            .ws-vf--fade{opacity:0}
-            .ws-vb{z-index:1;opacity:0;transition:opacity .5s cubic-bezier(.4,0,.2,1)}
-            .ws-vb--vis{opacity:1}
-            @keyframes dkCinIn{0%{opacity:0;transform:scale(1.02)}100%{opacity:1;transform:scale(1)}}
-            .ws-cin-in{animation:dkCinIn 1.5s ease-out .1s both}
-            .ws-gr{position:absolute;inset:0;z-index:10;pointer-events:none;overflow:hidden}
-            .ws-gw{position:absolute;inset:0;background:white;opacity:0;z-index:6}
-            .ws-psi .ws-gw{animation:dkWGI 1.1s cubic-bezier(.4,0,.2,1) forwards}
-            .ws-pwp .ws-gw{opacity:.45}
-            .ws-pso .ws-gw{animation:dkWFO 1.1s cubic-bezier(.4,0,.2,1) forwards}
-            @keyframes dkWGI{0%{opacity:0}30%{opacity:.01}50%{opacity:.05}70%{opacity:.15}85%{opacity:.3}100%{opacity:.45}}
-            @keyframes dkWFO{0%{opacity:.45}15%{opacity:.3}30%{opacity:.15}50%{opacity:.06}70%{opacity:.02}100%{opacity:0}}
-            .ws-gd{position:absolute;inset:0;background:rgba(255,255,255,0);z-index:3}
-            .ws-psi .ws-gd{animation:dkDI 1.1s cubic-bezier(.4,0,.2,1) forwards}
-            .ws-pso .ws-gd{animation:dkDO 1.1s cubic-bezier(.4,0,.2,1) forwards}
-            @keyframes dkDI{0%{background:rgba(255,255,255,0)}100%{background:rgba(255,255,255,.05)}}
-            @keyframes dkDO{0%{background:rgba(255,255,255,.05)}100%{background:rgba(255,255,255,0)}}
-            .ws-gb{position:absolute;width:300%;height:300%;top:-100%;left:-100%;transform:translateX(-110%) rotate(-35deg);will-change:transform;z-index:4}
-            .ws-bw{position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,transparent 34%,rgba(255,255,255,.008) 36%,rgba(255,255,255,.02) 37.5%,rgba(255,255,255,.05) 39%,rgba(255,255,255,.1) 41%,rgba(255,255,255,.18) 43%,rgba(255,255,255,.28) 44.5%,rgba(255,255,255,.4) 46%,rgba(255,255,255,.55) 47.5%,rgba(255,255,255,.7) 48.5%,rgba(255,255,255,.82) 49.3%,rgba(255,255,255,.92) 49.8%,rgba(255,255,255,1) 50%,rgba(255,255,255,.92) 50.2%,rgba(255,255,255,.82) 50.7%,rgba(255,255,255,.7) 51.5%,rgba(255,255,255,.55) 52.5%,rgba(255,255,255,.4) 54%,rgba(255,255,255,.28) 55.5%,rgba(255,255,255,.18) 57%,rgba(255,255,255,.1) 59%,rgba(255,255,255,.05) 61%,rgba(255,255,255,.02) 62.5%,rgba(255,255,255,.008) 64%,transparent 66%,transparent 100%)}
-            .ws-bc{position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,transparent 47%,rgba(255,255,255,.2) 48%,rgba(255,255,255,.5) 49%,rgba(255,255,255,.85) 49.6%,rgba(255,255,255,1) 50%,rgba(255,255,255,.85) 50.4%,rgba(255,255,255,.5) 51%,rgba(255,255,255,.2) 52%,transparent 53%,transparent 100%)}
-            .ws-bl{position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,transparent 26%,rgba(255,255,255,.005) 28%,rgba(255,255,255,.015) 29.5%,rgba(255,255,255,.035) 31%,rgba(255,255,255,.015) 33%,rgba(255,255,255,.005) 34.5%,transparent 36%,transparent 100%)}
-            .ws-bt{position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,transparent 65%,rgba(255,255,255,.005) 66%,rgba(255,255,255,.02) 67.5%,rgba(255,255,255,.04) 69%,rgba(255,255,255,.02) 71%,rgba(255,255,255,.005) 72.5%,transparent 74%,transparent 100%)}
-            .ws-gbb{position:absolute;width:300%;height:300%;top:-100%;left:-100%;transform:translateX(-110%) rotate(-35deg);will-change:transform;z-index:3}
-            .ws-bbd{position:absolute;inset:0;backdrop-filter:blur(16px) saturate(1.3) brightness(1.1);-webkit-backdrop-filter:blur(16px) saturate(1.3) brightness(1.1);mask-image:linear-gradient(90deg,transparent 0%,transparent 38%,black 44%,black 56%,transparent 62%,transparent 100%);-webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 38%,black 44%,black 56%,transparent 62%,transparent 100%)}
-            @keyframes dkBSI{0%{transform:translateX(-110%) rotate(-35deg)}100%{transform:translateX(-5%) rotate(-35deg)}}
-            @keyframes dkBSO{0%{transform:translateX(-5%) rotate(-35deg)}100%{transform:translateX(110%) rotate(-35deg)}}
-            .ws-psi .ws-gb,.ws-psi .ws-gbb{animation:dkBSI 1.1s cubic-bezier(.16,1,.3,1) forwards}
-            .ws-pwp .ws-gb,.ws-pwp .ws-gbb{transform:translateX(-5%) rotate(-35deg)}
-            .ws-pso .ws-gb,.ws-pso .ws-gbb{animation:dkBSO 1.1s cubic-bezier(.16,1,.3,1) forwards}
-            .ws-vig{position:absolute;inset:0;z-index:8;pointer-events:none;background:radial-gradient(ellipse 85% 85% at 50% 50%,transparent 55%,rgba(0,0,0,.12) 100%)}
-            @keyframes dkHI{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:translateY(0)}}
-            @keyframes dkBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
-            @keyframes btnShimmer{0%{transform:translateX(-100%) skewX(-15deg)}100%{transform:translateX(200%) skewX(-15deg)}}
-            @keyframes btnPulseGlow{0%,100%{box-shadow:0 4px 24px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1),0 0 0 0 rgba(249,221,163,0)}50%{box-shadow:0 4px 24px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1),0 0 0 6px rgba(249,221,163,0.08)}}
-            .ws-cta-premium{position:relative;display:inline-flex;align-items:center;gap:10px;padding:14px 30px;border-radius:50px;background:linear-gradient(135deg,#F9DDA3 0%,#e6c57a 100%);color:#2a1f0e;font-family:'Poppins',sans-serif;font-weight:600;font-size:14px;letter-spacing:0.04em;cursor:pointer;border:none;box-shadow:0 4px 24px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1);overflow:hidden;transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.4s cubic-bezier(0.4,0,0.2,1),background 0.4s ease,filter 0.35s ease;animation:btnPulseGlow 3s ease-in-out 3s infinite;isolation:isolate}
-            .ws-cta-premium::before{content:'';position:absolute;top:0;left:0;width:45%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0) 10%,rgba(255,255,255,0.35) 45%,rgba(255,255,255,0.6) 50%,rgba(255,255,255,0.35) 55%,rgba(255,255,255,0) 90%,transparent 100%);transform:translateX(-100%) skewX(-15deg);transition:none;pointer-events:none;z-index:1}
-            .ws-cta-premium::after{content:'';position:absolute;inset:-2px;border-radius:52px;background:linear-gradient(135deg,rgba(255,255,255,0.3) 0%,rgba(249,221,163,0.15) 30%,transparent 50%,rgba(249,221,163,0.1) 70%,rgba(255,255,255,0.2) 100%);opacity:0;transition:opacity 0.4s ease;z-index:-1;pointer-events:none}
-            .ws-cta-premium:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 32px rgba(249,221,163,0.4),0 4px 16px rgba(249,221,163,0.25),0 0 48px rgba(249,221,163,0.15),0 1px 3px rgba(0,0,0,0.08);background:linear-gradient(135deg,#fce5b5 0%,#F9DDA3 40%,#eecf8a 100%);filter:brightness(1.08);animation:none}
-            .ws-cta-premium:hover::before{animation:btnShimmer 0.8s cubic-bezier(0.4,0,0.2,1) forwards}
-            .ws-cta-premium:hover::after{opacity:1}
-            .ws-cta-premium:hover .ws-cta-arrow{transform:translateX(3px)}
-            .ws-cta-premium:active{transform:translateY(-1px) scale(1.005);box-shadow:0 4px 20px rgba(249,221,163,0.3),0 2px 8px rgba(249,221,163,0.2),0 1px 3px rgba(0,0,0,0.1);filter:brightness(1.02);transition:transform 0.12s ease,box-shadow 0.12s ease,filter 0.12s ease}
-            .ws-cta-arrow{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);position:relative;z-index:2}
-            .ws-cta-text{position:relative;z-index:2}
+    <section className="relative w-full flex justify-center bg-[#F9FAFB] overflow-hidden">
+      {/* ── Huellitas decorativas ── */}
+      <img
+        src="/huella.png"
+        alt=""
+        className="absolute top-24 right-[8%] w-14 h-14 opacity-[0.04] rotate-12 pointer-events-none select-none"
+      />
+      <img
+        src="/huella.png"
+        alt=""
+        className="absolute bottom-20 left-[4%] w-20 h-20 opacity-[0.035] -rotate-12 pointer-events-none select-none"
+      />
+      <img
+        src="/huella.png"
+        alt=""
+        className="absolute top-1/3 right-[2%] w-10 h-10 opacity-[0.03] rotate-45 pointer-events-none select-none"
+      />
+      {/* Glow sutil superior */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-b from-[#67D1E3]/8 to-transparent rounded-full blur-3xl pointer-events-none" />
 
-            /* ★ HERO CONTENT CONTAINER — max-width for large screens */
-            .ws-hero-container{
-              position:absolute;inset:0;z-index:12;
-              display:flex;align-items:center;
-              pointer-events:none;
-            }
-            .ws-hero-inner{
-              width:100%;
-              max-width:1380px;
-              margin:0 auto;
-              padding:0 40px;
-              position:relative;
-            }
-          `}</style>
-
-          <div className={`ws-cl ${entered ? 'ws-cin-in' : ''}`} style={{ opacity: entered ? undefined : 0 }}>
-            <div className="ws-vs">
-              <div className={`ws-vsl ${isAFront ? `ws-vf ${frontFading ? 'ws-vf--fade' : ''}` : `ws-vb ${backVisible ? 'ws-vb--vis' : ''}`}`}>
-                <video ref={videoARef} muted playsInline preload="auto" {...(isAFront ? { onTimeUpdate: handleTimeUpdate, onEnded: handleEnded } : {})} />
-              </div>
-              <div className={`ws-vsl ${!isAFront ? `ws-vf ${frontFading ? 'ws-vf--fade' : ''}` : `ws-vb ${backVisible ? 'ws-vb--vis' : ''}`}`}>
-                <video ref={videoBRef} muted playsInline preload="auto" {...(!isAFront ? { onTimeUpdate: handleTimeUpdate, onEnded: handleEnded } : {})} />
-              </div>
-            </div>
-            <div className={`ws-gr ${phase === 'sweep-in' ? 'ws-psi' : phase === 'white-peak' ? 'ws-pwp' : phase === 'sweep-out' ? 'ws-pso' : ''}`}>
-              <div className="ws-gw" /><div className="ws-gd" />
-              <div className="ws-gbb"><div className="ws-bbd" /></div>
-              <div className="ws-gb"><div className="ws-bl" /><div className="ws-bw" /><div className="ws-bc" /><div className="ws-bt" /></div>
-            </div>
-            <div className="ws-vig" />
-          </div>
-
-          {/* ═══ HERO OVERLAY — now constrained by max-width container ═══ */}
+      <div className="w-full max-w-[1800px] px-6 md:px-10 lg:px-40 flex flex-col lg:flex-row items-center py-12 md:py-20 lg:py-28 pt-24 md:pt-28 lg:pt-36 relative z-10">
+        {/* ── PHONES (arriba en mobile, derecha en desktop) ── */}
+        <div className="w-full lg:w-1/2 flex items-center justify-center lg:justify-start lg:order-2 mb-12 lg:mb-0">
+          {/* PHONE 1 */}
           <div
-            className="ws-hero-container"
+            className="relative shrink-0"
             style={{
-              opacity: entered ? 1 : 0,
-              transition: 'opacity 0.7s ease, transform 0.6s ease',
-              ...(heroVisible ? {} : { opacity: 0, transform: 'translateY(-12px)' }),
+              filter:
+                "drop-shadow(0 30px 60px rgba(14,165,183,0.14)) drop-shadow(0 10px 20px rgba(0,0,0,0.06))",
             }}
           >
-            {/* Dark gradient scrim — stays full width behind */}
-            <div style={{
-              position: 'absolute', left: 0, top: 0, bottom: 0, width: '52%',
-              background: 'linear-gradient(to right, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.10) 45%, rgba(0,0,0,0.03) 70%, transparent 100%)',
-              pointerEvents: 'none', zIndex: 0,
-            }} />
-
-            <div className="ws-hero-inner">
-              <div style={{
-                maxWidth: 560, pointerEvents: 'auto',
-              }}>
-                {/* Gold accent */}
-                <div style={{
-                  width: 38, height: 2.5,
-                  background: 'linear-gradient(90deg, #F9DDA3, rgba(249,221,163,0.2))',
-                  borderRadius: 2, marginBottom: 22, opacity: 0,
-                  ...(entered ? { animation: 'dkHI 0.8s ease-out 0.6s both' } : {}),
-                }} />
-
-                {/* Title */}
-                <div style={{
-                  minHeight: 'clamp(90px, 8.5vw, 130px)',
-                  display: 'flex', alignItems: 'flex-start',
-                }}>
-                  <div style={{
-                    transition: titleTransition,
-                    opacity: titleOpacity,
-                    transform: titleTransform,
-                    filter: titleFilter,
-                  }}>
-                    <h1 style={{
-                      fontFamily: "'Poppins', sans-serif", fontWeight: 700,
-                      fontSize: 'clamp(1.9rem, 3.4vw, 3.1rem)', lineHeight: 1.15,
-                      color: '#fff', letterSpacing: '-0.02em',
-                      margin: 0,
-                      textShadow: '0 2px 30px rgba(0,0,0,0.25)',
-                      opacity: 0,
-                      ...(entered ? { animation: 'dkHI 0.9s ease-out 0.75s both' } : {}),
-                    }}>
-                      {HERO_TITLES[heroLine]}
-                    </h1>
-                  </div>
-                </div>
-
-                {/* Subtitle */}
-                <p style={{
-                  fontFamily: "'Poppins', sans-serif", fontWeight: 300,
-                  fontSize: 'clamp(0.88rem, 1.15vw, 1.1rem)', lineHeight: 1.7,
-                  color: 'rgba(255,255,255,0.72)',
-                  margin: '16px 0 32px', letterSpacing: '0.015em',
-                  textShadow: '0 1px 12px rgba(0,0,0,0.15)',
-                  opacity: 0,
-                  ...(entered ? { animation: 'dkHI 0.9s ease-out 1.0s both' } : {}),
-                }}>
-                  Acompañamiento emocional real y personalizado.<br />
-                  Un espacio seguro, creado para vos.
-                </p>
-
-                {/* CTA */}
-                <div style={{
-                  opacity: 0,
-                  ...(entered ? { animation: 'dkHI 0.8s ease-out 1.25s both' } : {}),
-                }}>
-                  <button className="ws-cta-premium" onClick={() => scrollTo('contacto')}>
-                    <span className="ws-cta-text">Quiero mi compañia</span>
-                    <svg className="ws-cta-arrow" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
+            <div className="relative w-[160px] h-[330px] sm:w-[200px] sm:h-[415px] lg:w-[260px] lg:h-[540px]">
+              <div className="absolute inset-[3%] overflow-hidden rounded-[1.4rem] sm:rounded-[1.8rem] lg:rounded-[2.2rem] z-0">
+                <img
+                  src="/Screen.png"
+                  alt="App screen"
+                  className="absolute top-[-10px] left-[-2px] w-[102%] h-auto"
+                />
               </div>
+              <img
+                src="/phone.png"
+                alt="Phone frame"
+                className="relative w-full h-full object-contain z-10"
+              />
             </div>
           </div>
 
-          {/* Video dots */}
-          <div style={{
-            position: 'absolute', bottom: 80, left: '50%',
-            transform: 'translateX(-50%)', zIndex: 20,
-            display: 'flex', gap: 8,
-            opacity: entered ? 1 : 0,
-            transition: 'opacity 0.8s ease 2.5s',
-          }}>
-            {VIDEOS.map((_, i) => (
-              <button key={i} onClick={() => handleDotClick(i)} aria-label={`Video ${i + 1}`} style={{
-                width: currentVideoIdx === i ? 20 : 6, height: 6,
-                borderRadius: currentVideoIdx === i ? 3 : '50%',
-                background: currentVideoIdx === i ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.3)',
-                border: 'none', padding: 0, cursor: 'pointer', outline: 'none',
-                transition: 'all 0.4s cubic-bezier(0.4,0,0.2,1)',
-                ...(currentVideoIdx === i ? { boxShadow: '0 0 8px rgba(255,255,255,0.3)' } : {}),
-              }} />
-            ))}
-          </div>
-
-          {/* Descubrí más */}
-          <div style={{
-            position: 'absolute', bottom: 28, left: '50%',
-            transform: 'translateX(-50%)', zIndex: 20,
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-            animation: 'dkBounce 2.5s ease-in-out infinite',
-            opacity: entered ? 1 : 0,
-            transition: 'opacity 0.8s ease 2s',
-          }}>
-            <span style={{
-              fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 11,
-              color: 'rgba(255,255,255,0.6)', letterSpacing: '0.15em',
-              textTransform: 'uppercase' as const,
-            }}>Descubrí más</span>
-            <svg width={14} height={14} style={{ opacity: 0.5 }} fill="none" stroke="rgba(255,255,255,0.5)" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7" />
-            </svg>
-          </div>
-        </>
-      )}
-
-      {isMobile && (
-        <>
-          <style>{`
-            @keyframes mBg{0%{opacity:0;transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
-            @keyframes mLine{0%{opacity:0;width:0}100%{opacity:1;width:40px}}
-            @keyframes mUp{0%{opacity:0;transform:translateY(22px)}100%{opacity:1;transform:translateY(0)}}
-            @keyframes mRise{0%{opacity:0;transform:translateY(60px)}60%{opacity:1;transform:translateY(-8px)}100%{opacity:1;transform:translateY(0)}}
-            @keyframes mPop{0%{opacity:0;transform:scale(0) rotate(-20deg)}60%{opacity:1;transform:scale(1.15) rotate(5deg)}100%{opacity:1;transform:scale(1) rotate(0deg)}}
-            @keyframes mFH{0%,100%{transform:translateY(0) scale(1) rotate(0)}25%{transform:translateY(-8px) scale(1.04) rotate(1.5deg)}50%{transform:translateY(-14px) scale(1) rotate(-1deg)}75%{transform:translateY(-6px) scale(1.03) rotate(.5deg)}}
-            @keyframes mFL{0%,100%{transform:translateY(0) rotate(0)}20%{transform:translateY(-10px) rotate(2deg)}50%{transform:translateY(-6px) rotate(-2.5deg)}70%{transform:translateY(-12px) rotate(1.5deg)}}
-            @keyframes mFP{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(-.8deg)}}
-            @keyframes mFB{0%,100%{transform:translateY(0) rotate(0) translateX(0)}30%{transform:translateY(-7px) rotate(1.5deg) translateX(2px)}60%{transform:translateY(-4px) rotate(-1deg) translateX(-1px)}80%{transform:translateY(-9px) rotate(.5deg) translateX(1px)}}
-            @keyframes mFloor{0%{transform:translateY(100%)}100%{transform:translateY(0)}}
-            @keyframes mBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-            @keyframes mScrollIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
-            @keyframes btnShimmer{0%{transform:translateX(-100%) skewX(-15deg)}100%{transform:translateX(200%) skewX(-15deg)}}
-            @keyframes btnPulseGlow{0%,100%{box-shadow:0 4px 24px rgba(249,221,163,0.3),0 1px 3px rgba(0,0,0,0.12),0 0 0 0 rgba(249,221,163,0)}50%{box-shadow:0 4px 24px rgba(249,221,163,0.3),0 1px 3px rgba(0,0,0,0.12),0 0 0 5px rgba(249,221,163,0.06)}}
-            .ws-cta-premium-mobile{position:relative;display:inline-flex;align-items:center;gap:clamp(7px, 2vw, 10px);padding:clamp(11px, 2.8vw, 16px) clamp(26px, 8vw, 38px);border-radius:50px;background:linear-gradient(135deg,#F9DDA3 0%,#e6c57a 100%);color:#2a1f0e;font-family:'Poppins',sans-serif;font-weight:600;font-size:clamp(12px, 3.5vw, 15px);letter-spacing:0.04em;border:none;cursor:pointer;box-shadow:0 4px 24px rgba(249,221,163,0.3),0 1px 3px rgba(0,0,0,0.12);overflow:hidden;-webkit-tap-highlight-color:transparent;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.35s ease,background 0.35s ease,filter 0.3s ease;animation:btnPulseGlow 3s ease-in-out 3s infinite;isolation:isolate}
-            .ws-cta-premium-mobile::before{content:'';position:absolute;top:0;left:0;width:45%;height:100%;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0) 10%,rgba(255,255,255,0.35) 45%,rgba(255,255,255,0.6) 50%,rgba(255,255,255,0.35) 55%,rgba(255,255,255,0) 90%,transparent 100%);transform:translateX(-100%) skewX(-15deg);pointer-events:none;z-index:1}
-            .ws-cta-premium-mobile::after{content:'';position:absolute;inset:-2px;border-radius:52px;background:linear-gradient(135deg,rgba(255,255,255,0.3) 0%,rgba(249,221,163,0.15) 30%,transparent 50%,rgba(249,221,163,0.1) 70%,rgba(255,255,255,0.2) 100%);opacity:0;transition:opacity 0.35s ease;z-index:-1;pointer-events:none}
-            .ws-cta-premium-mobile:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 28px rgba(249,221,163,0.4),0 3px 12px rgba(249,221,163,0.25),0 0 40px rgba(249,221,163,0.12);background:linear-gradient(135deg,#fce5b5 0%,#F9DDA3 40%,#eecf8a 100%);filter:brightness(1.06);animation:none}
-            .ws-cta-premium-mobile:hover::before{animation:btnShimmer 0.8s cubic-bezier(0.4,0,0.2,1) forwards}
-            .ws-cta-premium-mobile:hover::after{opacity:1}
-            .ws-cta-premium-mobile:hover .ws-cta-arrow{transform:translateX(3px)}
-            .ws-cta-premium-mobile:active{transform:translateY(0px) scale(0.97);box-shadow:0 2px 12px rgba(249,221,163,0.3),0 1px 4px rgba(0,0,0,0.1);filter:brightness(1.0);transition:transform 0.1s ease,box-shadow 0.1s ease,filter 0.1s ease}
-            .ws-cta-arrow{transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);position:relative;z-index:2}
-            .ws-cta-text{position:relative;z-index:2}
-          `}</style>
-
-          <div style={{
-            position: 'absolute', inset: 0, zIndex: 0, opacity: 0,
-            ...(entered ? { animation: 'mBg 1s ease-out 0.1s both' } : {}),
-          }}>
-            <img src="/fondoazul.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
-          </div>
-
-          <div style={{
-            position: 'relative', zIndex: 20, flex: 1,
-            display: 'flex', flexDirection: 'column', alignItems: 'center',
-            width: '100%', minHeight: 0,
-          }}>
-            <div style={{
-              width: '100%', flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              position: 'relative', zIndex: 40,
-            }}>
-              <div style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center',
-                textAlign: 'center', width: '100%',
-                paddingTop: 'clamp(28px, 5vh, 55px)',
-                paddingLeft: 'clamp(20px, 6vw, 30px)',
-                paddingRight: 'clamp(20px, 6vw, 30px)',
-                paddingBottom: 6,
-              }}>
-                <div style={{
-                  height: 2.5, borderRadius: 2,
-                  background: 'linear-gradient(90deg, #F9DDA3, rgba(249,221,163,0.25))',
-                  marginBottom: 'clamp(8px, 1.2vh, 14px)',
-                  opacity: 0, width: 0,
-                  ...(entered ? { animation: 'mLine 0.7s ease-out 0.4s both' } : {}),
-                }} />
-
-                <h1 style={{
-                  fontFamily: "'Poppins', sans-serif", fontWeight: 700,
-                  fontSize: 'clamp(1.75rem, 8.5vw, 2.8rem)', lineHeight: 1.12,
-                  color: '#ffffff', letterSpacing: '-0.02em',
-                  margin: '0 0 clamp(5px, 0.8vh, 10px)',
-                  textShadow: '0 3px 30px rgba(0,0,0,0.35)',
-                  opacity: 0,
-                  ...(entered ? { animation: 'mUp 0.8s ease-out 0.55s both' } : {}),
-                }}>
-                  Sentite especial,<br />con alguien especial.
-                </h1>
-
-                <p style={{
-                  fontFamily: "'Poppins', sans-serif", fontWeight: 400,
-                  fontSize: 'clamp(0.82rem, 3.8vw, 1.05rem)', lineHeight: 1.6,
-                  color: 'rgba(255,255,255,0.78)',
-                  margin: '0 0 clamp(10px, 1.8vh, 20px)',
-                  letterSpacing: '0.01em', maxWidth: 420,
-                  textShadow: '0 1px 12px rgba(0,0,0,0.18)',
-                  opacity: 0,
-                  ...(entered ? { animation: 'mUp 0.8s ease-out 0.75s both' } : {}),
-                }}>
-                  Acompañamiento emocional real y personalizado.<br />Un espacio seguro, creado para vos.
-                </p>
-
-                <div style={{
-                  opacity: 0,
-                  ...(entered ? { animation: 'mUp 0.7s ease-out 0.95s both' } : {}),
-                }}>
-                  <button className="ws-cta-premium-mobile" onClick={() => scrollTo('que-es')}>
-                    <span className="ws-cta-text">Conocé a Camil</span>
-                    <svg className="ws-cta-arrow" width="clamp(13px, 3.5vw, 16px)" height="clamp(13px, 3.5vw, 16px)" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
+          {/* PHONE 2 */}
+          <div
+            className="relative translate-y-[30px] ml-4 sm:ml-5 lg:ml-6 shrink-0"
+            style={{
+              filter:
+                "drop-shadow(0 30px 60px rgba(14,165,183,0.14)) drop-shadow(0 10px 20px rgba(0,0,0,0.06))",
+            }}
+          >
+            <div className="relative w-[160px] h-[330px] sm:w-[200px] sm:h-[415px] lg:w-[260px] lg:h-[540px]">
+              <div className="absolute inset-[3%] overflow-hidden rounded-[1.4rem] sm:rounded-[1.8rem] lg:rounded-[2.2rem] z-0">
+                <img
+                  src="/Screen.png"
+                  alt="App screen"
+                  className="absolute top-[-10px] left-[-2px] w-[102%] h-auto"
+                />
               </div>
-            </div>
-
-            <div style={{
-              width: '100%', flex: 1, position: 'relative',
-              display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
-              zIndex: 30, minHeight: 0,
-            }}>
-              <div style={{
-                position: 'relative', display: 'flex', justifyContent: 'center',
-                alignItems: 'flex-end', zIndex: 30, opacity: 0,
-                ...(entered ? { animation: 'mRise 1s cubic-bezier(0.25,0.46,0.45,0.94) 0.5s both' } : {}),
-              }}>
-                <img src="/camilhome.png" alt="Camil" style={{
-                  height: 'auto', width: 'auto',
-                  maxWidth: 'clamp(200px, 62vw, 320px)',
-                  maxHeight: 'clamp(42vh, 55vh, 62vh)',
-                  objectFit: 'contain', objectPosition: 'bottom center', zIndex: 30,
-                }} />
-
-                <img src="/corazon.png" alt="" style={{
-                  position: 'absolute', objectFit: 'contain', zIndex: 50, pointerEvents: 'none',
-                  left: 'clamp(-6px, -2vw, -14px)', top: '10%',
-                  width: 'clamp(22px, 10vw, 50px)', height: 'clamp(22px, 10vw, 50px)',
-                  opacity: 0,
-                  ...(iconsReady ? { animation: 'mFH 3.4s ease-in-out infinite', opacity: 1 }
-                    : entered ? { animation: 'mPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.3s both' } : {}),
-                }} />
-
-                <img src="/celular.png" alt="" style={{
-                  position: 'absolute', objectFit: 'contain', zIndex: 50, pointerEvents: 'none',
-                  left: 'clamp(-12px, -6vw, -38px)', bottom: '24%',
-                  width: 'clamp(42px, 18vw, 95px)', height: 'clamp(42px, 18vw, 95px)',
-                  opacity: 0,
-                  ...(iconsReady ? { animation: 'mFP 4.5s ease-in-out infinite', opacity: 1 }
-                    : entered ? { animation: 'mPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.5s both' } : {}),
-                }} />
-
-                <img src="/billete.png" alt="" style={{
-                  position: 'absolute', objectFit: 'contain', zIndex: 50, pointerEvents: 'none',
-                  right: 'clamp(-7px, -3vw, -16px)', top: '3%',
-                  width: 'clamp(24px, 10vw, 52px)', height: 'clamp(24px, 10vw, 52px)',
-                  opacity: 0,
-                  ...(iconsReady ? { animation: 'mFB 5s ease-in-out infinite', opacity: 1 }
-                    : entered ? { animation: 'mPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.7s both' } : {}),
-                }} />
-
-                <img src="/carta.png" alt="" style={{
-                  position: 'absolute', objectFit: 'contain', zIndex: 50, pointerEvents: 'none',
-                  right: 'clamp(-8px, -4vw, -20px)', bottom: '46%',
-                  width: 'clamp(20px, 9vw, 48px)', height: 'clamp(20px, 9vw, 48px)',
-                  opacity: 0,
-                  ...(iconsReady ? { animation: 'mFL 4s ease-in-out infinite', opacity: 1 }
-                    : entered ? { animation: 'mPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 1.9s both' } : {}),
-                }} />
-              </div>
-
-              <div style={{
-                position: 'absolute', bottom: 0, left: 0, right: 0,
-                zIndex: 55, pointerEvents: 'none',
-                height: 'clamp(140px, 22vh, 200px)',
-                background: `linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.03) 15%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.25) 50%, rgba(0,0,0,0.42) 70%, rgba(0,0,0,0.58) 85%, rgba(0,0,0,0.7) 100%)`,
-              }}>
-                <div style={{
-                  position: 'absolute', inset: 0,
-                  backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
-                  maskImage: 'linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.7) 70%, black 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, transparent 20%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.7) 70%, black 100%)',
-                }} />
-              </div>
-
-              <div style={{
-                position: 'absolute', bottom: 'clamp(10px, 2vh, 20px)',
-                left: 0, right: 0, zIndex: 60,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-                opacity: 0,
-                ...(entered ? { animation: 'mScrollIn 0.6s ease-out 1.3s both' } : {}),
-              }}>
-                <div style={{
-                  animation: 'mBounce 2s ease-in-out infinite',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-                }}>
-                  <span style={{
-                    fontFamily: "'Poppins', sans-serif", fontWeight: 400,
-                    fontSize: 'clamp(9px, 2.5vw, 11px)',
-                    color: 'rgba(255,255,255,0.65)', letterSpacing: '0.15em',
-                    textTransform: 'uppercase' as const,
-                    textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-                  }}>Descubrí más</span>
-                  <svg width="clamp(10px, 3vw, 14px)" height="clamp(10px, 3vw, 14px)" fill="none" stroke="rgba(255,255,255,0.5)" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7" />
-                  </svg>
-                </div>
-              </div>
+              <img
+                src="/phone.png"
+                alt="Phone frame"
+                className="relative w-full h-full object-contain z-10"
+              />
             </div>
           </div>
+        </div>
 
-          <div style={{
-            width: '100%', flexShrink: 0,
-            height: 'clamp(28px, 6vh, 44px)',
-            backgroundColor: '#F9DDA3',
-            position: 'relative', zIndex: 10,
-            transform: 'translateY(100%)',
-            ...(entered ? { animation: 'mFloor 0.6s cubic-bezier(0.25,0.46,0.45,0.94) 0.2s both' } : {}),
-          }} />
-        </>
-      )}
+        {/* ── TEXT + BUTTONS ── */}
+        <div className="w-full lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left lg:pr-16 lg:order-1">
+          {/* Badge */}
+          <span className="inline-flex w-fit items-center gap-2 bg-[#E0F7FA] text-[#0EA5B7] text-[10px] sm:text-[11px] font-bold px-3 sm:px-4 py-2 rounded-full mb-6 sm:mb-8 tracking-[0.12em] border border-[#A5F3FC]/50">
+            🐾 NUEVA VERSIÓN 2.0 YA DISPONIBLE
+          </span>
+
+          {/* Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.75rem] font-extrabold text-[#111827] leading-[1.08] mb-4 sm:mb-6">
+            Todo lo que tu mascota necesita en{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0EA5B7] to-[#67D1E3]">
+              una sola app.
+            </span>
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-base sm:text-lg lg:text-xl text-[#6B7280] leading-relaxed mb-8 sm:mb-10 max-w-xl">
+            Centraliza su historial médico, compra los mejores productos y
+            agenda turnos con profesionales verificados en segundos.
+          </p>
+
+          {/* Buttons */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
+            <button className="bg-gradient-to-r from-[#0EA5B7] to-[#67D1E3] hover:from-[#0C9AAB] hover:to-[#5BC5D8] text-white font-semibold text-base sm:text-lg px-8 py-4 rounded-2xl transition-all shadow-lg shadow-[#14B8C4]/25 hover:shadow-xl hover:shadow-[#14B8C4]/35 active:scale-[0.97]">
+              Descarga la App
+            </button>
+            <button className="border-2 border-[#E5E7EB] hover:border-[#14B8C4]/30 bg-white text-[#111827] font-semibold text-base sm:text-lg px-8 py-4 rounded-2xl transition-all hover:bg-[#F0FDFA] active:scale-[0.97]">
+              Suma tu negocio
+            </button>
+          </div>
+        </div>
+      </div>
     </section>
   );
 };

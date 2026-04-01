@@ -19,7 +19,7 @@ const FAQS = [
   },
   {
     question: '¿Cómo es la primera experiencia?',
-    answer: 'Una vez que completás el formulario, el equipo de Camil te contacta a la brevedad para conocerte, entender qué buscás y coordinar todo. Desde el primer momento vas a sentir la calidez que nos caracteriza.',
+    answer: 'Una vez que completás el formulario, Camil te contacta a la brevedad para conocerte, entender qué buscás y coordinar todo. Desde el primer momento vas a sentir la calidez que nos caracteriza.',
   },
   {
     question: '¿Por qué no se muestra el rostro de Camil?',
@@ -27,7 +27,7 @@ const FAQS = [
   },
   {
     question: '¿Puedo cambiar de plan?',
-    answer: 'Sí, podés subir o bajar de plan cuando quieras. El cambio se aplica en el siguiente ciclo de facturación. Nuestro equipo te ayuda con la transición.',
+    answer: 'Sí, podés subir o bajar de plan cuando quieras. El cambio se aplica en el siguiente ciclo de facturación. Camil te ayuda con la transición.',
   },
   {
     question: '¿Qué métodos de pago aceptan?',
@@ -152,11 +152,11 @@ const FAQScreen = () => {
         .faq-title {
           font-family: 'Poppins', sans-serif;
           font-weight: 700;
-          font-size: clamp(26px, 3.2vw, 40px);
-          line-height: 1.25;
+          font-size: clamp(26px, 2.8vw, 42px);
+          line-height: 1.18;
           color: #1C1C1E;
           letter-spacing: -0.025em;
-          margin: 0 0 clamp(10px, 1vw, 16px);
+          margin: 0 0 18px;
           opacity: 0;
         }
 

@@ -1,490 +1,175 @@
-const Footer = () => {
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
-  };
+import React from "react";
 
+const Footer: React.FC = () => {
   return (
-    <footer
-      className="footer-root"
-      style={{
-        backgroundColor: '#F9DDA3',
-        width: '100%',
-      }}
-    >
-      <style>{`
-        /* ══════════════════════════════
-           DESKTOP — todo vw puro → px fijo
-        ══════════════════════════════ */
-        .footer-grid {
-          display: flex;
-          justify-content: space-between;
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 8px 60px 20px;          /* era 0.5vw 6vw 1.5vw → a 5000px = 25px 300px 75px */
-        }
-
-        .footer-col-logo {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;                        /* era 1vw → a 5000px = 50px */
-          max-width: 340px;                 /* era 24vw → a 5000px = 1200px */
-        }
-
-        .footer-logo-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 0;
-          display: flex;
-          align-items: center;
-          align-self: flex-start;
-          transition: all 0.3s ease;
-        }
-        .footer-logo-btn:hover {
-          opacity: 0.85;
-          transform: scale(1.02);
-        }
-
-        .footer-logo-img {
-          height: clamp(80px, 10vw, 130px); /* era 12.5vw → a 5000px = 625px */
-          width: auto;
-        }
-
-        .footer-desc {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: rgba(90,69,32,0.7);
-          font-size: 14px;                  /* era 0.85vw → a 5000px = 42.5px */
-          line-height: 1.7;
-          margin: 0;
-        }
-
-        .footer-col {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;                        /* era 0.7vw → a 5000px = 35px */
-        }
-
-        .footer-col-title {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 600;
-          color: #5A4520;
-          font-size: 14px;                  /* era 0.88vw → a 5000px = 44px */
-          letter-spacing: 0.08em;
-          margin: 0 0 4px 0;               /* era 0 0 0.3vw 0 → a 5000px = 15px */
-          text-transform: uppercase;
-        }
-
-        .footer-col-link {
-          background: none;
-          border: none;
-          padding: 0;
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: rgba(90,69,32,0.65);
-          font-size: 14px;                  /* era 0.85vw → a 5000px = 42.5px */
-          cursor: pointer;
-          text-align: left;
-          transition: color 0.3s ease;
-        }
-        .footer-col-link:hover {
-          color: #5A4520;
-        }
-
-        .footer-contact-text {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: rgba(90,69,32,0.65);
-          font-size: 14px;                  /* era 0.85vw */
-        }
-
-        .footer-socials {
-          display: flex;
-          align-items: center;
-          gap: 8px;                         /* era 0.6vw → a 5000px = 30px */
-          margin-top: 8px;                  /* era 0.5vw → a 5000px = 25px */
-        }
-
-        .footer-social-icon {
-          width: clamp(30px, 2.3vw, 38px);
-          height: clamp(30px, 2.3vw, 38px);
-          border-radius: 50%;
-          background: rgba(90,69,32,0.1);
-          border: 1px solid rgba(90,69,32,0.2);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          font-family: 'Poppins', sans-serif;
-          font-weight: 500;
-          color: rgba(90,69,32,0.6);
-          font-size: 12px;                  /* era 0.7vw → a 5000px = 35px */
-        }
-        .footer-social-icon:hover {
-          background: rgba(90,69,32,0.2);
-          border-color: rgba(90,69,32,0.35);
-          color: #5A4520;
-        }
-
-        /* Bottom bar */
-        .footer-bottom {
-          border-top: 1px solid rgba(90,69,32,0.12);
-          padding: 16px 60px;              /* era 1.2vw 6vw → a 5000px = 60px 300px */
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          max-width: 1400px;
-          margin: 0 auto;
-        }
-
-        .footer-bottom-left {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: rgba(90,69,32,0.5);
-          font-size: 12px;                  /* era 0.78vw → a 5000px = 39px */
-        }
-
-        .footer-bottom-right {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 400;
-          color: rgba(90,69,32,0.4);
-          font-size: 12px;                  /* era 0.75vw → a 5000px = 37.5px */
-        }
-
-        /* ══════════════════════════════
-           TABLET (≤ 1024px)
-        ══════════════════════════════ */
-        @media (max-width: 1024px) {
-          .footer-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 32px 40px;
-            padding: 40px 40px 28px;
-          }
-
-          .footer-col-logo {
-            max-width: 100%;
-            gap: 14px;
-            grid-column: 1 / 2;
-          }
-
-          .footer-logo-img {
-            height: 90px;
-          }
-
-          .footer-desc {
-            font-size: 13px;
-          }
-
-          .footer-col-title {
-            font-size: 12px;
-            margin-bottom: 4px;
-          }
-
-          .footer-col {
-            gap: 8px;
-          }
-
-          .footer-col-link {
-            font-size: 13px;
-          }
-
-          .footer-contact-text {
-            font-size: 13px;
-          }
-
-          .footer-socials {
-            gap: 8px;
-            margin-top: 8px;
-          }
-
-          .footer-social-icon {
-            width: 34px;
-            height: 34px;
-            font-size: 12px;
-          }
-
-          .footer-bottom {
-            padding: 16px 40px;
-            flex-direction: column;
-            gap: 6px;
-            align-items: center;
-            text-align: center;
-          }
-
-          .footer-bottom-left {
-            font-size: 11px;
-          }
-
-          .footer-bottom-right {
-            font-size: 11px;
-          }
-        }
-
-        /* ══════════════════════════════
-           MOBILE (≤ 768px)
-        ══════════════════════════════ */
-        @media (max-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 1fr;
-            gap: 28px;
-            padding: 48px 28px 24px;
-          }
-
-          .footer-col-logo {
-            align-items: center;
-            text-align: center;
-            gap: 12px;
-          }
-
-          .footer-logo-btn {
-            align-self: center;
-          }
-
-          .footer-logo-img {
-            height: 80px;
-          }
-
-          .footer-desc {
-            font-size: 13px;
-            max-width: 320px;
-          }
-
-          .footer-col {
-            align-items: center;
-            text-align: center;
-            gap: 7px;
-          }
-
-          .footer-col-title {
-            font-size: 11.5px;
-            margin-bottom: 2px;
-          }
-
-          .footer-col-link {
-            font-size: 13px;
-            text-align: center;
-          }
-
-          .footer-contact-text {
-            font-size: 13px;
-          }
-
-          .footer-socials {
-            justify-content: center;
-            gap: 10px;
-            margin-top: 6px;
-          }
-
-          .footer-social-icon {
-            width: 36px;
-            height: 36px;
-            font-size: 13px;
-          }
-
-          .footer-bottom {
-            padding: 14px 28px;
-            flex-direction: column;
-            gap: 4px;
-          }
-
-          .footer-bottom-left {
-            font-size: 10.5px;
-          }
-
-          .footer-bottom-right {
-            font-size: 10.5px;
-          }
-        }
-
-        /* ══════════════════════════════
-           SMALL MOBILE (≤ 480px)
-        ══════════════════════════════ */
-        @media (max-width: 480px) {
-          .footer-grid {
-            gap: 24px;
-            padding: 56px 20px 20px;
-          }
-
-          .footer-logo-img {
-            height: 68px;
-          }
-
-          .footer-desc {
-            font-size: 12px;
-            max-width: 280px;
-            line-height: 1.6;
-          }
-
-          .footer-col {
-            gap: 6px;
-          }
-
-          .footer-col-title {
-            font-size: 11px;
-          }
-
-          .footer-col-link {
-            font-size: 12px;
-          }
-
-          .footer-contact-text {
-            font-size: 12px;
-          }
-
-          .footer-social-icon {
-            width: 34px;
-            height: 34px;
-            font-size: 12px;
-          }
-
-          .footer-bottom {
-            padding: 12px 20px;
-          }
-
-          .footer-bottom-left,
-          .footer-bottom-right {
-            font-size: 10px;
-          }
-        }
-
-        /* ══════════════════════════════
-           VERY SMALL (≤ 340px)
-        ══════════════════════════════ */
-        @media (max-width: 340px) {
-          .footer-grid {
-            gap: 20px;
-            padding: 60px 16px 16px;
-          }
-
-          .footer-logo-img {
-            height: 56px;
-          }
-
-          .footer-desc {
-            font-size: 11px;
-            max-width: 240px;
-          }
-
-          .footer-col-title {
-            font-size: 10.5px;
-          }
-
-          .footer-col-link {
-            font-size: 11px;
-          }
-
-          .footer-contact-text {
-            font-size: 11px;
-          }
-
-          .footer-social-icon {
-            width: 30px;
-            height: 30px;
-            font-size: 11px;
-          }
-
-          .footer-bottom {
-            padding: 10px 16px;
-          }
-
-          .footer-bottom-left,
-          .footer-bottom-right {
-            font-size: 9px;
-          }
-        }
-      `}</style>
-
-      {/* ═══ 4-Column Grid ═══ */}
-      <div className="footer-grid">
-        {/* Col 1 — Logo + descripción */}
-        <div className="footer-col-logo">
-          <button
-            type="button"
-            className="footer-logo-btn"
-            onClick={() => scrollToSection('inicio')}
-          >
-            <img
-              src="/logo.png"
-              alt="Camil Virtual"
-              className="footer-logo-img"
-            />
-          </button>
-          <p className="footer-desc">
-            Compañía emocional genuina en un mundo digital. Porque todos merecemos a alguien que nos escuche de verdad.
-          </p>
-        </div>
-
-        {/* Col 2 — Navegación */}
-        <div className="footer-col">
-          <h4 className="footer-col-title">Navegación</h4>
-          {[
-            { label: 'Inicio', id: 'inicio' },
-            { label: 'Cómo funciona', id: 'como-funciona' },
-            { label: 'Vínculos', id: 'vinculos' },
-            { label: 'Planes', id: 'planes' },
-            { label: 'Preguntas frecuentes', id: 'faq' },
-            { label: 'Contacto', id: 'contacto' },
-          ].map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="footer-col-link"
-              onClick={() => scrollToSection(item.id)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Col 3 — Legal */}
-        <div className="footer-col">
-          <h4 className="footer-col-title">Legal</h4>
-          {[
-            'Términos y condiciones',
-            'Política de privacidad',
-            'Política de cookies',
-            'Política de reembolso',
-          ].map((item) => (
-            <button
-              key={item}
-              type="button"
-              className="footer-col-link"
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-
-        {/* Col 4 — Contacto */}
-        <div className="footer-col">
-          <h4 className="footer-col-title">Contacto</h4>
-          <span className="footer-contact-text">📧 hola@camilvirtual.com</span>
-          <span className="footer-contact-text">📱 @camilvirtual</span>
-
-          <div className="footer-socials">
-            {['Instagram', 'TikTok', 'Twitter'].map((social) => (
-              <div
-                key={social}
-                className="footer-social-icon"
-              >
-                {social.charAt(0)}
+    <footer className="relative w-full bg-[#0F172A] overflow-hidden">
+      {/* Huellitas sobre el footer */}
+      <img
+        src="/huella.png"
+        alt=""
+        className="absolute top-16 right-[8%] w-16 h-16 opacity-[0.03] rotate-12 pointer-events-none select-none brightness-0 invert"
+      />
+      <img
+        src="/huella.png"
+        alt=""
+        className="absolute bottom-20 left-[5%] w-12 h-12 opacity-[0.025] -rotate-12 pointer-events-none select-none brightness-0 invert"
+      />
+
+      <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-40">
+        {/* ── MAIN FOOTER ── */}
+        <div className="py-16 sm:py-20 lg:py-24 border-b border-white/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-8">
+            {/* ── BRAND COLUMN ── */}
+            <div className="lg:col-span-4 flex flex-col">
+              <img
+                src="/logoBlanco.png"
+                alt="Petlia"
+                className="h-8 sm:h-9 w-auto object-contain object-left mb-6"
+              />
+              {/* Línea decorativa teal */}
+              <div className="w-12 h-0.5 bg-gradient-to-r from-[#67D1E3] to-[#0EA5B7] rounded-full mb-6" />
+              <p className="text-sm text-[#94A3B8] leading-relaxed max-w-xs mb-8">
+                El primer ecosistema integral para mascotas en Latinoamérica.
+                Todo lo que necesitan, en un solo lugar.
+              </p>
+
+              {/* Social icons */}
+              <div className="flex items-center gap-4">
+                {/* Instagram */}
+                <a
+                  href="#"
+                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#14B8C4]/20 border border-white/10 hover:border-[#14B8C4]/30 flex items-center justify-center transition-all group"
+                >
+                  <svg
+                    className="w-4 h-4 text-[#94A3B8] group-hover:text-[#67D1E3] transition-colors"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
+                  </svg>
+                </a>
+                {/* TikTok */}
+                <a
+                  href="#"
+                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#14B8C4]/20 border border-white/10 hover:border-[#14B8C4]/30 flex items-center justify-center transition-all group"
+                >
+                  <svg
+                    className="w-4 h-4 text-[#94A3B8] group-hover:text-[#67D1E3] transition-colors"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 0010.86 4.46V13a8.28 8.28 0 005.58 2.17V11.7a4.83 4.83 0 01-3.77-1.24V6.69h3.77z" />
+                  </svg>
+                </a>
+                {/* LinkedIn */}
+                <a
+                  href="#"
+                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#14B8C4]/20 border border-white/10 hover:border-[#14B8C4]/30 flex items-center justify-center transition-all group"
+                >
+                  <svg
+                    className="w-4 h-4 text-[#94A3B8] group-hover:text-[#67D1E3] transition-colors"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  </svg>
+                </a>
+                {/* X / Twitter */}
+                <a
+                  href="#"
+                  className="w-10 h-10 rounded-full bg-white/5 hover:bg-[#14B8C4]/20 border border-white/10 hover:border-[#14B8C4]/30 flex items-center justify-center transition-all group"
+                >
+                  <svg
+                    className="w-4 h-4 text-[#94A3B8] group-hover:text-[#67D1E3] transition-colors"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+            {/* ── LINKS COLUMNS ── */}
+            {[
+              {
+                title: "Producto",
+                links: [
+                  "Funcionalidades",
+                  "Para Negocios",
+                  "Marketplace",
+                  "Turnos",
+                  "Precios",
+                ],
+              },
+              {
+                title: "Compañía",
+                links: [
+                  "Sobre nosotros",
+                  "Blog",
+                  "Carreras",
+                  "Prensa",
+                  "Contacto",
+                ],
+              },
+              {
+                title: "Soporte",
+                links: [
+                  "Centro de ayuda",
+                  "Comunidad",
+                  "Guías",
+                  "Status",
+                  "FAQ",
+                ],
+              },
+              {
+                title: "Legal",
+                links: [
+                  "Términos de uso",
+                  "Privacidad",
+                  "Cookies",
+                  "Licencias",
+                ],
+              },
+            ].map((col, ci) => (
+              <div key={ci} className="lg:col-span-2">
+                <h4 className="text-sm font-bold text-white mb-5 tracking-wide">
+                  {col.title}
+                </h4>
+                <ul className="flex flex-col gap-3.5">
+                  {col.links.map((link, li) => (
+                    <li key={li}>
+                      <a
+                        href="#"
+                        className="text-sm text-[#94A3B8] hover:text-[#67D1E3] transition-colors"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* ═══ Bottom Bar ═══ */}
-      <div className="footer-bottom">
-        <span className="footer-bottom-left">
-          © {new Date().getFullYear()} Camil Virtual. Todos los derechos reservados.
-        </span>
-        <span className="footer-bottom-right">
-          Hecho con 💛 para quienes necesitan ser escuchados
-        </span>
+        {/* ── BOTTOM BAR ── */}
+        <div className="py-7 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-[#64748B]">
+            © {new Date().getFullYear()} Petlia. Todos los derechos reservados.
+          </p>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-[#64748B]">Hecho con</span>
+            <svg
+              className="w-4 h-4 text-[#14B8C4]"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            <span className="text-xs text-[#64748B]">en Argentina 🇦🇷</span>
+          </div>
+        </div>
       </div>
     </footer>
   );

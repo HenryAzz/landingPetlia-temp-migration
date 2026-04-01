@@ -80,7 +80,7 @@ const WhatsAppFloat = () => {
       )}
 
 <a
-  href="https://wa.link/140fb7"
+  href="https://wa.link/nrb6ix"
   target="_blank"
   rel="noopener noreferrer"
   className="wa-btn"
