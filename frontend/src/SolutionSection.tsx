@@ -1,85 +1,91 @@
 import React from "react";
 import Reveal from "./Reveal";
 
-const cards = [
+const steps = [
   {
-    icon: (
-      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-        <rect x="3" y="3" width="7" height="7" rx="1.5" />
-        <rect x="14" y="3" width="7" height="7" rx="1.5" />
-        <rect x="3" y="14" width="7" height="7" rx="1.5" />
-        <rect x="14" y="14" width="7" height="7" rx="1.5" />
-      </svg>
-    ),
-    title: "Gestión Centralizada",
-    desc: "Digitalizamos cada visita, vacuna y tratamiento. Tu historial siempre contigo.",
+    num: "01",
+    icon: "📱",
+    title: "Descargá y cargá tus mascotas",
+    desc: "Creá tu cuenta en segundos. Cargá nombre, edad y tipo. Cada mascota recibe un ID único.",
+    color: "from-[#67D1E3] to-[#0EA5B7]",
   },
   {
-    icon: (
-      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        <polyline points="9 12 11 14 15 10" />
-      </svg>
-    ),
-    title: "Red de Confianza",
-    desc: "Acceso exclusivo a proveedores puntuados por la comunidad PETLIA.",
+    num: "02",
+    icon: "🔍",
+    title: "Explorá negocios cercanos",
+    desc: "Veterinarias, pet shops, peluquerías y clínicas. Con precios reales, rating, horarios y distancia.",
+    color: "from-[#0EA5B7] to-[#0C9AAB]",
   },
   {
-    icon: (
-      <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-        <path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z" />
-        <path d="M3 9l2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.79 1.1L21 9" />
-        <line x1="12" y1="3" x2="12" y2="9" />
-      </svg>
-    ),
-    title: "Compras sin fricción",
-    desc: "Tus marcas favoritas con entrega programada para que nunca falte comida.",
+    num: "03",
+    icon: "💬",
+    title: "Conectá directo por WhatsApp",
+    desc: "Hablá con el negocio sin intermediarios. Consultá disponibilidad, pedí productos y listo.",
+    color: "from-[#0C9AAB] to-[#088395]",
   },
 ];
 
 const SolutionSection: React.FC = () => {
   return (
-    <section className="relative w-full bg-[#F9FAFB] overflow-hidden dot-pattern">
-      <img src="/huella.png" alt="" className="absolute top-20 left-[5%] w-10 h-10 opacity-[0.03] -rotate-12 pointer-events-none select-none animate-float-slow" />
-      <img src="/huella.png" alt="" className="absolute bottom-16 right-[8%] w-14 h-14 opacity-[0.035] rotate-[25deg] pointer-events-none select-none animate-float" style={{ animationDelay: "2s" }} />
+    <section id="como-funciona" className="relative w-full bg-white overflow-hidden">
+      <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
 
-      <div className="w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-40 py-20 sm:py-28 relative z-10">
-        {/* ── HEADER ── */}
-        <div className="flex flex-col items-center text-center mb-14 sm:mb-20">
+      <img src="/huella.png" alt="" className="absolute top-20 right-[6%] w-10 h-10 opacity-[0.03] rotate-[20deg] pointer-events-none select-none" />
+
+      <div className="relative z-10 w-full max-w-[1800px] mx-auto px-6 sm:px-10 lg:px-20 xl:px-40 py-20 sm:py-28 lg:py-32">
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-16 sm:mb-20">
           <Reveal>
-            <span className="inline-block font-heading text-xs sm:text-sm font-semibold text-[#0EA5B7] bg-[#E0F7FA]/80 px-5 py-2 rounded-full mb-6 tracking-wide border border-[#A5F3FC]/40 backdrop-blur-sm">
-              Nuestra Propuesta
+            <span className="inline-flex items-center gap-2 font-heading text-xs font-bold tracking-[0.2em] text-[#0EA5B7] uppercase mb-4">
+              <span className="w-8 h-px bg-[#0EA5B7]/40" />
+              Cómo funciona
+              <span className="w-8 h-px bg-[#0EA5B7]/40" />
             </span>
           </Reveal>
           <Reveal delay={100}>
-            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] leading-[1.12] mb-5 max-w-3xl">
-              La solución que tú y ellos{" "}
-              <span className="gradient-text-animated">merecen.</span>
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#111827] leading-[1.08] tracking-[-0.02em] mb-5 max-w-2xl">
+              Simple. Rápido.{" "}
+              <span className="gradient-text-animated">Sin vueltas.</span>
             </h2>
           </Reveal>
           <Reveal delay={200}>
             <p className="font-body text-base sm:text-lg text-[#6B7280] leading-relaxed max-w-xl">
-              Diseñamos PETLIA para que tu única preocupación sea disfrutar con
-              tu mejor amigo. Todo bajo control, desde la palma de tu mano.
+              En tres pasos tenés todo resuelto. Sin crear cuentas complicadas, sin fricción.
             </p>
           </Reveal>
         </div>
 
-        {/* ── CARDS ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {cards.map((card, i) => (
-            <Reveal key={i} delay={150 + i * 120}>
-              <div className="group bg-white rounded-2xl sm:rounded-3xl p-8 sm:p-10 border border-[#E5E7EB] card-glow cursor-default">
+        {/* Steps */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {steps.map((step, i) => (
+            <Reveal key={i} delay={200 + i * 150}>
+              <div className="group relative bg-[#F9FAFB] rounded-3xl p-8 sm:p-10 border border-[#E5E7EB] card-glow cursor-default h-full">
+                {/* Number */}
+                <span className="font-heading text-[80px] sm:text-[100px] font-extrabold text-[#F3F4F6] leading-none absolute top-4 right-6 select-none transition-colors duration-300 group-hover:text-[#E0F7FA]">
+                  {step.num}
+                </span>
+
                 {/* Icon */}
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#67D1E3] to-[#0EA5B7] flex items-center justify-center mb-6 shadow-md shadow-[#14B8C4]/20 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                  {card.icon}
+                <div className={`relative w-14 h-14 rounded-2xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-6 shadow-md shadow-[#14B8C4]/15 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                  <span className="text-2xl">{step.icon}</span>
                 </div>
-                <h3 className="font-heading text-xl sm:text-[1.35rem] font-bold text-[#111827] mb-3">
-                  {card.title}
+
+                {/* Content */}
+                <h3 className="relative font-heading text-xl font-bold text-[#111827] mb-3 leading-snug">
+                  {step.title}
                 </h3>
-                <p className="font-body text-sm sm:text-[15px] text-[#6B7280] leading-relaxed">
-                  {card.desc}
+                <p className="relative font-body text-[15px] text-[#6B7280] leading-relaxed">
+                  {step.desc}
                 </p>
+
+                {/* Arrow connector (desktop only, not on last) */}
+                {i < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-8 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center z-20 shadow-sm">
+                    <svg className="w-4 h-4 text-[#0EA5B7]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                )}
               </div>
             </Reveal>
           ))}

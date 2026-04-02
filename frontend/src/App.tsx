@@ -31,20 +31,21 @@ function App() {
   }, []);
 
   return (
-    <div className="w-full bg-[#F9FAFB]">
+    <div className="w-full bg-[#F9FAFB] overflow-x-hidden">
       {loading && <Loader onFinish={handleLoaderFinish} />}
       <Navbar />
       <WelcomeScreen loaderFinished={loaderFinished} />
       <ProblemSection />
       <SolutionSection />
       <FeaturesSection />
-      <BusinessSection />
       <AppScreensSection />
+      <BusinessSection />
       <ManifestoBanner />
       <RoadmapSection />
       <CTASection />
       <Footer />
       <WhatsAppFloat />
+      <ExitIntentModal />
     </div>
   );
 }
