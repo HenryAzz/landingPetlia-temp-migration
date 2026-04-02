@@ -65,7 +65,7 @@ const Navbar: React.FC = () => {
                 <a
                   key={item}
                   href="#"
-                  className="text-sm font-semibold transition-all duration-300"
+                  className="font-body text-sm font-semibold transition-all duration-300"
                   style={{
                     color:
                       progress > 0.5
@@ -83,7 +83,7 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-4">
             <a
               href="#"
-              className="hidden sm:inline-flex text-sm px-6 py-2.5 rounded-full font-bold transition-all duration-300"
+              className="hidden sm:inline-flex font-heading text-sm px-6 py-2.5 rounded-full font-bold transition-all duration-300"
               style={{
                 background:
                   progress > 0.5

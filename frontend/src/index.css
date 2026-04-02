@@ -1,1 +1,43 @@
 @import "tailwindcss";
+@config "../tailwind.config.mjs";
+
+@layer components {
+  /* Degradé animado alineado al botón "Descargar la App" (cyan → aqua) */
+  .welcome-mascota-gradient {
+    font-style: italic;
+    display: inline-block;
+    line-height: 1.06;
+    padding-right: 0.05em;
+    background-image: linear-gradient(
+      90deg,
+      #0ea5b7,
+      #67d1e3,
+      #5bc5d8,/* hover.to del botón */
+      #67d1e3,
+      #0ea5b7
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: welcome-mascota-shimmer 4s ease-in-out infinite;
+  }
+
+  @keyframes welcome-mascota-shimmer {
+    0%,
+    100% {
+      background-position: 0% center;
+    }
+    50% {
+      background-position: 100% center;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-mascota-gradient {
+    animation: none;
+    background-position: 0 center;
+  }
+}

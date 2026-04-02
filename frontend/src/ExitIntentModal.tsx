@@ -115,21 +115,21 @@ const ExitIntentModal = () => {
           background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
           display: flex; align-items: center; justify-content: center;
           cursor: pointer; transition: all 0.3s ease; color: rgba(255,255,255,0.5);
-          font-size: 16px; font-family: 'Poppins', sans-serif;
+          font-size: 16px; font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif;
         }
         .ei-close:hover { background: rgba(255,255,255,0.15); color: #F9DDA3; }
 
         .ei-emoji { font-size: clamp(36px, 3.5vw, 50px); }
 
         .ei-title {
-          font-family: 'Poppins', sans-serif; font-weight: 600;
+          font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif; font-weight: 600;
           font-size: clamp(18px, 1.6vw, 26px); color: #FFF; margin: 0;
           line-height: 1.3;
         }
         .ei-title-gold { color: #F9DDA3; }
 
         .ei-desc {
-          font-family: 'Poppins', sans-serif; font-weight: 400;
+          font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif; font-weight: 400;
           font-size: clamp(13px, 1vw, 15px); color: rgba(255,255,255,0.65);
           line-height: 1.6; margin: 0; max-width: 340px;
         }
@@ -145,7 +145,7 @@ const ExitIntentModal = () => {
           border: 1px solid rgba(255,255,255,0.25);
           background: rgba(255,255,255,0.08);
           backdrop-filter: blur(8px); color: #FFF;
-          font-family: 'Poppins', sans-serif; font-size: clamp(13px, 1vw, 15px);
+          font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif; font-size: clamp(13px, 1vw, 15px);
           outline: none; transition: all 0.3s ease; box-sizing: border-box;
         }
         .ei-input::placeholder { color: rgba(255,255,255,0.4); }
@@ -156,7 +156,7 @@ const ExitIntentModal = () => {
           border-radius: 50px;
           background: linear-gradient(135deg, #F9DDA3, #f0c96e);
           border: none; color: #5A4520;
-          font-family: 'Poppins', sans-serif; font-weight: 600;
+          font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif; font-weight: 600;
           font-size: clamp(13px, 1vw, 16px); cursor: pointer;
           box-shadow: 0 4px 20px rgba(249,221,163,0.2);
           transition: all 0.35s ease;
@@ -166,7 +166,7 @@ const ExitIntentModal = () => {
         .ei-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 
         .ei-trust {
-          font-family: 'Poppins', sans-serif; font-weight: 400;
+          font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif; font-weight: 400;
           font-size: clamp(10px, 0.75vw, 12px); color: rgba(255,255,255,0.35);
         }
 
@@ -174,7 +174,7 @@ const ExitIntentModal = () => {
         .ei-success-emoji { font-size: 40px; animation: eiPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
         @keyframes eiPop { 0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
         .ei-success-text {
-          font-family: 'Poppins', sans-serif; font-weight: 500;
+          font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif; font-weight: 500;
           font-size: clamp(15px, 1.2vw, 18px); color: #F9DDA3;
         }
 

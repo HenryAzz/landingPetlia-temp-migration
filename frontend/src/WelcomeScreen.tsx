@@ -128,7 +128,9 @@ const WelcomeScreen: React.FC<Props> = ({ loaderFinished }) => {
             className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-[3.6rem] font-extrabold text-[#111827] leading-[1.08] mb-4 sm:mb-5"
             style={animate(150, 18)}
           >
-            Todo lo que tu mascota necesita en{" "}
+            Todo lo que tu{" "}
+            <span className="welcome-mascota-gradient">mascota</span> necesita
+            en{" "}
             <span className="gradient-text-animated">una sola app.</span>
           </h1>
 

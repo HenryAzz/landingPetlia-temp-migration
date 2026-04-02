@@ -1,12 +1,12 @@
-import type { Config } from "tailwindcss";
-
+/** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       fontFamily: {
-        heading: ["Manrope", "sans-serif"],
-        body: ["Nunito", "sans-serif"],
+        sans: ["Nunito", "ui-sans-serif", "system-ui", "sans-serif"],
+        heading: ["Manrope", "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ["Nunito", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       keyframes: {
         "fade-up": {
@@ -44,4 +44,4 @@ export default {
     },
   },
   plugins: [],
-} satisfies Config;
+};

@@ -1,78 +1,65 @@
 import React, { useEffect, useRef, useState } from "react";
 
-/* ═══════════════════════════════════════════════════════
-   Parallax tilt – solo desktop, solo cuando la sección
-   está visible en viewport. Lerp continuo para fluidez.
-   ═══════════════════════════════════════════════════════ */
-function useTilt(isActive: boolean) {
+function useMouseFollowTilt(isActive: boolean) {
   const ref = useRef<HTMLDivElement>(null);
-  const raf = useRef(0);
-  const pos = useRef({ x: 0, y: 0 });
-  const goal = useRef({ x: 0, y: 0 });
   const activeRef = useRef(isActive);
 
-  /* Sync sin reiniciar el loop */
+  // Mantener la ref sincronizada sin recrear el effect
   useEffect(() => {
     activeRef.current = isActive;
-    if (!isActive) goal.current = { x: 0, y: 0 };
   }, [isActive]);
 
   useEffect(() => {
-    if (window.matchMedia("(hover: none)").matches) return;
     const el = ref.current;
     if (!el) return;
 
-    let alive = true;
-    const EASE = 0.055;       // lerp factor – más bajo = más sedoso
-    const MAX_DEG = 4;        // grados máximos de inclinación
-    const PERSP = 1200;       // perspectiva CSS (px)
-    const SCALE_K = 0.002;    // cuánto escala con la magnitud
+    const target = { x: 0, y: 0 };
+    const current = { x: 0, y: 0 };
+    let rafId = 0;
 
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+    const MAX_DEG = 12;
+    const EASE = 0.12;
 
-    /* ── animation loop ── */
-    const tick = () => {
-      if (!alive) return;
+    const render = () => {
+      // Cuando no está activo, vuelve suavemente al centro
+      if (!activeRef.current) {
+        target.x = 0;
+        target.y = 0;
+      }
 
-      const gx = activeRef.current ? goal.current.x : 0;
-      const gy = activeRef.current ? goal.current.y : 0;
+      current.x += (target.x - current.x) * EASE;
+      current.y += (target.y - current.y) * EASE;
 
-      pos.current.x = lerp(pos.current.x, gx, EASE);
-      pos.current.y = lerp(pos.current.y, gy, EASE);
+      if (Math.abs(current.x - target.x) < 0.005) current.x = target.x;
+      if (Math.abs(current.y - target.y) < 0.005) current.y = target.y;
 
-      // Snap cerca de cero para evitar jitter sub-píxel
-      if (Math.abs(pos.current.x) < 0.005) pos.current.x = 0;
-      if (Math.abs(pos.current.y) < 0.005) pos.current.y = 0;
-
-      const { x, y } = pos.current;
-      const s = 1 + Math.hypot(x, y) * SCALE_K;
-
-      el.style.transform = `perspective(${PERSP}px) rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg) scale(${Math.min(s, 1.015).toFixed(4)})`;
-
-      raf.current = requestAnimationFrame(tick);
+      el.style.transform = `perspective(1200px) rotateX(${current.x.toFixed(2)}deg) rotateY(${current.y.toFixed(2)}deg)`;
+      rafId = requestAnimationFrame(render);
     };
 
-    /* ── mouse tracking ── */
     const onMove = (e: MouseEvent) => {
       if (!activeRef.current) return;
-      const r = el.getBoundingClientRect();
-      const dx = (e.clientX - (r.left + r.width / 2)) / (window.innerWidth / 2);
-      const dy = (e.clientY - (r.top + r.height / 2)) / (window.innerHeight / 2);
-      goal.current = {
-        x: -Math.max(-1, Math.min(1, dy)) * MAX_DEG,
-        y: Math.max(-1, Math.min(1, dx)) * MAX_DEG,
-      };
+      const nx = (e.clientX / window.innerWidth - 0.5) * 2;
+      const ny = (e.clientY / window.innerHeight - 0.5) * 2;
+      target.x = -ny * MAX_DEG;
+      target.y = nx * MAX_DEG;
     };
 
-    tick();
+    const onLeave = () => {
+      target.x = 0;
+      target.y = 0;
+    };
+
+    rafId = requestAnimationFrame(render);
     window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseleave", onLeave);
 
     return () => {
-      alive = false;
-      cancelAnimationFrame(raf.current);
+      cancelAnimationFrame(rafId);
       window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
     };
-  }, []); // corre una sola vez; isActive se lee desde ref
+  }, []); // Se ejecuta UNA sola vez, sin recrearse
 
   return ref;
 }
@@ -130,7 +117,8 @@ const FeaturesSection: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [triggered, setTriggered] = useState(false);
   const [isInView, setIsInView] = useState(false);
-  const tiltRef = useTilt(isInView);
+  const [allowTilt, setAllowTilt] = useState(false);
+  const tiltRef = useMouseFollowTilt(isInView && allowTilt);
 
   /* Un solo observer: entrada one-shot + visibilidad continua */
   useEffect(() => {
@@ -145,6 +133,20 @@ const FeaturesSection: React.FC = () => {
     );
     obs.observe(el);
     return () => obs.disconnect();
+  }, []);
+
+  /* Tilt solo en desktop (ancho lg + puntero fino); sin efecto en móvil */
+  useEffect(() => {
+    const mqWide = window.matchMedia("(min-width: 1024px)");
+    const mqHover = window.matchMedia("(hover: hover)");
+    const sync = () => setAllowTilt(mqWide.matches && mqHover.matches);
+    sync();
+    mqWide.addEventListener("change", sync);
+    mqHover.addEventListener("change", sync);
+    return () => {
+      mqWide.removeEventListener("change", sync);
+      mqHover.removeEventListener("change", sync);
+    };
   }, []);
 
   const t = (ms: number) =>
@@ -247,7 +249,7 @@ const FeaturesSection: React.FC = () => {
             ))}
           </div>
 
-          {/* PHONE — con tilt viewport-aware */}
+          {/* PHONE — tilt que "mira" al mouse, solo en desktop y cuando la sección es visible */}
           <div
             className="w-full lg:w-[40%] flex justify-center order-1 lg:order-2 mb-4 lg:mb-0"
             style={{
@@ -260,21 +262,15 @@ const FeaturesSection: React.FC = () => {
             <div
               ref={tiltRef}
               className="relative shrink-0"
-              style={{
-                transformStyle: "preserve-3d",
-                willChange: "transform",
-              }}
+              style={{ transformStyle: "preserve-3d", willChange: "transform" }}
             >
               <div
-                className="animate-float"
                 style={{
                   filter:
                     "drop-shadow(0 30px 60px rgba(14,165,183,0.14)) drop-shadow(0 10px 20px rgba(0,0,0,0.06))",
-                  animationDuration: "7s",
                 }}
               >
                 <div className="relative w-[260px] h-[540px] sm:w-[290px] sm:h-[600px] lg:w-[310px] lg:h-[640px]">
-                  {/* ── 6.png (telefono + screen integrado) ── */}
                   <img
                     src="/6.png"
                     alt="App preview"

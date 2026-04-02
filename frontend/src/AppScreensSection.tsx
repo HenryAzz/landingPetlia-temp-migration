@@ -17,12 +17,10 @@ const PhoneMockup: React.FC<{
 }> = ({ label, img, className = "", sizeClass }) => (
   <div className={`relative ${className}`}>
     <div
-      className="relative animate-float"
+      className="relative"
       style={{
         filter:
           "drop-shadow(0 25px 50px rgba(14,165,183,0.12)) drop-shadow(0 8px 16px rgba(0,0,0,0.05))",
-        animationDuration: `${6 + Math.random() * 3}s`,
-        animationDelay: `${Math.random() * 2}s`,
       }}
     >
       <div className={`relative ${sizeClass}`}>
